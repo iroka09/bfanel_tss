@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-dark: var(--secondary-dark);
+}
+
+:root {
+  --primary: hsl(211, 100%, 10%);
+  --primary-fixed: hsl(211, 100%, 10%);
+  --primary-light: hsl(211, 100%, 20%);
+  --primary-dark: hsl(211, 100%, 8%);
+  --secondary: hsl(193, 81%, 41%);
+  --secondary-fixed: hsl(193, 81%, 41%);
+  --secondary-light: hsl(193, 81%, 65%);
+  --secondary-dark: hsl(193, 81%, 25%);
+}
+
+:root.dark {
+  --primary: white;
+  --secondary: hsl(193, 81%, 25%);
+}
+
+
+.container {
+  @apply px-5 mx-auto
+}
+
+
+.career-background {
+  background-image: url(/images-1.jpg);
+  background-position: center;
+}
+
+.contact-us-background {
+  background-image: url(/contact_us.jpg);
+  background-position: center;
+}
+
+.skeleton-wave {
+  background: linear-gradient(135deg, transparent, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.2) 85%, transparent);
+  animation: wave-skeleton 3s infinite linear;
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+}
+
+@keyframes wave-skeleton {
+  0% {
+    background-position: 200% 0%;
+  }
+  
+  30%,
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.section {
+  /* clip-path: path('M 0 100 L 0 40 C 50 -10 150 -10 200 40 L 200 100 Z');*/
+}
