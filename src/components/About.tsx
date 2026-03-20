@@ -1,6 +1,7 @@
 
 import Card from "@/components/Card"
 
+
 export default function About() {
   return (
     <div className="grid md:grid-cols-2 gap-5">

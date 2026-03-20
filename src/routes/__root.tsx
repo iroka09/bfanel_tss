@@ -10,14 +10,7 @@ import Header from '@/components/Header'
 import Events from "@/components/Events"
 import { MdInfo } from "react-icons/md";
 import GoogleLogin from "@/components/GoogleLogin"
-//css
-import globalCss from '@/globals.css?url'
-import { root_metadatas } from './-root_metadatas'
-import swiperCss from "swiper/css?url"
-import swiperCssPagination from "swiper/css/pagination?url"
-import swipeeCssNavigation from "swiper/css/navigation?url"
-import swiperCssEffectCoverflow from "swiper/css/effect-coverflow?url"
-// import swiperCssEffectCube from  "swiper/css/effect-cube?url"
+import { root_metadatas } from './-utils/root_metadatas.ts'
 
 
 

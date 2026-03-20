@@ -2,7 +2,7 @@
 import globalCss from '@/globals.css?url'
 import swiperCss from "swiper/css?url"
 import swiperCssPagination from "swiper/css/pagination?url"
-import swipeeCssNavigation from "swiper/css/navigation?url"
+import swiperCssNavigation from "swiper/css/navigation?url"
 import swiperCssEffectCoverflow from "swiper/css/effect-coverflow?url"
 // import swiperCssEffectCube from  "swiper/css/effect-cube?url"
 
@@ -14,11 +14,11 @@ const description = "B-Fanel Industries manufactures durable plumbing and electr
 
 
 
-export const root_metadatas = async(key = "all") => {
+export const root_metadatas = async (key = "all") => {
   const metadata = {
     meta: [
-      { charSet: 'utf-8' },
       { title },
+      { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { name: "description", content: description },
       { name: "keywords", content: "Pipes production, Plumbing pipes, Conduit pipes, Pipes supply" },
@@ -40,7 +40,7 @@ export const root_metadatas = async(key = "all") => {
       { rel: 'stylesheet', href: globalCss },
       { rel: 'stylesheet', href: swiperCss },
       { rel: 'stylesheet', href: swiperCssPagination },
-      { rel: 'stylesheet', href: swipeeCssNavigation },
+      { rel: 'stylesheet', href: swiperCssNavigation },
       { rel: 'stylesheet', href: swiperCssEffectCoverflow },
       { rel: 'icon', href: '/favicon.ico' },
       { rel: 'apple-touch-icon', href: '/favicon.ico' }
