@@ -4,15 +4,17 @@ import { Spin as Hamburger } from 'hamburger-react'
 import { Drawer } from "vaul";
 import Nav from "@/components/Nav"
 import SocialMediaContacts from "@/components/SocialMediaContacts"
-import { usePathname } from '@/hooks/usePathname'
+import { useLocation } from '@tanstack/react-router'
 
 
 export default function Navbar({ children }) {
   const [showDrawer, setShowDrawer] = useState(false)
-  const pathname = usePathname()
+  const [pathname, href] = useLocation({
+    select: (location) => [location.pathname, location.href]
+  })
   useEffect(() => {
     setShowDrawer(false)
-  }, [pathname])
+  }, [href])
   return (
     <Drawer.Root direction="left" open={showDrawer} onOpenChange={setShowDrawer}>
       <Drawer.Trigger asChild>
