@@ -11,6 +11,7 @@ import Events from "@/components/Events"
 import { MdInfo } from "react-icons/md";
 import GoogleLogin from "@/components/GoogleLogin"
 import { root_metadatas } from './-utils/root_metadatas.ts'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 
 
@@ -59,6 +60,7 @@ function RootDocument() {
             ]}
           />
         </TanStackQueryProvider>
+        <SpeedInsights />
         <Scripts />
       </body>
     </html>
