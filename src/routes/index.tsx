@@ -26,11 +26,11 @@ function App() {
       <section className="flex flex-col space-y-5 md:flex-row pt-2 pb-10 md:px-5 md:gap-2">
         <div className="container text-primary md:pt-5 space-y-5 py-5 flex flex-col md:flex-row-reverse *:flex-1 gap-2">
           <div className="relative w-fill aspect-square">
-            {<img src="/bfanel.jpg" alt="Company's hero image of services" className="block mx-auto mb-2 object-contain" fill loading="eager" />}
+            {<img src="/bfanel.jpg" alt="Company's hero image of services" className="block mx-auto mb-2 object-contain" loading="eager" />}
           </div>
           <div className="text-center md:text-left">
             <h1 className="text-5xl uppercase font-[700] font-open_sans bg-gradient-to-br from-primary from-30% to-cyan-400 bg-clip-text text-transparent">
-              Bfanel Industries Limited
+              Bfanel Industries Limited.
             </h1>
             <p className="inline-block py-3 text-md">
               Your <span className="text-secondary-fixed font-bold">Trusted</span> Partner in Electrical & Plumbing Piping Systems. <br />
@@ -61,7 +61,7 @@ function App() {
           </section>
 
           {/*" Products "*/}
-          <section id="products" className="bg-primary-light text-white">
+          <section id="products">
             <Products />
           </section>
 
@@ -114,16 +114,18 @@ function App() {
           </section>
 
           {/*" Faqs "*/}
-          <section id="faqs" className="py-16 bg-secondary text-slate-800">
+          <section id="faqs" className="py-16 bg-secondary-dark text-white">
             <div className="container">
-              <h1 className="text-2xl font-bold text-primary mb-6 uppercase">Frequently Asked Questions</h1>
+              <h1 className="text-2xl font-bold mb-6 uppercase">Frequently Asked Questions</h1>
               <Faqs />
             </div>
           </section>
+
           <div className="contact-us-background bg-slate-800">
             <ContactForm />
             <Footer />
           </div>
+
         </div>
       </div>
     </main >

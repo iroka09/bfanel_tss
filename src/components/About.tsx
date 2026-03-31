@@ -34,7 +34,6 @@ function AboutCard({ imageSrc, title, alt, body, className = "" }) {
             //  src={"/logo_high.png"}
             className="block w-full h-full object-cover"
             alt={alt}
-            fill
           />
         </div>
         <div className="py-1 text-center py-3 px-5">

@@ -18,7 +18,8 @@ const datas = [
 
 export default function Products() {
   return (
-    <div className="relative mt-[50px]">
+   
+    <div className="relative mt-[50px] bg-secondary-dark text-white py-5">
       <svg
         viewBox="0 0 400 60"
         className="absolute bottom-full z-[-1]"
@@ -27,12 +28,12 @@ export default function Products() {
         <path
           d="M0 20 Q100 -20, 200 20 T400 20 V60 H0 z"
           fill="red"
-          className="fill-secondary"
+          className="fill-amber-500"
         />
         <path
           d="M0 25 Q110 -10, 210 25 T400 25 V60 H0 z"
           fill="red"
-          className="fill-primary-light"
+          className="fill-secondary-dark"
         />
       </svg>
       <div className="container">

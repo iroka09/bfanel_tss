@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { createFileRoute } from '@tanstack/react-router'
 import { AboutUs } from "@/components/LearnMore"
-import { getInfo } from "@/server/utils"
+import { getInfo /*useAppSession*/ } from "@/server/utils"
 import Footer from "@/components/Footer"
 
 
@@ -12,13 +12,18 @@ export const Route = createFileRoute('/about/')({
       { title: "About Us" }
     ]
   }),
+  beforeLoad: async (xx) => {
+    // let res = await useAppSession()
+    console.log("beforeLoad: ",xx)
+    return { a: 4 }
+  },
   component: About
 })
 
 
 function About() {
   const submit = async () => {
-    let result = await getInfo({ data: { name: "_Chisom" } })
+    let result = await getInfo({ data: { name: 5, age: "54 yy" } })
     alert(JSON.stringify(result, null, 2))
   }
   useEffect(() => {
