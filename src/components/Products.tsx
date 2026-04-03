@@ -46,7 +46,6 @@ export default function Products() {
                 <img
                   src={data.imageSrc}
                   className="object-cover h-full w-full"
-                  fill
                   alt={data.alt}
                 />
               </div>

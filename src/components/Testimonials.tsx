@@ -133,7 +133,6 @@ export default function TestimonialCarousel() {
               <img
                 src={item.avatar}
                 className="object-cover h-full w-full"
-                fill
                 alt={item.name + " avatar"}
               />
             </div>

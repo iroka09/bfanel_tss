@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import _Collapse from "react-collapse"
 import Collapse from "@mui/material/Collapse";
 import Card from "@/components/Card"
 import { IoClose } from "react-icons/io5";

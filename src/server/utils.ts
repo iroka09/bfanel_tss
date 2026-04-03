@@ -1,7 +1,8 @@
 
 import { createServerFn, createMiddleware } from "@tanstack/react-start"
+import * as z from "zod"
+//import { redirect } from "@tanstack/react-router"
 // import { useSession } from '@tanstack/react-start/server'
-import * as yup from "yup"
 
 
 
@@ -28,46 +29,60 @@ export function useAppSession() {
 }
 */
 
-let n = 0
-
-const authMiddleware = createMiddleware()
+const authMiddleware = createMiddleware({type:"function"})
   .client(async ({ next, ...others }) => {
-    console.log("client before: ", others)
-    //let result = await next({ context: { name: "client" } })
-    let result = await next({ sendContext: { value: ".client" } })
+    // console.log("client before: ", others)
+    let result = await next({ sendContext: { from: ".client sendContext" } })
     // alert(others.sendData.env)
-    console.log("client after: ", others)
+    console.log("client after: ", result)
     return result
   })
   .server(async ({ next, ...others }) => {
-    console.log('.server: ', others.context)
-    return next({ sendContext: { value: ".server" } })
+    console.log('middleware data: ', new URL(others.request.headers.get("referer")).pathname)
+    console.log('authMiddleware context: ', others.context)
+    console.log('authMiddleware sendContext: ', others.sendContext)
+    return next({
+      sendContext: {
+        from: "server sendContext"
+      },
+      context: {
+        auth: "server context"
+      }
+    })
+    // return next({ sendContext: { value: ".server" } })
+  })
+
+const loggerMiddleware = createMiddleware()
+  .server(async ({ next, ...others }) => {
+    console.log('loggerMiddleware context: ', others.context)
+    console.log('loggerMiddleware sendContext: ', others.sendContext)
+    return next()
+    // return next({ sendContext: { value: ".server" } })
   })
 
 
 
 export const getInfo = createServerFn({ type: "function", method: "POST" })
-  .middleware([authMiddleware])
-  .inputValidator(async (data) => {
-    const schema = yup.object({
-      name: yup.string("name must be a text"),
-      age: yup.number("age must be number").required()
-    })
+  // .middleware([authMiddleware, loggerMiddleware])
+  .inputValidator(async data => {
+    return data
+  })
+  .handler(async (arg) => {
     try {
-      let res = await schema.validate(data, { strict: true, abortEarly: false })
-      return res
+      const schema = z.object({
+        msg: z.string("name must be a text"),
+        age: z.number()
+      })
+      let res = await schema.safeParse(arg.data)
+      console.log(res)
+      return {
+        res,
+        from: "server",
+        val: Math.random()
+      }
     }
     catch (e) {
-      //console.log(e instanceof yup.ValidationError)
-      console.log(JSON.stringify(e, null, 2))
-      data.error = e.errors.join(" || ")
-      return { error: data.error, inputValidator: "inputValidator" }
-    }
-  })
-  .handler(async (x) => {
-    console.log("handler: ", x.data)
-    return {
-      ...x.data,
-      from: "server"
+      console.log(e)
+      return "Something went wrong"
     }
   })
