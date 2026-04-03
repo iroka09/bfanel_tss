@@ -10,7 +10,7 @@ export default function LearnMore() {
     <Drawer.Root direction="bottom">
       <Drawer.Trigger asChild>
         <button
-          className="inline-block px-5 py-2 text-xl border border-secondary dark:border-white text-secondary dark:text-white rounded-full hover:bg-cyan-400/20 transition active:translate-y-[5px] w-full font-[600]"
+          className="inline-block px-5 py-2 text-xl border-2 border-white text-white rounded-full transition active:translate-y-[5px] w-full font-[600] hover:bg-white hover:text-black transition"
         >
           Learn More
         </button>

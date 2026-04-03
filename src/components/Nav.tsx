@@ -23,6 +23,9 @@ export default function Nav(){
           <li key={link.label}>
             <Link
               to={link.href}
+              activeProps={{
+                className: "text-blue-500 font-bold"
+              }}
               className="block hover:[.mobile_&]:bg-black/10 dark:hover:[.mobile_&]:bg-white/10 text-center [.mobile_&]:font-bold [.mobile_&]:py-3 [.mobile_&]:text-lg "
             >
               {link.label}

@@ -43,22 +43,19 @@ export const Route = createFileRoute('/about/')({
 
 
 function About() {
-  const _getInfo = useServerFn(getInfo)
+  const get_info = useServerFn(getInfo)
   // const data1 = Route.useRouteContext()
   const loaderData = Route.useLoaderData()
-  const submit = async () => {
-    let result = await _getInfo({
+  const submit = async function () {
+    let result = await get_info({
       data: {
         msg: "app component",
-        age: 55,
+        age: "554543",
         student: true
       }
     })
     alert(JSON.stringify(result, null, 2))
   }
-  useEffect(() => {
-
-  }, [])
   return (
     <>
       <div className="p-5 mb-5">
@@ -68,10 +65,10 @@ function About() {
             className="rounded-md px-5 py-1 bg-secondary hover:bg-secondary-dark text-white text-lg"
             onClick={submit}
           >
-            Get Infos
+            Click To Get Infos
           </button>
         }
-        <span className="italic text-bold">{loaderData.val}</span>
+        <span hidden className="italic text-bold">{loaderData.val}</span>
         <h1 className="text-4xl font-bold py-3 mb-5">ABOUT US</h1>
         <img src="/logo_high.png" alt="bfanel logo" height="200" width="300" className="object-contain mb-4 mx-auto" />
         <AboutUs />

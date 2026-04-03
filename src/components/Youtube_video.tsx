@@ -23,7 +23,7 @@ export default function App({ id, title }: { id: string, title: string }) {
   return (
     <div
       ref={ref}
-      className={`container grid place-items-center ${videoState === "success" ? "min-h-[300px]" : "min-h-[200px]"} bg-black mx-auto`}
+      className={`container grid place-items-center ${videoState === "success" ? "min-h-[300px]" : "min-h-[200px]"} bg-black mx-auto lg:max-w-[70%]`}
     >
       <YouTube
         videoId={id}

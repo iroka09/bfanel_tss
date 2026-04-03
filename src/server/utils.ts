@@ -33,15 +33,12 @@ const authMiddleware = createMiddleware({ type: "function" })
   .client(async ({ next, ...others }) => {
     // console.log("client before: ", others)
     let result = await next({ sendContext: { from: ".client sendContext" } })
-    // alert(others.sendData.env)
-    console.log("client after: ", result)
+    console.log("client after: ", result.context)
     return result
   })
   .server(async ({ next, ...others }) => {
-    console.log('middleware data: ', new URL(others.request.headers.get("referer")).pathname)
-    console.log('authMiddleware context: ', others.context)
-    console.log('authMiddleware sendContext: ', others.sendContext)
-    return next({
+    console.log('authMiddleware context before: ', others.context)
+    const result = await next({
       sendContext: {
         from: "server sendContext"
       },
@@ -49,13 +46,12 @@ const authMiddleware = createMiddleware({ type: "function" })
         auth: "server context"
       }
     })
-    // return next({ sendContext: { value: ".server" } })
+    console.log('authMiddleware context after: ', result.context)
+    return result
   })
 
 const loggerMiddleware = createMiddleware()
   .server(async ({ next, ...others }) => {
-    console.log('loggerMiddleware context: ', others.context)
-    console.log('loggerMiddleware sendContext: ', others.sendContext)
     return next()
     // return next({ sendContext: { value: ".server" } })
   })
@@ -63,17 +59,33 @@ const loggerMiddleware = createMiddleware()
 
 
 export const getInfo = createServerFn({ type: "function", method: "POST" })
-  // .middleware([authMiddleware, loggerMiddleware])
+  .middleware([authMiddleware, loggerMiddleware])
   .inputValidator(async data => {
     return data
   })
   .handler(async (arg) => {
+    console.log("==handler begins==")
     try {
+      await fetch("http://localhost:3000/api/user/7070", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-json-data": JSON.stringify({
+            occupation: "engineering",
+            gender: "male"
+          })
+        },
+        body: JSON.stringify({
+          occupation: "engineering",
+          gender: "male"
+        })
+      }).catch(() => console.log("FETCH DIDNT WORK"))
+      console.log("==handler fetch ends==")
       const schema = z.object({
         msg: z.string("name must be a text"),
-        age: z.number()
+        age: z.coerce.number().optional()
       })
-      let res = await schema.safeParse(arg.data)
+      let res = schema.parse(arg.data)
       console.log(res)
       return {
         res,

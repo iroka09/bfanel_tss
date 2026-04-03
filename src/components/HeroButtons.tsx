@@ -29,10 +29,10 @@ const shopNowLink = `mailto: info@bfanelindustries.com?subject=${subject}&body=$
 
 export default function HeroButtons() {
   return (
-    <div className="flex flex-col md:flex-row gap-3">
+    <div className="flex flex-col md:flex-row gap-3 w-full">
       <Link
         to={shopNowLink}
-        className="inline-block px-5 py-2 text-xl text-white shadow-md rounded-full hover:opacity-80 transition active:translate-y-[5px] w-full bg-gradient-to-r from-primary-light to-secondary via-red-900 font-[600] text-center"
+        className="inline-grid place-items-center py-2 px-9 text-xl text-white shadow-md rounded-full hover:opacity-80 transition active:translate-y-[5px] w-full bg-gradient-to-r from-white to-secondary via-red-900 font-[600] text-center"
       >
         Shop Now
       </Link>

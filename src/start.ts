@@ -1,20 +1,21 @@
 import { createStart, createMiddleware } from '@tanstack/react-start'
 
-const logger1 = createMiddleware().server(async ({ next, context }) => {
-  console.log("Global request 1 " + Date().toLocaleString())
+const funcLogger = createMiddleware().server(async ({ next, data, context }) => {
   let xx = await next({
-    context: { student: "irokaooooo" }
+    context: { type2: "functionMiddleware" }
   })
   return xx
 })
 
-const logger2 = createMiddleware().server(async ({ next, datass, request }) => {
-  //  console.log("Data: ", datass.name)
-  // console.log("req: ", request)
-  return next()
+const reqLogger = createMiddleware().server(async ({ next, data, request }) => {
+  let xx = await next({
+    context: { type: "requestMiddleware" }
+  })
+  console.log("reqLogger data: ", data)
+  return xx
 })
 
 export const startInstance = createStart(() => ({
-  functionMiddleware: [logger1, logger2]
-  // requestMiddleware: [logger1, logger2]
+  functionMiddleware: [funcLogger],
+  requestMiddleware: [reqLogger]
 }))

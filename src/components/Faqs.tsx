@@ -40,7 +40,7 @@ export default function FAQs() {
   return (<>
     <div
       ref={animatingBoxRef}
-      className="max-w-4xl mx-auto py-5 divide-y divide-black/20"
+      className="mx-auto py-5 divide-y divide-black/20"
     >
       {faqs.slice(0, showAll ? undefined : 4).map((faq) => {
         const key = faq.question
@@ -51,7 +51,7 @@ export default function FAQs() {
           >
             <div
               onClick={() => handleExpand(key)}
-              className="flex justify-between items-center gap-5"
+              className="flex justify-between items-center gap-5 cursor-pointer"
             >
               <h2 className="font-semibold text-lg leading-5">{faq.question}</h2>
               <span className="text-3xl">
