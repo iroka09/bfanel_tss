@@ -7,6 +7,10 @@ import { getInfo /*useAppSession*/ } from "@/server/utils"
 import Footer from "@/components/Footer"
 
 
+
+
+let loaderCache = {}
+
 export const Route = createFileRoute('/about/')({
   head: async () => {
     return ({
@@ -21,11 +25,17 @@ export const Route = createFileRoute('/about/')({
     return { beforeLoad: "yes" }
   },
   loader: async ({ context }) => {
-    let result = await getInfo({
-      data: { msg: "loader" }
-    })
-    // console.log("loader: ", context)
-    return result
+    try {
+      let result = await getInfo({
+        data: { msg: "loader" }
+      })
+      // console.log("loader: ", context)
+      loaderCache = { loaderCache, ...result }//cache the result incase if there is network failure in subsequent network req
+      return result
+    }
+    catch (e) {
+      return loaderCache
+    }
   },
   component: About
 })

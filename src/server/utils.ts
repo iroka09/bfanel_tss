@@ -29,7 +29,7 @@ export function useAppSession() {
 }
 */
 
-const authMiddleware = createMiddleware({type:"function"})
+const authMiddleware = createMiddleware({ type: "function" })
   .client(async ({ next, ...others }) => {
     // console.log("client before: ", others)
     let result = await next({ sendContext: { from: ".client sendContext" } })
