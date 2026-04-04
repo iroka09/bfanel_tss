@@ -37,6 +37,9 @@ export const root_metadatas = async (key = "all") => {
     ],
     //link tags
     links: [
+      { rel: 'preconnect', href: "https://fonts.googleapis.com" },
+      { rel: 'preconnect', href: "https://fonts.gstatic.com", crossorigin: "crossorigin" },
+      { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap" },
       { rel: 'stylesheet', href: globalCss },
       { rel: 'stylesheet', href: swiperCss },
       { rel: 'stylesheet', href: swiperCssPagination },

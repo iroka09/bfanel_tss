@@ -36,9 +36,9 @@ function RootDocument({ children }) {
       <head>
         <HeadContent />
       </head>
-      <body className="font-sans p-0 m-0 dark:bg-slate-900 dark:text-white/90 ">
+      <body className="nice-font [&_*]:text-xl p-0 m-0 dark:bg-slate-900 dark:text-white/90 ">
         <TanStackQueryProvider>
-          { false &&
+          {false &&
             <div className="flex gap-3 w-fit max-w-[80%] my-2 mx-auto rounded-md border border-red-500 text-red-500 p-3 text-sm font-bold skeleton-wave">
               <MdInfo className="rotate-180 text-3xl" />
               <span>This is not the official BFanel website.</span>

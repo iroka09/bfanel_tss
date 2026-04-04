@@ -22,7 +22,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <main className="[&_h2]:font-open_sans">
+    <main className="text-lg">
       {/*" Hero Section "*/}
       <section>
         <div className="relative text-primary w-full mb-5 overflow-hidden">
@@ -31,8 +31,8 @@ function App() {
           </div>
           <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent to-black/80 to-60%"></div>
           <div className="relative z-1 flex flex-col items-start justify-end text-center md:text-left p-8 pt-60 text-white max-w-[800px]">
-            <h1 className="text-5xl lg:text-7xl uppercase font-[700] font-open_sans bg-gradient-to-br from-white from-30% to-cyan-400 bg-clip-text text-transparent">
-              Bfanel Industries Limited.
+            <h1 className="text-5xl lg:text-7xl uppercase font-[700] font-sans bg-gradient-to-br from-white from-30% to-cyan-400 bg-clip-text text-transparent">
+              Quality Pipes. Built to Last.
             </h1>
             <p className="inline-block py-3 lg:text-lg">
               Your <span className="text-secondary-fixed font-bold">Trusted</span> Partner in Electrical & Plumbing Piping Systems. <br />

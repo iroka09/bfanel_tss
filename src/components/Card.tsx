@@ -25,6 +25,7 @@ const Card = forwardRef(({ noGrid = false, children, className = "", noPadding =
       <div
         ref={ref}
         className={clsx(
+          "transition-[transform_opacity] duration-[.6s]",
           "translate-y-[20px] opacity-0",
           (disableAnimation || isClient === false || inView) && "!translate-y-0 opacity-100",
           noPadding || "p-6",
@@ -93,11 +94,11 @@ Card.image = function ({
 }
 
 Card.body = function ({ className, children }) {
-    const { noGrid } = useContext(CardContext)
+  const { noGrid } = useContext(CardContext)
   return (
     <p
       className={clsx(
-       noGrid || "md:p-0",
+        noGrid || "md:p-0",
         className,
       )}
     >

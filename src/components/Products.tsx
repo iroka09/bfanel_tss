@@ -1,4 +1,5 @@
 
+import { clsx } from "clsx"
 import Card from "@/components/Card"
 
 const datas = [
@@ -36,7 +37,14 @@ export default function Products() {
     </svg>
     <div className="relative bg-secondary-dark text-white py-6">
       <div className="container px-5">
-        <h1 className="section-title mt-6 mb-9 uppercase">Our Products</h1>
+        <h1
+          className={clsx(
+            "inline-block relative section-title mt-6 mb-9 uppercase",
+            "after:content-[''] after:absolute after:h-[3px] after:bg-amber-500 after:top-[115%] after:left-[5%] after:w-[50%] after:rounded-full"
+          )}
+        >
+          Our Products
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {datas.map(data => (
             <div
