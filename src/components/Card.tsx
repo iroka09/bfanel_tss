@@ -93,9 +93,11 @@ Card.image = function ({
 }
 
 Card.body = function ({ className, children }) {
+    const { noGrid } = useContext(CardContext)
   return (
     <p
       className={clsx(
+       noGrid || "md:p-0",
         className,
       )}
     >
