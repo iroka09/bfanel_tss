@@ -70,7 +70,7 @@ function About() {
         }
         <span hidden className="italic text-bold">{loaderData.val}</span>
         <h1 className="text-4xl font-bold py-3 mb-5">ABOUT US</h1>
-        <img src="/logo_high.png" alt="bfanel logo" height="200" width="300" className="object-contain mb-4 mx-auto" />
+        <img src="/bfanel.jpg" alt="about bfanel" height="200" width="300" className="object-contain mb-4 mx-auto" />
         <AboutUs />
       </div>
       <Footer />

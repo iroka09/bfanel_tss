@@ -35,21 +35,26 @@ export default function Products() {
       />
     </svg>
     <div className="relative bg-secondary-dark text-white py-6">
-      <div className="px-5">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mt-6 mb-9 uppercase">Our Products</h1>
+      <div className="container px-5">
+        <h1 className="section-title mt-6 mb-9 uppercase">Our Products</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {datas.map(data => (
-            <div className="w-full">
-              <Card noPadding key={data.title}>
-                <h2 className="text-xl font-bold p-4">{data.title}</h2>
-                <div className="w-full h-[250px] relative">
-                  <img
-                    src={data.imageSrc}
-                    className="object-cover h-full w-full"
-                    alt={data.alt}
+            <div
+              key={data.title}
+              className="w-full"
+            >
+              <Card noPadding>
+                <Card.title>{data.title}</Card.title>
+                <Card.content>
+                  <Card.image
+                    imageProps={{
+                      src: data.imageSrc,
+                      className: "object-cover h-full w-full",
+                      alt: data.alt
+                    }}
                   />
-                </div>
-                <p className="p-4">{data.body}</p>
+                  <Card.body className="py-5">{data.body}</Card.body>
+                </Card.content>
               </Card>
             </div>
           ))}

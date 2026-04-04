@@ -73,72 +73,83 @@ const testimonials: dataType = [
 
 export default function TestimonialCarousel() {
   return (
-    <Swiper
-      modules={[
-        Autoplay,
-        Pagination,
-        //Navigation,
-        //EffectCube, 
-        EffectCoverflow,
-      ]}
-      speed={400}
-      //  navigation={true}
-      spaceBetween={20}
-      autoHeight
-      //slidesPerView={1}
-      autoplay={{ delay: 4000 }}
-      pagination={{ clickable: true }}
-      loop
-      className="mySwiper"
-      breakpoints={{
-        768: { slidesPerView: 2 },
-        1024: { slidesPerView: 3 },
-      }}
-      /*  
-      effect={'cube'}
-         grabCursor={true}
-         cubeEffect={{
-           shadow: true,
-           slideShadows: true,
-           shadowOffset: 20,
-           shadowScale: 0.94,
-         }}
-         */
-      effect={'coverflow'}
-      centeredSlides={true}
-      slidesPerView={'auto'}
-      coverflowEffect={{
-        rotate: 45,
-        stretch: 0,
-        depth: 100,
-        modifier: 1,
-        slideShadows: true,
-      }}
-    >
-      {testimonials.map((item, i) => (
-        <SwiperSlide key={i}>
-          <Card className="bg-white bg-slate-700 pt-3 pb-[50px]" noPadding disableAnimation>
-            <div className="mt-4 px-3 pb-3">
-              <p className="text-md">
-                <FaQuoteLeft className="inline-block text-4xl pr-3" />
-                <span className="">
-                  {item.message}
-                </span>
-              </p>
-              <div className="mt-4 text-sm italic font-semibold">
-                ~ {item.name}
-              </div>
-            </div>
-            <div className="w-full h-[250px] relative">
-              <img
-                src={item.avatar}
-                className="object-cover h-full w-full"
-                alt={item.name + " avatar"}
-              />
-            </div>
-          </Card>
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <div className="container">
+      <h1 className="section-title text-primary mb-10 uppercase">What Our Clients Say</h1>
+      <Swiper
+        modules={[
+          Autoplay,
+          Pagination,
+          //Navigation,
+          //EffectCube, 
+          EffectCoverflow,
+        ]}
+        speed={400}
+        //  navigation={true}
+        spaceBetween={20}
+        autoHeight
+        //slidesPerView={1}
+        autoplay={{ delay: 4000 }}
+        pagination={{ clickable: true }}
+        loop
+        className="mySwiper"
+        breakpoints={{
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }}
+        /*  
+        effect={'cube'}
+           grabCursor={true}
+           cubeEffect={{
+             shadow: true,
+             slideShadows: true,
+             shadowOffset: 20,
+             shadowScale: 0.94,
+           }}
+           */
+        effect={'coverflow'}
+        centeredSlides={true}
+        slidesPerView={'auto'}
+        coverflowEffect={{
+          rotate: 45,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+        }}
+      >
+        {testimonials.map((item, i) => (
+          <SwiperSlide key={i}>
+            <Card
+              className="bg-white dark:bg-white/10 pt-3 pb-[80px] md:pb-2"
+              noPadding
+              disableAnimation
+              author={"Saco of user_id=" + i}
+            >
+              <Card.content className="mt-4 px-3 pb-3">
+                <Card.body className="mt-4 px-3 pb-3">
+                  <p className="text-md">
+                    <FaQuoteLeft className="inline-block text-4xl align-text-bottom mr-2" />
+                    <span className="">
+                      {item.message}
+                    </span>
+                  </p>
+                  <div className="mt-4 text-sm italic font-semibold">
+                    ~ {item.name}
+                  </div>
+                </Card.body>
+                <Card.image
+                  className="w-full h-[250px] relative"
+                  imageProps={{
+                    src: item.avatar,
+                    className: "object-cover h-full w-full",
+                    alt: item.name + " avatar"
+                  }}
+                />
+              </Card.content>
+            </Card>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   )
 }

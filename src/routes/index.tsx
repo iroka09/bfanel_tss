@@ -6,6 +6,7 @@ import Card from "@/components/Card"
 import Faqs from "@/components/Faqs"
 import About from "@/components/About"
 import Products from "@/components/Products"
+import JoinUs from "@/components/JoinUs"
 import HeroButtons from "@/components/HeroButtons"
 import ContactForm from "@/components/ContactForm"
 import Testimonials from "@/components/Testimonials"
@@ -44,12 +45,6 @@ function App() {
 
       <div className="">
 
-        {/*" About Us "*/}
-        <section id="about" className="bg-gray-200 dark:bg-slate-800 py-5">
-          <div id="about" className="container">
-            <About />
-          </div>
-        </section>
         {/*" Video "*/}
         <section id="video" className="py-5">
           <YouTube
@@ -58,38 +53,31 @@ function App() {
           />
         </section>
 
+        {/*" About Us "*/}
+        <section id="about" className="py-5">
+          <div id="about" className="container">
+            <About />
+          </div>
+        </section>
+
         {/*" Products "*/}
         <section id="products">
           <Products />
         </section>
 
         {/*" Testimonials "*/}
-        <section className="py-16 bg-neutral-100 dark:bg-slate-600">
-          <div className="container">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-10 uppercase">What Our Clients Say</h1>
-            <div className="py-0 ">
-              <Testimonials />
-            </div>
-          </div>
+        <section className="py-16 bg-neutral-100 dark:bg-black">
+          <Testimonials />
         </section>
 
         {/*" Join us"*/}
         <section className="relative career-background py-16">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 from-40% via-black/70 via-70% to-black/40"></div>
-          <div className="container relative z-1">
-            <h1 className="text-2xl font-bold text-white mb-6 uppercase md:text-3xl lg:text-4xl">Join Our Team</h1>
-            <p className="text-lg text-white/80">
-              We're always looking for talented individuals to join our growing team. Send your CV to: <Link to="mailto: info@bfanelindustries.com" className="text-secondary-light underline underline-offset-2" aria-label="bfanel email">info@bfanelindustries.com</Link>
-            </p>
-          </div>
+          <JoinUs />
         </section>
 
         {/*" Faqs "*/}
         <section id="faqs" className="py-16 bg-secondary-dark text-white">
-          <div className="container">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 uppercase">Frequently Asked Questions</h1>
-            <Faqs />
-          </div>
+          <Faqs />
         </section>
 
         {/*" Form and Footer "*/}

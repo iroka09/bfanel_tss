@@ -50,14 +50,15 @@ export default function App() {
       [key]: false
     }))
   }
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     window.location.href = `mailto: info@bfanelindustries.com?subject=${name.trim()}&email=${email}&body=${encodeURIComponent(message)}`
   }
   return (
     <div id="contact" className="!text-white container [&_strong]:txt-primary [&_p_:not(strong)]:text-sm py-5">
       {/*<GoogleMap />*/}
       <div className="bg-black/60 rounded-lg px-3 py-5">
-        <h2 className="text-2xl font-bold mb-6 uppercase w-fit mx-auto">Contact Us</h2>
+        <h2 className="section-title mb-6 uppercase w-fit mx-auto">Contact Us</h2>
         <p className="mb-4 leading-5">
           <strong>Location:</strong> <span>At NO.16 Kilometer 10 Orlu-Ihiala road, Awo-Idemili, Imo state.</span>
         </p>

@@ -25,21 +25,19 @@ export default function About() {
 
 function AboutCard({ imageSrc, title, alt, body, className = "" }) {
   return (
-    <Card noPadding>
-      <div className={"bg-white dark:bg-slate-900 overflow-hidden" + className}>
-        <h2 className="font-bold text-xl py-5 uppercase text-center">{title}</h2>
-        <div className="w-full h-[250px] relative border-y border-y-gray-600/30">
-          <img
-            src={imageSrc}
-            //  src={"/logo_high.png"}
-            className="block w-full h-full object-cover"
-            alt={alt}
-          />
-        </div>
-        <div className="py-1 text-center py-3 px-5">
-          <p>{body}</p>
-        </div>
-      </div>
+    <Card noPadding noGrid>
+      <Card.title className="font-bold text-xl py-5 uppercase">{title}</Card.title>
+      <Card.content className={"overflow-hidden" + className}>
+        <Card.image
+          imageProps={{
+            src: imageSrc,
+            className: "block w-full h-full object-cover",
+            alt: alt
+          }}
+        />
+
+        <Card.body className="py-5">{body}</Card.body>
+      </Card.content>
     </Card>
   )
 }

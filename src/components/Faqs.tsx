@@ -38,40 +38,43 @@ export default function FAQs() {
     setExpanded((prev) => (prev === key ? false : key));
   };
   return (<>
-    <div
-      ref={animatingBoxRef}
-      className="mx-auto py-5 divide-y divide-black/20"
-    >
-      {faqs.slice(0, showAll ? undefined : 4).map((faq) => {
-        const key = faq.question
-        return (
-          <div
-            key={key}
-            className="py-5"
-          >
+    <div className="container">
+      <h1 className="section-title mb-6 uppercase">Frequently Asked Questions</h1>
+      <div
+        ref={animatingBoxRef}
+        className="mx-auto py-5 divide-y divide-black/20"
+      >
+        {faqs.slice(0, showAll ? undefined : 4).map((faq) => {
+          const key = faq.question
+          return (
             <div
-              onClick={() => handleExpand(key)}
-              className="flex justify-between items-center gap-5 cursor-pointer"
+              key={key}
+              className="py-5"
             >
-              <h2 className="font-semibold text-lg leading-5">{faq.question}</h2>
-              <span className="text-3xl">
-                {
-                  <IoClose
-                    className={`${expanded === key ? "rotate-[0deg]" : "rotate-[-45deg]"} transition text-[20px]`}
-                  />
-                }
-              </span>
+              <div
+                onClick={() => handleExpand(key)}
+                className="flex justify-between items-center gap-5 cursor-pointer"
+              >
+                <h2 className="font-semibold text-lg leading-5">{faq.question}</h2>
+                <span className="text-3xl">
+                  {
+                    <IoClose
+                      className={`${expanded === key ? "rotate-[0deg]" : "rotate-[-45deg]"} transition text-[20px]`}
+                    />
+                  }
+                </span>
+              </div>
+              <Collapse in={expanded === key} unmountOnExit={false}>
+                <p className="block mt-4 px-3">{faq.answer}</p>
+              </Collapse>
             </div>
-            <Collapse in={expanded === key} unmountOnExit={false}>
-              <p className="block mt-4 px-3">{faq.answer}</p>
-            </Collapse>
-          </div>
-        )
-      })
-      }
+          )
+        })
+        }
+      </div>
+      <button className="mt-7 border-[.5px] font-[500] border-white/50 py-1 px-5 rounded-md bg-transarent hover:bg-white hover:text-secondary-dark cursor-pointer select-none" onClick={() => setShowAll(x => !x)}>
+        {showAll ? "Show Less" : "Show All"}
+      </button>
     </div>
-    <button className="mt-7 border-[.5px] font-[500] border-white/50 py-1 px-5 rounded-md bg-transparent" onClick={() => setShowAll(x => !x)}>
-      {showAll ? "Show Less" : "Show All"}
-    </button>
   </>);
 };
