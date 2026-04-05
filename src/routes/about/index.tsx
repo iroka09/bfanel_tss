@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { AboutUs } from "@/components/AboutUs"
+import AboutUs from "@/components/AboutUs"
 import { getInfo /*useAppSession*/ } from "@/server/utils"
 import Footer from "@/components/Footer"
 
