@@ -40,7 +40,7 @@ const Card = forwardRef(({ noGrid = false, children, className = "", noPadding =
   )
 })
 
-Card.title = function ({ className, children }) {
+Card.Title = function ({ className, children }) {
   return (
     <h2
       className={clsx(
@@ -53,7 +53,7 @@ Card.title = function ({ className, children }) {
   )
 }
 
-Card.content = function ({ className, children }) {
+Card.Content = function ({ className, children }) {
   const { noGrid } = useContext(CardContext)
   return (
     <div
@@ -67,7 +67,7 @@ Card.content = function ({ className, children }) {
   )
 }
 
-Card.image = function ({
+Card.Image = function ({
   className,
   children,
   imageProps: { imageClassName, ...imageProps }
@@ -93,7 +93,7 @@ Card.image = function ({
   )
 }
 
-Card.body = function ({ className, children }) {
+Card.Body = function ({ className, children }) {
   const { noGrid } = useContext(CardContext)
   return (
     <p

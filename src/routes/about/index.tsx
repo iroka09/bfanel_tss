@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { AboutUs } from "@/components/LearnMore"
+import { AboutUs } from "@/components/AboutUs"
 import { getInfo /*useAppSession*/ } from "@/server/utils"
 import Footer from "@/components/Footer"
 
@@ -69,9 +69,14 @@ function About() {
           </button>
         }
         <span hidden className="italic text-bold">{loaderData.val}</span>
-        <h1 className="text-4xl font-bold py-3 mb-5">ABOUT US</h1>
-        <img src="/bfanel.jpg" alt="about bfanel" height="200" width="300" className="object-contain mb-4 mx-auto" />
-        <AboutUs />
+        <AboutUs
+          titleComponent={(
+            <>
+              <h1 className="text-4xl font-bold py-3 mb-5">ABOUT US</h1>
+              <img src="/bfanel.jpg" alt="about bfanel" height="200" width="300" className="object-contain mb-4 mx-auto" />
+            </>
+          )}
+        />
       </div>
       <Footer />
     </>)

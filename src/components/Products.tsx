@@ -52,17 +52,17 @@ export default function Products() {
               className="w-full"
             >
               <Card noPadding>
-                <Card.title>{data.title}</Card.title>
-                <Card.content>
-                  <Card.image
+                <Card.Title>{data.title}</Card.Title>
+                <Card.Content>
+                  <Card.Image
                     imageProps={{
                       src: data.imageSrc,
                       className: "object-cover h-full w-full",
                       alt: data.alt
                     }}
                   />
-                  <Card.body className="py-5">{data.body}</Card.body>
-                </Card.content>
+                  <Card.Body className="py-5">{data.body}</Card.Body>
+                </Card.Content>
               </Card>
             </div>
           ))}

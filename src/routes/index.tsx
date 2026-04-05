@@ -4,7 +4,7 @@ import YouTube from "@/components/Youtube_video"
 import { Link } from "@tanstack/react-router";
 import Card from "@/components/Card"
 import Faqs from "@/components/Faqs"
-import About from "@/components/About"
+import Expertise from "@/components/Expertise"
 import Products from "@/components/Products"
 import JoinUs from "@/components/JoinUs"
 import HeroButtons from "@/components/HeroButtons"
@@ -21,6 +21,7 @@ export const Route = createFileRoute('/')({
 
 
 function App() {
+  // return (<h1>testing</h1>)
   return (
     <main className="text-lg">
       {/*" Hero Section "*/}
@@ -43,9 +44,10 @@ function App() {
         </div>
       </section>
 
+
       <div className="">
 
-        {/*" Video "*/}
+        {/*" Video */}
         <section id="video" className="py-5">
           <YouTube
             id="Bkg9yt2FJGc"
@@ -55,9 +57,7 @@ function App() {
 
         {/*" About Us "*/}
         <section id="about" className="py-5">
-          <div id="about" className="container">
-            <About />
-          </div>
+          <Expertise />
         </section>
 
         {/*" Products "*/}
@@ -66,7 +66,7 @@ function App() {
         </section>
 
         {/*" Testimonials "*/}
-        <section className="py-16 bg-neutral-100 dark:bg-black">
+        <section className="py-16 bg-neutral-100 dark:bg-transparent">
           <Testimonials />
         </section>
 

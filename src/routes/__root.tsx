@@ -36,7 +36,7 @@ function RootDocument({ children }) {
       <head>
         <HeadContent />
       </head>
-      <body className="nice-font tet-xl p-0 m-0 dark:bg-slate-900 dark:text-white/90 ">
+      <body className="nice-font tet-xl p-0 m-0 dark:bg-neutral-950 dark:text-white/80 ">
         <TanStackQueryProvider>
           {false &&
             <div className="flex gap-3 w-fit max-w-[80%] my-2 mx-auto rounded-md border border-red-500 text-red-500 p-3 text-sm font-bold skeleton-wave">

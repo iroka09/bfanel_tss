@@ -120,13 +120,13 @@ export default function TestimonialCarousel() {
         {testimonials.map((item, i) => (
           <SwiperSlide key={i}>
             <Card
-              className="bg-white dark:bg-white/10 pt-3 pb-[80px] md:pb-2"
+              className="bg-white dark:bg-white/5 pt-3 pb-[80px] md:pb-2"
               noPadding
               disableAnimation
               author={"Saco of user_id=" + i}
             >
-              <Card.content className="mt-4 px-3 pb-3">
-                <Card.body className="mt-4 px-3 pb-3">
+              <Card.Content className="mt-4 px-3 pb-3">
+                <Card.Body className="mt-4 px-3 pb-3">
                   <p className="text-md">
                     <FaQuoteLeft className="inline-block text-4xl align-text-bottom mr-2" />
                     <span className="">
@@ -136,8 +136,8 @@ export default function TestimonialCarousel() {
                   <div className="mt-4 text-sm italic font-semibold">
                     ~ {item.name}
                   </div>
-                </Card.body>
-                <Card.image
+                </Card.Body>
+                <Card.Image
                   className="w-full h-[250px] relative"
                   imageProps={{
                     src: item.avatar,
@@ -145,7 +145,7 @@ export default function TestimonialCarousel() {
                     alt: item.name + " avatar"
                   }}
                 />
-              </Card.content>
+              </Card.Content>
             </Card>
           </SwiperSlide>
         ))}

@@ -15,7 +15,7 @@ const config = defineConfig({
     tanstackStart(),
     nitro(),
     viteReact(),
-  ],
+  ]
 })
 
 export default config
