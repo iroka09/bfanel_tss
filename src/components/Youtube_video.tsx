@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useInView } from "react-intersection-observer"
 import YouTube from "react-youtube"
-import { clsx } from "clsx"
+import { cn } from  "@/lib/utils"
 import { MdRefresh as RefreshIcon } from "react-icons/md"
 import { ClientOnly } from '@tanstack/react-router'
 
@@ -25,7 +25,7 @@ export default function App({ id, title }: { id: string, title: string }) {
   return (
     <div
       ref={ref}
-      className={clsx(
+      className={cn(
         "container grid place-items-center", videoState === "success" ? "min-h-[300px]" : "min-h-[200px]",
         "bg-black mx-auto lg:max-w-[70%]"
       )}
@@ -34,7 +34,7 @@ export default function App({ id, title }: { id: string, title: string }) {
         <YouTube
           videoId={id}
           title={title}
-          className={clsx(
+          className={cn(
             "w-full h-full",
             videoState === "success" ? "block" : "hidden",
           )}

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, createContext, useContext, forwardRef } from "react"
 import { useInView } from "react-intersection-observer"
-import { clsx } from "clsx"
+import { cn } from "@/lib/utils"
 
 
 interface CardType {
@@ -24,7 +24,7 @@ const Card = forwardRef(({ noGrid = false, children, className = "", noPadding =
     <CardContext value={{ noGrid }}>
       <div
         ref={ref}
-        className={clsx(
+        className={cn(
           "transition-[transform_opacity] duration-[.6s]",
           "translate-y-[20px] opacity-0",
           (disableAnimation || isClient === false || inView) && "!translate-y-0 opacity-100",
@@ -43,7 +43,7 @@ const Card = forwardRef(({ noGrid = false, children, className = "", noPadding =
 Card.Title = function ({ className, children }) {
   return (
     <h2
-      className={clsx(
+      className={cn(
         "text-xl font-bold py-3",
         className,
       )}
@@ -57,7 +57,7 @@ Card.Content = function ({ className, children }) {
   const { noGrid } = useContext(CardContext)
   return (
     <div
-      className={clsx(
+      className={cn(
         noGrid || "md:grid md:grid-cols-2 gap-2",
         className,
       )}
@@ -74,7 +74,7 @@ Card.Image = function ({
 }) {
   return (
     <div
-      className={clsx(
+      className={cn(
         "w-full ",
         className,
       )}
@@ -82,7 +82,7 @@ Card.Image = function ({
       {children ||
         <img
           {...imageProps}
-          className={clsx(
+          className={cn(
             "",
             imageClassName
           )}
@@ -97,7 +97,7 @@ Card.Body = function ({ className, children }) {
   const { noGrid } = useContext(CardContext)
   return (
     <p
-      className={clsx(
+      className={cn(
         noGrid || "md:p-0",
         className,
       )}

@@ -1,5 +1,5 @@
 
-import globalCss from '@/globals.css?url'
+import mainCss from '@/styles/main.css?url'
 import swiperCss from "swiper/css?url"
 import swiperCssPagination from "swiper/css/pagination?url"
 import swiperCssNavigation from "swiper/css/navigation?url"
@@ -39,8 +39,8 @@ export const root_metadatas = async (key = "all") => {
     links: [
       { rel: 'preconnect', href: "https://fonts.googleapis.com" },
       { rel: 'preconnect', href: "https://fonts.gstatic.com", crossOrigin: "crossOrigin" },
-      { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap" },
-      { rel: 'stylesheet', href: globalCss },
+      { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?family=Alice&family=Marcellus&display=swap" },
+      { rel: 'stylesheet', href: mainCss },
       { rel: 'stylesheet', href: swiperCss },
       { rel: 'stylesheet', href: swiperCssPagination },
       { rel: 'stylesheet', href: swiperCssNavigation },

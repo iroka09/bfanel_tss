@@ -1,5 +1,5 @@
 
-import { clsx } from "clsx"
+import { cn } from "@/lib/utils"
 import Card from "@/components/Card"
 
 const datas = [
@@ -38,7 +38,7 @@ export default function Products() {
     <div className="relative bg-secondary-dark text-white py-6">
       <div className="container">
         <h1
-          className={clsx(
+          className={cn(
             "inline-block relative section-title mt-6 mb-9 uppercase",
             "after:content-[''] after:absolute after:h-[3px] after:bg-amber-500 after:top-[115%] after:left-[5%] after:w-[50%] after:rounded-full"
           )}

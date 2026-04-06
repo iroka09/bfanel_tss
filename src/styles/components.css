@@ -1,0 +1,11 @@
+@layer components {
+  
+  .container {
+    @apply px-5 mx-auto
+  }
+  
+  .section-title {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold uppercase
+  }
+  
+}

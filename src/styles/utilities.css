@@ -1,0 +1,45 @@
+@layer utilities {
+  
+  .nice-font {
+    font-family: "Alice", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .nice-font2 {
+    font-family: "Marcellus", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .career-background {
+    background-image: url(/images-1.jpg);
+    background-position: center;
+  }
+  
+  .contact-us-background {
+    background-image: url(/contact_us.jpg);
+    background-position: center;
+  }
+  
+  .skeleton-wave {
+    background: linear-gradient(135deg, transparent, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.2) 85%, transparent);
+    animation: wave-skeleton 3s infinite linear;
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+  }
+  
+  
+  @keyframes wave-skeleton {
+    0% {
+      background-position: 200% 0%;
+    }
+    
+    30%,
+    100% {
+      background-position: -100% 0;
+    }
+  }
+  
+  
+}
