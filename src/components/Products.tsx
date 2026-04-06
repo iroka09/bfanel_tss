@@ -36,7 +36,7 @@ export default function Products() {
       />
     </svg>
     <div className="relative bg-secondary-dark text-white py-6">
-      <div className="container px-5">
+      <div className="container">
         <h1
           className={clsx(
             "inline-block relative section-title mt-6 mb-9 uppercase",
@@ -45,14 +45,14 @@ export default function Products() {
         >
           Our Products
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-4 w-full">
           {datas.map(data => (
             <div
               key={data.title}
               className="w-full"
             >
-              <Card noPadding>
-                <Card.Title>{data.title}</Card.Title>
+              <Card noPadding className="">
+                <Card.Title className="uppercase">{data.title}</Card.Title>
                 <Card.Content>
                   <Card.Image
                     imageProps={{
