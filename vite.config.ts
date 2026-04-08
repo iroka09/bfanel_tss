@@ -8,11 +8,23 @@ import tailwindcss from '@tailwindcss/vite'
 
 
 const config = defineConfig({
+  server: {
+    port: 3000,
+  },
+  resolve: {
+    // Enables Vite to resolve imports using path aliases.
+    //tsconfigPaths: true,
+  },
   plugins: [
     devtools(),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      srcDirectory: 'src', // This is the default
+      router: {
+        routesDirectory: 'routes', // Defaults to "routes" but can be changed to "app" if routes are in app folder, relative to srcDirectory
+      },
+    }),
     nitro(),
     viteReact(),
   ]

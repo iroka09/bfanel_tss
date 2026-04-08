@@ -67,6 +67,7 @@ Card.Content = function ({ className, children }) {
   )
 }
 
+
 Card.Image = function ({
   className,
   children,

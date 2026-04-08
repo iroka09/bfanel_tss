@@ -9,6 +9,8 @@ import {
 } from "swiper/modules"
 import Card from "@/components/Card"
 import { FaQuoteLeft } from "react-icons/fa";
+import { cn } from "@/lib/utils"
+
 
 
 type dataType = Array<{
@@ -138,7 +140,10 @@ export default function TestimonialCarousel() {
                   </div>
                 </Card.Body>
                 <Card.Image
-                  className="w-full h-[250px] relative"
+                  className={cn(
+                    "w-full h-[250px] relative",
+                    item.name.toLowerCase() === "anonymous" && "dark:opacity-50"
+                  )}
                   imageProps={{
                     src: item.avatar,
                     className: "object-cover h-full w-full",
