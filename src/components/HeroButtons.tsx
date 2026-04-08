@@ -51,7 +51,7 @@ function LearnMoreButton({ title = "click me" }: { title: string }) {
     <Drawer.Root direction="bottom">
       <Drawer.Trigger asChild>
         <button
-          className="inline-block px-5 py-2 text-lg border border-neutral-300 text-white rounded-full transition active:translate-y-[5px] w-full font-[600] hover:bg-neutral-300 hover:text-black transition uppercase font-sans"
+          className="inline-block px-5 py-2 text-lg border border-neutral-300 text-white rounded-full transition active:translate-y-[5px] w-full font-[600] hover:bg-neutral-300 hover:text-black transition uppercase"
         >
           {title}
         </button>
