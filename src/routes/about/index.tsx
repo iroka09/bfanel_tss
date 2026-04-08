@@ -47,6 +47,7 @@ function About() {
   // const data1 = Route.useRouteContext()
   const loaderData = Route.useLoaderData()
   const submit = async function () {
+    return
     let result = await get_info({
       data: {
         msg: "app component",

@@ -48,6 +48,7 @@ export const root_metadatas = async (key = "all") => {
       { rel: 'icon', href: '/favicon.ico' },
       { rel: 'apple-touch-icon', href: '/favicon.ico' }
     ],
+    //scripts
     scripts: [
       ...isDev ?
         [
