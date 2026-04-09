@@ -1,10 +1,11 @@
 
 import { createServerFn, createMiddleware } from "@tanstack/react-start"
+import other, { getCookie, setCookie } from '@tanstack/react-start/server'
 import * as z from "zod"
 //import { redirect } from "@tanstack/react-router"
 // import { useSession } from '@tanstack/react-start/server'
 
-
+console.log(other)
 
 type SessionData = {
   userId?: string
@@ -58,43 +59,22 @@ const loggerMiddleware = createMiddleware()
 
 
 
-export const getInfo = createServerFn({ type: "function", method: "POST" })
-  .middleware([authMiddleware, loggerMiddleware])
-  .inputValidator(async data => {
-    return data
-  })
-  .handler(async (arg) => {
+export const getInfo = createServerFn({ method: "POST" })
+  //.middleware([authMiddleware, loggerMiddleware])
+  .inputValidator(z.object({
+    msg: z.string("name must be a text"),
+    age: z.coerce.number().max(5),
+    student: z.boolean()
+  }))
+  .handler(async ({ data, request }) => {
+    throw Error("error oooo")
+    // const cookies = parseCookies()
     console.log("==handler begins==")
-    try {
-      await fetch("http://localhost:3000/api/user/7070", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-json-data": JSON.stringify({
-            occupation: "engineering",
-            gender: "male"
-          })
-        },
-        body: JSON.stringify({
-          occupation: "engineering",
-          gender: "male"
-        })
-      }).catch(() => console.log("FETCH DIDNT WORK"))
-      console.log("==handler fetch ends==")
-      const schema = z.object({
-        msg: z.string("name must be a text"),
-        age: z.coerce.number().optional()
-      })
-      let res = schema.parse(arg.data)
-      console.log(res)
-      return {
-        res,
-        from: "server",
-        val: Math.random()
-      }
-    }
-    catch (e) {
-      console.log(e)
-      return "Something went wrong"
+    console.log("data: ", data)
+    if (data.msg === "loader") setCookie("msg", "loader o")
+    else console.log("cookie: ", getCookie("msg"))
+    return {
+      val: Math.random(),
+      ...data
     }
   })

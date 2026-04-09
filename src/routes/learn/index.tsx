@@ -1,14 +1,7 @@
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-import React from "react"
-import { createFileRoute } from '@tanstack/react-router'
-import AboutUs from "@/components/AboutUs"
-import Footer from "@/components/Footer"
+export const Route = createFileRoute('/learn/')({
 
-
-
-
-
-export const Route = createFileRoute('/about/')({
   // ════════════════════════════════════════════════════════════
   // ROUTE MATCHING
   // ════════════════════════════════════════════════════════════
@@ -73,9 +66,9 @@ export const Route = createFileRoute('/about/')({
   // - Return an object → merged into route context
   // - Throw redirect() → cancel navigation and redirect
   // - Throw an error → route enters error state
-  beforeLoad: async ({ context, params, location, search, cause }) => {
-    // `cause` is 'enter' | 'stay'
-    if (!context.auth.isAuthenticated) {
+  beforeLoad: async ({ context, params, location, search, cause, buildLocation }) => {
+    // `cause` is 'enter' | 'stay' | 'preload'
+    if (!context.auth?.isAuthenticated) {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },
@@ -107,6 +100,7 @@ export const Route = createFileRoute('/about/')({
       preload,   // true if this is a preload call
       abortController, // cancel long-running fetches on unmount
       parentMatchPromise, // resolves when parent route's loader finishes
+      route  // The AnyRoute object for this route itself. Useful for accessing route.id or route.options.
     }) => {
       await parentMatchPromise // wait for parent data if needed
 
@@ -293,23 +287,23 @@ export const Route = createFileRoute('/about/')({
     console.log('Left:', match.routeId)
   },
 
+
+  // ════════════════════════════════════════════════════════════
   // COMPONENT
-  component: About
+  // ════════════════════════════════════════════════════════════
+
+  component: function PostPage() {
+    const { post } = Route.useLoaderData()
+    const { page, filter } = Route.useSearch()
+    const { postId } = Route.useParams()
+    const { user } = Route.useRouteContext()
+
+    return (
+      <article>
+        <h1>{post.title}</h1>
+        <p>By {user.name}</p>
+        <p>Page {page} — Filter: {filter}</p>
+      </article>
+    )
+  },
 })
-
-
-
-function About(): React.JSX {
-  const { post } = Route.useLoaderData()
-  const { page, filter } = Route.useSearch()
-  const { postId } = Route.useParams()
-  const { user } = Route.useRouteContext()
-
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>By {user.name}</p>
-      <p>Page {page} — Filter: {filter}</p>
-    </article>
-  )
-}
