@@ -7,7 +7,7 @@ const isDev = process.env.NODE_ENV === "development"
 
 
 export const Route = createFileRoute('/learn/')({
-  head: ({ loaderData, params, match, matches }) => ({
+  head: () => ({
     meta: [
       { title: 'Learn' }
     ]
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/learn/')({
       sort: (raw.sort as 'asc' | 'desc') ?? 'asc',
     }
   },
-  beforeLoad: async ({ context, params, location, search, cause }) => {
+  beforeLoad: async ({ search }) => {
     console.log("beforeLoad search: ", search)
     if (typeof window) return { val: "beforeLoad client" }
     else return { val: "beforeLoad server" }
@@ -39,11 +39,10 @@ export const Route = createFileRoute('/learn/')({
     },
     staleReloadMode: 'background', //blocking
   },*/
-  loader: async ({ params, deps, context, location, cause }) => {
-    // console.log(cause)
+  loader: async ({ cause }): Promise<{ val: string; num: string }> => {
     await new Promise(res => setTimeout(res, 2000))
     console.log("loader cause: ", cause)
-    const num = Math.random().toString().slice(-4)+"yeah"
+    const num = Math.random().toString().slice(-4) + "yeah"
     if (typeof window) return { val: "loader client", num }
     else return { val: "loader server", num }
   },
@@ -76,7 +75,12 @@ function PostPage() {
           {JSON.stringify(loaderData, null, 2)}
         </code>
       </pre>
-      <Button onClick={router.invalidate}>invalidate</Button>
+      <Button
+        onClick={() => router.invalidate()}
+        size={'lg'}
+      >
+        invalidate
+      </Button>
     </div>
   )
 }

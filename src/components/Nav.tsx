@@ -6,17 +6,16 @@ import { Link } from "@tanstack/react-router";
 const isDev = process.env.NODE_ENV === "development"
 
 
-
 type LinkType = React.ComponentProps<typeof Link>
 
-type NavLink = React.ComponentProps<typeof Link> & {
-  label: string
+type NavLink = LinkType & {
+  label?: string
 }
 
 
 
 const navLinks: NavLink[] = [
-  isDev ? { label: "Learn", to: "/learn", preload: "intent" } : undefined,
+  (isDev ? { label: "Learn", to: "/learn", preload: "intent" } : undefined) as unknown as LinkType,
   { label: "About Us", to: "/about" },
   { label: "Products", to: "/#products" },
   { label: "Services", to: "/#services" },
