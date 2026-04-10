@@ -15,7 +15,7 @@ interface CardType {
   Body: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
 }
 
-const CardContext = createContext(null)
+const CardContext = createContext<{ noGrid: boolean }>({ noGrid: false })
 
 const Card: CardType = function App({ noGrid = false, children, className = "", noPadding = false, disableAnimation = false }) {
   const [isClient, setIsClient] = useState(false)
@@ -35,7 +35,7 @@ const Card: CardType = function App({ noGrid = false, children, className = "", 
           className
         )}
       >
-        <div ref={_ref}>
+        <div>
           {children}
         </div>
       </div>
