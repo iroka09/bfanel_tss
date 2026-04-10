@@ -38,7 +38,7 @@ export default function HeroButtons() {
         to={shopNowLink}
         className="inline-grid place-items-center py-2 px-9 text-lg text-white shadow-md rounded-full hover:opacity-80 transition active:translate-y-1.25 w-full bg-linear-to-r from-blue-800 to-amber-900 font-semibold text-center uppercase"
       >
-        Go Shopping
+        Get in Touch
       </Link>
       <LearnMoreButton title={"Learn More"} />
     </div>

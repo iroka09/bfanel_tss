@@ -1,17 +1,82 @@
 
+import React from "react";
 import { Link } from "@tanstack/react-router";
 import SocialMediaContacts from "@/components/SocialMediaContacts"
+import { createServerFn } from "@tanstack/react-start";
+import z from "zod";
+import { Input } from "./ui/input";
+import { Button } from "@/components/ui/button";
+
+
+
+const zodSchema = z.object({
+  email: z.email({ error: 'The email you entered is wrong.' })
+})
+
+const submitEmail = createServerFn({ method: 'GET' })
+  .inputValidator((data: z.infer<typeof zodSchema>) => data)
+  .handler(async ({ data }) => {
+    console.log(data)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      const res = await zodSchema.parse(data)
+      console.log(res)
+      return { result: data.email + ' has subscribed successfully.' }
+    } catch (error) {
+      console.error(error)
+      if (error instanceof z.ZodError) {
+        return { result: JSON.parse(error.message)[0].message }
+      }
+      return { result: ' Ooops! something went wrong.' }
+    }
+  })
 
 
 
 export default function App() {
+  const [email, setEmail] = React.useState('')
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   return (
-    <footer className="bg-neutral-950 [&_*]:!text-neutral-300 py-5">
+    <footer className="dark bg-neutral-950 [&_*]:text-neutral-300 py-5">
       <div className="container">
-        <div className="flex justify-center my-3 always-white">
+        <div className="flex justify-center my-3">
           <SocialMediaContacts />
         </div>
         <div className="my-2 text-sm">
+          <div className="md:max-w-[50%] mx-auto flex flex-col my-6">
+            <h3 className="!text-amber-300">Subscribe to our Newsletter</h3>
+            <form className="flex gap-2 flex-row">
+              <Input
+                placeholder="Enter your email"
+                value={email}
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button
+                className="uppercase bg-aber-200 !text-black bg-amber-400 font-semibold text-xs rounded-lg px-3 hover:bg-amber-500 transition gap-2"
+                disabled={isSubmitting}
+                onClick={async () => {
+                  try {
+                    setIsSubmitting(true)
+                    const { result } = await submitEmail({
+                      data: { email }
+                    })
+                    console.log(result)
+                    alert(result)
+                  } finally {
+                    setIsSubmitting(false)
+                  }
+                }}
+              >
+                {isSubmitting ? <>
+                  <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                  submitting
+                </> :
+                  'Subscribe'
+                }
+              </Button>
+            </form>
+          </div>
           <Link to="https://wa.me/+2349014864168" className="text-white/80 underline underline">Contact the developer</Link>
         </div>
         <p className="text-sm text-center text-white/60 mt-5 pt-3 border-t border-t-white/10">&copy; {new Date().getFullYear() + " • "} All Rights Reserved.</p>

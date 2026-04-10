@@ -4,8 +4,9 @@ import { useEffect } from "react"
 
 const isDev = process.env.NODE_ENV === "development"
 
-export default function App() {
+export default function App(): null {
   useEffect(() => {
-   // isDev && window.eruda?.init()
+    // isDev && window.eruda?.init()
   }, [])
+  return null
 }

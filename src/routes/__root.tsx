@@ -1,5 +1,5 @@
 
-//import { ReactNode } from "react";
+import type { ReactNode, PropsWithChildren } from "react";
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -31,7 +31,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 
-function RootDocument({ children }) {
+function RootDocument({ children }: PropsWithChildren): ReactNode {
   return (
     <html lang="en">
       <head>
