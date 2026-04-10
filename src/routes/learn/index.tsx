@@ -1,6 +1,94 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import { Button } from "@/components/ui/button";
+
+
+const isDev = process.env.NODE_ENV === "development"
+
+
 
 export const Route = createFileRoute('/learn/')({
+  head: ({ loaderData, params, match, matches }) => ({
+    meta: [
+      { title: 'Learn' }
+    ]
+  }),
+  validateSearch: (raw) => {
+    return {
+      page: Number(raw.page ?? 1),
+      filter: (raw.filter as string) ?? 'all',
+      sort: (raw.sort as 'asc' | 'desc') ?? 'asc',
+    }
+  },
+  beforeLoad: async ({ context, params, location, search, cause }) => {
+    console.log("beforeLoad search: ", search)
+    if (typeof window) return { val: "beforeLoad client" }
+    else return { val: "beforeLoad server" }
+  },
+  loaderDeps: ({ search }) => {
+    console.log("loaderDeps search: ", search)
+    return {
+      page: search.page,
+      filter: search.filter,
+      sort: search.sort,
+    }
+  },
+  /*loader: {
+    handler: async ({ params, deps, context, location }) => {
+      if (typeof window) return { val: "loader client" }
+      else return { val: "loader server" }
+    },
+    staleReloadMode: 'background', //blocking
+  },*/
+  loader: async ({ params, deps, context, location, cause }) => {
+    // console.log(cause)
+    await new Promise(res => setTimeout(res, 2000))
+    console.log("loader cause: ", cause)
+    const num = Math.random().toString().slice(-4)+"yeah"
+    if (typeof window) return { val: "loader client", num }
+    else return { val: "loader server", num }
+  },
+  staleTime: 1000 * 60, // 60 seconds
+  preloadStaleTime: 1000 * 20, // 20 seconds
+  gcTime: 1000 * 60 * 10,
+  preloadMaxAge: 1000 * 60,
+  //shouldReload: true,
+  pendingMs: 0,
+  pendingMinMs: 1000 * 5,
+  pendingComponent: () => (
+    <div className="skeleton">loading...</div>
+  ),
+  component: PostPage,
+})
+
+
+function PostPage() {
+  const loaderData = Route.useLoaderData()
+  const router = useRouter()
+  // const { page, filter } = Route.useSearch()
+  // const { postId } = Route.useParams()
+  // const { user } = Route.useRouteContext()
+
+  return (
+    <div>
+      <h1 className="text-4xl font-black">Welcome</h1>
+      <pre>
+        <code>
+          {JSON.stringify(loaderData, null, 2)}
+        </code>
+      </pre>
+      <Button onClick={router.invalidate}>invalidate</Button>
+    </div>
+  )
+}
+
+
+
+
+
+
+
+/*
+export const Route = createFileRoute('/posts/$postId')({
 
   // ════════════════════════════════════════════════════════════
   // ROUTE MATCHING
@@ -67,7 +155,8 @@ export const Route = createFileRoute('/learn/')({
   // - Throw redirect() → cancel navigation and redirect
   // - Throw an error → route enters error state
   beforeLoad: async ({ context, params, location, search, cause, buildLocation }) => {
-    // `cause` is 'enter' | 'stay' | 'preload'
+    // `cause` is 'enter' | 'stay' 
+    return { user: "tochi" }
     if (!context.auth?.isAuthenticated) {
       throw redirect({
         to: '/login',
@@ -102,6 +191,7 @@ export const Route = createFileRoute('/learn/')({
       parentMatchPromise, // resolves when parent route's loader finishes
       route  // The AnyRoute object for this route itself. Useful for accessing route.id or route.options.
     }) => {
+      return { post: Math.random() }
       await parentMatchPromise // wait for parent data if needed
 
       if (abortController.signal.aborted) return
@@ -245,13 +335,15 @@ export const Route = createFileRoute('/learn/')({
   errorComponent: ({ error, reset }) => (
     <div>
       <p>Something went wrong: {error.message}</p>
-      {/* reset() retries the loader and clears the error */}
-      <button onClick={reset}>Try again</button>
-    </div>
+      {
+        //reset() retries the loader and clears the error 
+      }
+<button onClick={reset}>Try again</button>
+    </div >
   ),
 
-  // Rendered when notFound() is thrown inside loader or beforeLoad.
-  notFoundComponent: () => <div>Post not found!</div>,
+// Rendered when notFound() is thrown inside loader or beforeLoad.
+notFoundComponent: () => <div>Post not found!</div>,
 
   // Called when an error is thrown during navigation or preload.
   // You can throw a redirect() from here to recover.
@@ -259,51 +351,52 @@ export const Route = createFileRoute('/learn/')({
     console.error('[Route Error]', error)
   },
 
-  // Called when the React CatchBoundary catches a render-time error.
-  onCatch: (error, errorInfo) => {
-    console.error('[Caught Error]', error, errorInfo)
-  },
+    // Called when the React CatchBoundary catches a render-time error.
+    onCatch: (error, errorInfo) => {
+      console.error('[Caught Error]', error, errorInfo)
+    },
 
 
-  // ════════════════════════════════════════════════════════════
-  // LIFECYCLE EVENTS
-  // ════════════════════════════════════════════════════════════
+      // ════════════════════════════════════════════════════════════
+      // LIFECYCLE EVENTS
+      // ════════════════════════════════════════════════════════════
 
-  // Called when this route becomes active for the first time
-  // (was NOT matched in the previous location).
-  onEnter: (match) => {
-    console.log('Entered:', match.routeId)
-  },
+      // Called when this route becomes active for the first time
+      // (was NOT matched in the previous location).
+      onEnter: (match) => {
+        console.log('Entered:', match.routeId)
+      },
 
-  // Called when this route remains active across navigations
-  // (was ALSO matched in the previous location).
-  onStay: (match) => {
-    console.log('Stayed on:', match.routeId)
-  },
+        // Called when this route remains active across navigations
+        // (was ALSO matched in the previous location).
+        onStay: (match) => {
+          console.log('Stayed on:', match.routeId)
+        },
 
-  // Called when this route becomes inactive
-  // (was matched before but is NO LONGER matched).
-  onLeave: (match) => {
-    console.log('Left:', match.routeId)
-  },
+          // Called when this route becomes inactive
+          // (was matched before but is NO LONGER matched).
+          onLeave: (match) => {
+            console.log('Left:', match.routeId)
+          },
 
 
-  // ════════════════════════════════════════════════════════════
-  // COMPONENT
-  // ════════════════════════════════════════════════════════════
+            // ════════════════════════════════════════════════════════════
+            // COMPONENT
+            // ════════════════════════════════════════════════════════════
 
-  component: function PostPage() {
-    const { post } = Route.useLoaderData()
-    const { page, filter } = Route.useSearch()
-    const { postId } = Route.useParams()
-    const { user } = Route.useRouteContext()
+            component: function PostPage() {
+              const { post } = Route.useLoaderData()
+              const { page, filter } = Route.useSearch()
+              const { postId } = Route.useParams()
+              const { user } = Route.useRouteContext()
 
-    return (
-      <article>
-        <h1>{post.title}</h1>
-        <p>By {user.name}</p>
-        <p>Page {page} — Filter: {filter}</p>
-      </article>
-    )
-  },
+              return (
+                <article>
+                  <h1>{post.title}</h1>
+                  <p>By {user.name}</p>
+                  <p>Page {page} — Filter: {filter}</p>
+                </article>
+              )
+            },
 })
+*/

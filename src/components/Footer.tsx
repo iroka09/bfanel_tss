@@ -6,7 +6,7 @@ import SocialMediaContacts from "@/components/SocialMediaContacts"
 
 export default function App() {
   return (
-    <footer className="bg-neutral-950 [&_*]:!text-neutral-300 py-5 rounded-t-3xl">
+    <footer className="bg-neutral-950 [&_*]:!text-neutral-300 py-5">
       <div className="container">
         <div className="flex justify-center my-3 always-white">
           <SocialMediaContacts />

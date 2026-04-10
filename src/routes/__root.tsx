@@ -10,6 +10,7 @@ import Header from '@/components/Header'
 import Events from "@/components/Events"
 import { MdInfo } from "react-icons/md";
 import GoogleLogin from "@/components/GoogleLogin"
+import Footer from "@/components/Footer"
 import { root_metadatas } from '@/utils/root_metadatas.ts'
 
 
@@ -46,6 +47,7 @@ function RootDocument({ children }) {
           }
           <Header />
           {children}
+          <Footer />
           <Events />
           {typeof window && <GoogleLogin />}
           <DevTools />

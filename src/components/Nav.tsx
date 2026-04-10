@@ -1,34 +1,44 @@
-//import { ReactNode } from "react"
+import React from "react"
 import { Link } from "@tanstack/react-router";
 
-type NavLink = {
-  label: string;
-  href: string;
-};
+
+
+const isDev = process.env.NODE_ENV === "development"
+
+
+
+type LinkType = React.ComponentProps<typeof Link>
+
+type NavLink = React.ComponentProps<typeof Link> & {
+  label: string
+}
+
+
 
 const navLinks: NavLink[] = [
-  { label: "About Us", href: "/about" },
-  { label: "Products", href: "/#products" },
-  { label: "Services", href: "/#services" },
-  { label: "FAQs", href: "/#faqs" },
-  { label: "Contact", href: "/#contact" },
+  isDev ? { label: "Learn", to: "/learn", preload: "intent" } : undefined,
+  { label: "About Us", to: "/about" },
+  { label: "Products", to: "/#products" },
+  { label: "Services", to: "/#services" },
+  { label: "FAQs", to: "/#faqs" },
+  { label: "Contact", to: "/#contact" },
 ];
 
 
-export default function Nav(){
+export default function Nav(): React.ReactNode {
   return (
     <nav>
       <ul className="flex p-5 flex-col md:flex-row md:space-x-5 [.mobile_&]:divide-y [.mobile_&]:divide-black/20  [.mobile_&]:dark:divide-white/20">
-        {navLinks.map((link) => (
-          <li key={link.label}>
+        {navLinks.map(({ label, ...props }) => (
+          <li key={label}>
             <Link
-              to={link.href}
               activeProps={{
                 className: "text-blue-500 font-bold"
               }}
               className="block hover:[.mobile_&]:bg-black/10 dark:hover:[.mobile_&]:bg-white/10 text-center [.mobile_&]:font-bold [.mobile_&]:py-3 [.mobile_&]:text-lg "
+              {...props}
             >
-              {link.label}
+              {label}
             </Link>
           </li>
         ))}

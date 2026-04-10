@@ -10,7 +10,6 @@ import JoinUs from "@/components/JoinUs"
 import HeroButtons from "@/components/HeroButtons"
 import ContactForm from "@/components/ContactForm"
 import Testimonials from "@/components/Testimonials"
-import Footer from "@/components/Footer"
 
 
 
@@ -83,7 +82,6 @@ function App() {
         {/*" Form and Footer "*/}
         <section className="contact-us-background bg-slate-800">
           <ContactForm />
-          <Footer />
         </section>
 
       </div>
