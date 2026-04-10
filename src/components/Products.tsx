@@ -45,7 +45,7 @@ export default function Products() {
         >
           Our Products
         </h1>
-        <div className="grid grid-cols-1 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
           {datas.map(data => (
             <div
               key={data.title}
@@ -57,7 +57,7 @@ export default function Products() {
                   <Card.Image
                     imageProps={{
                       src: data.imageSrc,
-                      className: "object-cover h-full w-full",
+                      className: "object-cover",
                       alt: data.alt
                     }}
                   />

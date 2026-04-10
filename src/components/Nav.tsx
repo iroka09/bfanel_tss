@@ -15,7 +15,7 @@ type NavLink = LinkType & {
 
 
 const navLinks: NavLink[] = [
-  (isDev ? { label: "Learn", to: "/learn", preload: "intent" } : undefined) as unknown as LinkType,
+  (isDev ? { label: "Learn", to: "/learn", preload: "intent" } : null) as unknown as LinkType,
   { label: "About Us", to: "/about" },
   { label: "Products", to: "/#products" },
   { label: "Services", to: "/#services" },
@@ -28,7 +28,7 @@ export default function Nav(): React.ReactNode {
   return (
     <nav>
       <ul className="flex p-5 flex-col md:flex-row md:space-x-5 [.mobile_&]:divide-y [.mobile_&]:divide-black/20  [.mobile_&]:dark:divide-white/20">
-        {navLinks.map(({ label, ...props }) => (
+        {navLinks.filter(x => x).map(({ label, ...props }) => (
           <li key={label}>
             <Link
               activeProps={{

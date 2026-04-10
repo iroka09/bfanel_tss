@@ -1,8 +1,9 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
 
-const isDev = process.env.NODE_ENV === "development"
+//const isDev = process.env.NODE_ENV === "development"
 
 
 
@@ -40,7 +41,7 @@ export const Route = createFileRoute('/learn/')({
     staleReloadMode: 'background', //blocking
   },*/
   loader: async ({ cause }): Promise<{ val: string; num: string }> => {
-    await new Promise(res => setTimeout(res, 2000))
+    await new Promise(res => setTimeout(res, 5000))
     console.log("loader cause: ", cause)
     const num = Math.random().toString().slice(-4) + "yeah"
     if (typeof window) return { val: "loader client", num }
@@ -49,10 +50,10 @@ export const Route = createFileRoute('/learn/')({
   staleTime: 1000 * 60, // 60 seconds
   preloadStaleTime: 1000 * 20, // 20 seconds
   gcTime: 1000 * 60 * 10,
-  preloadMaxAge: 1000 * 60,
+  //preloadMaxAge: 1000 * 60,
   //shouldReload: true,
   pendingMs: 0,
-  pendingMinMs: 1000 * 5,
+  pendingMinMs: 1000 * 60,
   pendingComponent: () => (
     <div className="skeleton">loading...</div>
   ),
@@ -68,19 +69,28 @@ function PostPage() {
   // const { user } = Route.useRouteContext()
 
   return (
-    <div>
-      <h1 className="text-4xl font-black">Welcome</h1>
-      <pre>
-        <code>
-          {JSON.stringify(loaderData, null, 2)}
-        </code>
-      </pre>
-      <Button
-        onClick={() => router.invalidate()}
-        size={'lg'}
-      >
-        invalidate
-      </Button>
+    <div className='p-5'>
+      <Card>
+        <CardHeader>
+          <h1 className="text-2xl font-black">My Card</h1>
+        </CardHeader>
+        <CardContent>
+          <pre>
+            <code>
+              {JSON.stringify(loaderData, null, 2)}
+            </code>
+          </pre>
+        </CardContent>
+        <CardFooter>
+          <Button
+            className='uppercase'
+            onClick={() => router.invalidate()}
+            size={'lg'}
+          >
+            invalidate
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

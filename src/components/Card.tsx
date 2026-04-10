@@ -4,17 +4,20 @@ import { useInView } from "react-intersection-observer"
 import { cn } from "@/lib/utils"
 
 
+type CardElementType = React.HTMLAttributes<HTMLElement>
+
+
 interface CardType {
-  (prop: any): React.ReactNode,
-  title: (prop: any) => React.ReactNode,
-  content: (prop: any) => React.ReactNode,
-  image: (prop: any) => React.ReactNode,
-  body: (prop: any) => React.ReactNode,
+  (props: { noGrid?: boolean; children?: React.ReactNode; className?: string; noPadding?: boolean; disableAnimation?: boolean }): React.ReactNode,
+  Title: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
+  Content: (prop: { className?: string; children?: React.ReactNode } & CardType) => React.ReactNode,
+  Image: (prop: { className?: string; children?: React.ReactNode; imageProps?: { imageClassName?: string;[key: string]: unknown } & CardElementType } & CardElementType) => React.ReactNode,
+  Body: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
 }
 
-const CardContext = createContext()
+const CardContext = createContext(null)
 
-const Card = forwardRef(({ noGrid = false, children, className = "", noPadding = false, disableAnimation = false }, _ref) => {
+const Card: CardType = function App({ noGrid = false, children, className = "", noPadding = false, disableAnimation = false }) {
   const [isClient, setIsClient] = useState(false)
   const { inView, ref } = useInView({ threshold: 0.2, triggerOnce: false, skip: disableAnimation })
   useEffect(() => {
@@ -38,7 +41,8 @@ const Card = forwardRef(({ noGrid = false, children, className = "", noPadding =
       </div>
     </CardContext>
   )
-})
+}
+
 
 Card.Title = function ({ className, children }) {
   return (
