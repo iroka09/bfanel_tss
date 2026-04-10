@@ -125,16 +125,15 @@ export default function TestimonialCarousel() {
               className="bg-white dark:bg-white/5 pt-3 pb-[80px] md:pb-2"
               noPadding
               disableAnimation
-              author={"Saco of user_id=" + i}
             >
               <Card.Content className="mt-4 px-3 pb-3">
                 <Card.Body className="mt-4 px-3 pb-3">
-                  <p className="text-md">
+                  <div className="text-md">
                     <FaQuoteLeft className="inline-block text-4xl align-text-bottom mr-2" />
                     <span className="">
                       {item.message}
                     </span>
-                  </p>
+                  </div>
                   <div className="mt-4 text-sm italic font-semibold">
                     ~ {item.name}
                   </div>

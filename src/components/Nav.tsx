@@ -27,14 +27,14 @@ const navLinks: NavLink[] = [
 export default function Nav(): React.ReactNode {
   return (
     <nav>
-      <ul className="flex p-5 flex-col md:flex-row md:space-x-5 [.mobile_&]:divide-y [.mobile_&]:divide-black/20  [.mobile_&]:dark:divide-white/20">
+      <ul className="flex p-5 flex-col md:flex-row md:space-x-5 in-[.mobile]:divide-y in-[.mobile]:divide-black/20  in-[.mobile]:dark:divide-white/20">
         {navLinks.filter(x => x).map(({ label, ...props }) => (
           <li key={label}>
             <Link
               activeProps={{
                 className: "text-blue-500 font-bold"
               }}
-              className="block hover:[.mobile_&]:bg-black/10 dark:hover:[.mobile_&]:bg-white/10 text-center [.mobile_&]:font-bold [.mobile_&]:py-3 [.mobile_&]:text-lg "
+              className="block hover:in-[.mobile]:bg-black/10 dark:hover:in-[.mobile]:bg-white/10 text-center in-[.mobile]:font-bold in-[.mobile]:py-3 in-[.mobile]:text-lg "
               {...props}
             >
               {label}

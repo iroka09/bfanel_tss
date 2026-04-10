@@ -1,8 +1,6 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 import YouTube from "@/components/Youtube_video"
-import { Link } from "@tanstack/react-router";
-import Card from "@/components/Card"
 import Faqs from "@/components/Faqs"
 import Expertise from "@/components/Expertise"
 import Products from "@/components/Products"

@@ -1,6 +1,7 @@
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { IoSend } from 'react-icons/io5';
 
 
 //const isDev = process.env.NODE_ENV === "development"
@@ -83,11 +84,12 @@ function PostPage() {
         </CardContent>
         <CardFooter>
           <Button
-            className='uppercase'
+            className='uppercase gap-4'
             onClick={() => router.invalidate()}
             size={'lg'}
           >
             invalidate
+            <IoSend />
           </Button>
         </CardFooter>
       </Card>

@@ -1,7 +1,4 @@
 
-import Card from "@/components/Card"
-
-
 export default function Expertise() {
   return (
     <div className="container">

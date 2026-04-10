@@ -5,13 +5,14 @@ import { cn } from "@/lib/utils"
 
 
 type CardElementType = React.HTMLAttributes<HTMLElement>
+type ImageElementType = React.HTMLAttributes<HTMLImageElement>
 
 
 interface CardType {
   (props: { noGrid?: boolean; children?: React.ReactNode; className?: string; noPadding?: boolean; disableAnimation?: boolean }): React.ReactNode,
   Title: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
-  Content: (prop: { className?: string; children?: React.ReactNode } & CardType) => React.ReactNode,
-  Image: (prop: { className?: string; children?: React.ReactNode; imageProps?: { imageClassName?: string;[key: string]: unknown } & CardElementType } & CardElementType) => React.ReactNode,
+  Content: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
+  Image: (prop: { className?: string; children?: React.ReactNode; imageProps?: { src: string; alt: string } & ImageElementType } & CardElementType) => React.ReactNode,
   Body: (prop: { className?: string; children?: React.ReactNode } & CardElementType) => React.ReactNode,
 }
 
@@ -75,7 +76,7 @@ Card.Content = function ({ className, children }) {
 Card.Image = function ({
   className,
   children,
-  imageProps: { imageClassName, ...imageProps }
+  imageProps: { className: imageClassName, ...imageProps } = {}
 }) {
   return (
     <div
@@ -101,14 +102,14 @@ Card.Image = function ({
 Card.Body = function ({ className, children }) {
   const { noGrid } = useContext(CardContext)
   return (
-    <p
+    <div
       className={cn(
         noGrid || "md:p-0",
         className,
       )}
     >
       {children}
-    </p>
+    </div>
   )
 }
 
