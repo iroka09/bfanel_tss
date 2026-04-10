@@ -44,7 +44,7 @@ export default function App() {
         </div>
         <div className="my-2 text-sm">
           <div className="md:max-w-[50%] mx-auto flex flex-col my-6">
-            <h3 className="!text-amber-400">Subscribe to our Newsletter</h3>
+            <h3 className="!text-amber-400">Subscribe to our Newsletter to stay updated on our products</h3>
             <form className="flex gap-2 flex-row">
               <Input
                 placeholder="Enter your email"
