@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import SocialMediaContacts from "@/components/SocialMediaContacts"
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 
@@ -44,7 +44,7 @@ export default function App() {
         </div>
         <div className="my-2 text-sm">
           <div className="md:max-w-[50%] mx-auto flex flex-col my-6">
-            <h3 className="!text-amber-300">Subscribe to our Newsletter</h3>
+            <h3 className="!text-amber-400">Subscribe to our Newsletter</h3>
             <form className="flex gap-2 flex-row">
               <Input
                 placeholder="Enter your email"
@@ -53,7 +53,7 @@ export default function App() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Button
-                className="uppercase bg-aber-200 !text-black bg-amber-400 font-semibold text-xs rounded-lg px-3 hover:bg-amber-500 transition gap-2"
+                className="uppercase shrink-0 !text-black bg-amber-400 font-semibold text-xs rounded-lg px-3 hover:bg-amber-500 transition gap-2"
                 disabled={isSubmitting}
                 onClick={async () => {
                   try {

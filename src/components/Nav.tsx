@@ -27,7 +27,7 @@ const navLinks: NavLink[] = [
 export default function Nav(): React.ReactNode {
   return (
     <nav>
-      <ul className="flex p-5 flex-col md:flex-row md:space-x-5 in-[.mobile]:divide-y in-[.mobile]:divide-black/20  in-[.mobile]:dark:divide-white/20">
+      <ul className="flex p-5 flex-col md:flex-row md:space-x-5 in-[.mobile]:divide-y in-[.mobile]:divide-black/20 in-[.mobile]:dark:divide-white/20">
         {navLinks.filter(x => x).map(({ label, ...props }) => (
           <li key={label}>
             <Link
