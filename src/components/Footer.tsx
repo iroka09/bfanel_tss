@@ -76,9 +76,9 @@ export default function App() {
               >
                 {isSubmitting ? <>
                   <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                  submitting
+                  sending...
                 </> :
-                  'Subscribe'
+                  'Send'
                 }
               </Button>
             </form>
