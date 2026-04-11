@@ -11,7 +11,10 @@ import { Button } from "@/components/ui/button";
 
 const zodSchema = z.object({
   email: z.email({
-    error: (issue) => issue.input ? 'The email you entered is wrong.' : 'This field is required.'
+    error: (issue) => {
+      console.log(issue)
+      return issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.'
+    }
   }).trim()
 })
 
@@ -21,14 +24,15 @@ const submitEmail = createServerFn({ method: 'GET' })
     console.log(data)
     try {
       await new Promise((resolve) => setTimeout(resolve, 200))
-      const res = await zodSchema.parse(data)
+      const res = await zodSchema.safeParse(data)
       console.log(res)
-      return { result: data.email + ' has subscribed successfully.' }
-    } catch (error) {
-      console.error(error)
-      if (error instanceof z.ZodError) {
-        return { result: JSON.parse(error.message)[0].message }
+      if (res.success === false) {
+        return { result: res.error.issues[0].message }
       }
+      return { result: data.email + ' has subscribed successfully.' }
+    }
+    catch (error) {
+      console.error(error)
       return { result: ' Ooops! something went wrong.' }
     }
   })
