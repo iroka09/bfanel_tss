@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 
 
 const zodSchema = z.object({
-  email: z.email({ error: 'The email you entered is wrong.' })
+  email: z.email({
+    error: (issue) => issue.input ? 'The email you entered is wrong.' : 'This field is required.'
+  }).trim()
 })
 
 const submitEmail = createServerFn({ method: 'GET' })
@@ -44,7 +46,7 @@ export default function App() {
         </div>
         <div className="my-2 text-sm">
           <div className="md:max-w-[50%] mx-auto flex flex-col my-6">
-            <h3 className="!text-amber-400 text-xs">Subscribe to our Newsletter to stay updated on our products</h3>
+            <h3 className="!text-amber-400 py-2 text-xs">Subscribe to our Newsletter to stay updated on our products</h3>
             <form className="flex gap-2 flex-row">
               <Input
                 placeholder="Enter your email"
