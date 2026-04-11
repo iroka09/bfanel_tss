@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 const zodSchema = z.object({
   email: z.email({
     error: (issue) => {
-      console.log(issue)
       return issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.'
     }
   }).trim()
@@ -76,9 +75,9 @@ export default function App() {
               >
                 {isSubmitting ? <>
                   <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                  submitting
+                  submitting...
                 </> :
-                  'Subscribe'
+                  'submit'
                 }
               </Button>
             </form>
