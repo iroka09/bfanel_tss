@@ -23,7 +23,7 @@ const submitEmail = createServerFn({ method: 'GET' })
   .handler(async ({ data }) => {
     console.log(data)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       const res = await zodSchema.safeParse(data)
       console.log(res)
       if (res.success === false) {
@@ -41,7 +41,16 @@ const submitEmail = createServerFn({ method: 'GET' })
 
 export default function App() {
   const [email, setEmail] = React.useState('')
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [isSubmitting, startTransition] = React.useTransition()
+  const handleSubmit = () => {
+    startTransition(async () => {
+      const { result } = await submitEmail({
+        data: { email }
+      })
+      console.log(result)
+      alert(result)
+    })
+  }
   return (
     <footer className="dark bg-neutral-950 [&_*]:text-neutral-300 py-5">
       <div className="container">
@@ -61,24 +70,13 @@ export default function App() {
               <Button
                 className="uppercase shrink-0 !text-black bg-amber-400 font-semibold text-xs rounded-lg px-3 hover:bg-amber-500 transition gap-2"
                 disabled={isSubmitting}
-                onClick={async () => {
-                  try {
-                    setIsSubmitting(true)
-                    const { result } = await submitEmail({
-                      data: { email }
-                    })
-                    console.log(result)
-                    alert(result)
-                  } finally {
-                    setIsSubmitting(false)
-                  }
-                }}
+                onClick={handleSubmit}
               >
                 {isSubmitting ? <>
                   <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
                   sending...
                 </> :
-                  'Send'
+                  'Send please'
                 }
               </Button>
             </form>
