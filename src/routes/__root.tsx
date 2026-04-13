@@ -26,6 +26,10 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: async () => await root_metadatas(),
+  beforeLoad: async () => {
+    console.log("__root: ", Math.random())
+    return { __root: Math.random() }
+  },
   shellComponent: RootDocument,
 })
 

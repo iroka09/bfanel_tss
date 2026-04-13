@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +31,10 @@ function LoginForm() {
     e.preventDefault();
     console.log("Submitted:", formData);
   };
-
+  const val = Route.useRouteContext()
+  useEffect(() => {
+   // alert( JSON.stringify(val))
+  }, [])
   return (
     <div className="container pb-20">
       <form onSubmit={handleSubmit}>

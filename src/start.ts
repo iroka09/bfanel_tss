@@ -1,7 +1,7 @@
 import { createStart, createMiddleware } from '@tanstack/react-start'
 
 const funcLogger = createMiddleware().server(async ({ next, data, context }) => {
-  console.log('from funcLogger middleware: ', data)
+ // console.log('from funcLogger middleware: ', data)
   let xx = await next({
     context: { type2: "functionMiddleware" }
   })

@@ -54,7 +54,7 @@ export const Route = createFileRoute('/learn/')({
   //preloadMaxAge: 1000 * 60,
   //shouldReload: true,
   pendingMs: 0,
-  pendingMinMs: 1000 * 60,
+  pendingMinMs: 1000 * 5,
   pendingComponent: () => (
     <div className="skeleton">loading...</div>
   ),

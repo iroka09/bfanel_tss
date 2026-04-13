@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LearnIndexRouteImport } from './routes/learn/index'
+import { Route as Customer_careIndexRouteImport } from './routes/customer_care/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 
@@ -30,6 +31,11 @@ const LearnIndexRoute = LearnIndexRouteImport.update({
   path: '/learn/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Customer_careIndexRoute = Customer_careIndexRouteImport.update({
+  id: '/customer_care/',
+  path: '/customer_care/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
@@ -44,6 +50,7 @@ const ApiUserIdRoute = ApiUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about/': typeof AboutIndexRoute
+  '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutIndexRoute
+  '/customer_care': typeof Customer_careIndexRoute
   '/learn': typeof LearnIndexRoute
   '/login': typeof LoginIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
@@ -59,21 +67,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about/': typeof AboutIndexRoute
+  '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about/' | '/learn/' | '/login/' | '/api/user/$id'
+  fullPaths:
+    | '/'
+    | '/about/'
+    | '/customer_care/'
+    | '/learn/'
+    | '/login/'
+    | '/api/user/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/learn' | '/login' | '/api/user/$id'
-  id: '__root__' | '/' | '/about/' | '/learn/' | '/login/' | '/api/user/$id'
+  to: '/' | '/about' | '/customer_care' | '/learn' | '/login' | '/api/user/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/about/'
+    | '/customer_care/'
+    | '/learn/'
+    | '/login/'
+    | '/api/user/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutIndexRoute: typeof AboutIndexRoute
+  Customer_careIndexRoute: typeof Customer_careIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   ApiUserIdRoute: typeof ApiUserIdRoute
@@ -102,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer_care/': {
+      id: '/customer_care/'
+      path: '/customer_care'
+      fullPath: '/customer_care/'
+      preLoaderRoute: typeof Customer_careIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about/': {
       id: '/about/'
       path: '/about'
@@ -122,6 +152,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutIndexRoute: AboutIndexRoute,
+  Customer_careIndexRoute: Customer_careIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   ApiUserIdRoute: ApiUserIdRoute,

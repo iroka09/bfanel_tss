@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "@tanstack/react-router";
 import SocialMediaContacts from "@/components/SocialMediaContacts"
 import { createServerFn } from "@tanstack/react-start";
-import z from "zod";
+import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
