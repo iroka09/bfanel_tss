@@ -11,6 +11,7 @@ import Events from "@/components/Events"
 import { MdInfo } from "react-icons/md";
 import GoogleLogin from "@/components/GoogleLogin"
 import Footer from "@/components/Footer"
+import { Toaster } from "@/components/ui/sonner"
 import { root_metadatas } from '@/utils/root_metadatas.ts'
 
 
@@ -53,7 +54,8 @@ function RootDocument({ children }: PropsWithChildren): ReactNode {
           {children}
           <Footer />
           <Events />
-          {typeof window && <GoogleLogin />}
+          <Toaster />
+          <GoogleLogin />
           <DevTools />
         </TanStackQueryProvider>
         <Scripts />

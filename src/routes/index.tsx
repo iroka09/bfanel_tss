@@ -28,7 +28,7 @@ function App() {
             {<img src="/hero_image.jpg" alt="Company's hero image of services" className="absolute object-cover h-full w-full" loading="eager" />}
           </div>
           <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent to-black/80 to-60%"></div>
-          <div className="relative z-1 flex flex-col items-start justify-end text-center md:text-left p-8 pt-60 text-white max-w-[800px]">
+          <div className="relative z-1 text-center md:text-left p-8 pt-60 text-white max-w-[800px]">
             <h1 className="text-5xl lg:text-7xl uppercase font-[700] bg-gradient-to-br from-white from-30% to-cyan-400 bg-clip-text text-transparent">
               Quality Pipes Built to Last.
             </h1>

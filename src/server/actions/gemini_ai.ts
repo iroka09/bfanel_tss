@@ -24,7 +24,7 @@ export type DataSchemaType = z.infer<typeof dataSchema>
 
 type ReturnType = {
   success: boolean,
-  result: string
+  message: string
 }
 
 async function getResponse(data: DataSchemaType): Promise<ReturnType> {
@@ -34,11 +34,11 @@ async function getResponse(data: DataSchemaType): Promise<ReturnType> {
       model: 'gemini-2.0-flash',
       contents: data.content
     });
-    return { success: true, result: response.text() };
+    return { success: true, message: response.text() };
   }
   catch (error) {
     console.warn(error)
-    return { success: false, result: "Something went wrong." }
+    return { success: false, message: "Something went wrong." }
   }
 }
 
@@ -46,7 +46,7 @@ async function getResponse(data: DataSchemaType): Promise<ReturnType> {
 export const getAiMessage = createServerFn({ method: "POST" })
   //.inputValidator((data: DataSchemaType) => data)
   .handler(async ({ data }) => {
-    return process.env.GEMINI_API_KEY
+    //  return process.env.GEMINI_API_KEY
     const result = await getResponse(data)
     return result
   })

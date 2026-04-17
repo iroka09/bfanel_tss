@@ -5,6 +5,7 @@ import SocialMediaContacts from "@/components/SocialMediaContacts"
 import { createServerFn } from "@tanstack/react-start";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 
@@ -24,11 +25,11 @@ const submitEmail = createServerFn({ method: 'GET' })
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       const res = await zodSchema.safeParse(data)
-      console.log(res)
+      // console.log(res)
       if (res.success === false) {
         return { result: res.error.issues[0].message }
       }
-      return { result: data.email + ' has subscribed successfully.' }
+      return { result: 'You has subscribed successfully.' }
     }
     catch (error) {
       console.error(error)
@@ -41,13 +42,18 @@ const submitEmail = createServerFn({ method: 'GET' })
 export default function App() {
   const [email, setEmail] = React.useState('')
   const [isSubmitting, startTransition] = React.useTransition()
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!email.trim()) {
+      toast.error("Email field can't be empty.")
+      return true
+    }
     startTransition(async () => {
       const { result } = await submitEmail({
         data: { email }
       })
       console.log(result)
-      alert(result)
+      toast.success(result)
     })
   }
   return (
