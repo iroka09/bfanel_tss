@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 import { nitro } from 'nitro/vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
+//import tsconfigPaths from 'vite-tsconfig-paths'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -13,11 +13,11 @@ const config = defineConfig({
   },
   resolve: {
     // Enables Vite to resolve imports using path aliases.
-    //tsconfigPaths: true,
+    tsconfigPaths: true,
   },
   plugins: [
     devtools(),
-    tsconfigPaths({ projects: ['./tsconfig.json'] }),
+    // tsconfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
     tanstackStart({
       srcDirectory: 'src', // This is the default
