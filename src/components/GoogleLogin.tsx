@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from "react"
 import { useGoogleOneTapLogin } from 'react-google-one-tap-login';
+import { useSession } from '@/context/session';
+
 
 
 const client_id = '910193991072-542kbb03f4b1o8th2k2bui06u8eh9jng.apps.googleusercontent.com'
@@ -14,14 +16,23 @@ const options = {
 
 export default function App(): null {
   // const [loginData, setLoginData] = useState()
+  const { signIn } = useSession()
   if (globalThis.window) {
     useGoogleOneTapLogin({
       googleAccountConfigs: options,
-      onError: error => {
+      onError: (error) => {
         console.error(error)
       },
       onSuccess: async (profile) => {
-        console.log(profile)
+        console.log("profile: ", profile)
+        const result = await signIn({
+          oneTapLogin: {
+            name: profile.name,
+            email: profile.email,
+            picture: profile.picture,
+          }
+        })
+        console.log("result: ", result)
       }
     })
   }

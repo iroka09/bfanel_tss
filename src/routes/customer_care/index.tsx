@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CardFooter } from "@/components/ui/card";
 import { redirect, useRouter } from '@tanstack/react-router'
-import { getSession, logoutFn } from "@/server/actions/session"
+import { getSession } from "@/server/actions/session"
 import { getAiMessage } from "@/server/actions/gemini_ai"
 import { cn } from "@/lib/utils"
 import { type DataSchemaType } from "@/server/actions/gemini_ai";
 import { toast } from "sonner"
+import { useSession } from '@/context/session';
+
+
 
 
 export const Route = createFileRoute('/customer_care/')({
@@ -30,6 +33,7 @@ type HistoryType = Pick<DataSchemaType, "history">
 
 function RouteComponent() {
   const router = useRouter()
+  const { signOut } = useSession()
   const [message, setMessage] = React.useState("")
   const [history, setHistory] = React.useState<HistoryType>(fakeData || [])
   const [isPending, startTransition] = React.useTransition()
@@ -38,8 +42,7 @@ function RouteComponent() {
   const handleLogout = () => {
     startTransitionLogout(async () => {
       try {
-        await logoutFn()
-        router.navigate({ to: "/login", replace: true })
+        await signOut("/login")
       }
       catch (e) {
         console.log(e)

@@ -9,15 +9,42 @@ import { MdCheck as CheckIcon } from "react-icons/md"
 import { MdDarkMode as DarkModeIcon } from "react-icons/md"
 import ClickAwayListener from 'react-click-away-listener';
 import DrawerWithIcon from "@/components/Drawer"
+import { Button } from "@/components/ui/button"
 import Nav from "@/components/Nav"
 import Portal from "@/components/Portal"
+import { useSession } from '@/context/session';
+
 
 
 
 export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
   const isMediumScreen = useMediaQuery('(min-width: 768px)');
+  const { session, signOut } = useSession()
+  useEffect(() => {
+    console.log("header=> ", session)
+    //alert(JSON.stringify(session))
+  }, [])
   return (<>
+    {
+      session && (
+        <section className="px-5 py-2 space-y-2">
+          <div className="flex justify-between items-center gap-2">
+            <img src={session.picture} className="w-[40px] aspect-square rounded-full border-2" alt="avatar" />
+            <div className="text-ellipsis">{session.name}</div>
+          </div>
+          <div className="flex justify-between items-center gap-5">
+            <div className="text-ellipsis overflow-hidden whitespace-nowrap">{session.email}</div>
+            <Button
+              onClick={async () => {
+                await signOut()
+              }}
+            >
+              Sign Out
+            </Button>
+          </div>
+        </section>
+      )}
     <header className={`sticky top-0 inset-x-0 pr-2 py-1 flex justify-between items-center gap-2 min-w-full z-50 transition-transform duration-300 bg-white/50 dark:bg-black/30 backdrop-blur-md shadow-md ${pinned ? "translate-y-0" : "-translate-y-full"}`}>
       <Link to="/" className="flex items-center">
         <img src="/logo_low.png" width={60} height={20} alt="logo" loading="eager" />
@@ -63,6 +90,7 @@ const themeButtons: { key: ThemeValuesType, title: string, icon: ReactNode }[] =
     icon: AppSettingsAltIcon
   },
 ]
+
 
 function ThemeButton() {
   const [theme, setTheme] = useState<ThemeValuesType>("system")

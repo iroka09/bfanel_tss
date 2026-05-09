@@ -11,10 +11,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { loginFn, getSession } from "@/server/actions/session"
+import { getSession } from "@/server/actions/session"
 import { redirect } from '@tanstack/react-router'
 import { useRouter } from '@tanstack/react-router'
-
+import { useSession } from '@/context/session';
 
 
 
@@ -34,15 +34,16 @@ export const Route = createFileRoute('/login/')({
 function LoginForm() {
   const val = Route.useRouteContext()
   const router = useRouter()
+  const { signIn } = useSession()
   const [isPending, startTransition] = React.useTransition()
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", picture: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=30&q=20" });
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await loginFn({ data: formData });
+      const result = await signIn({ credentials: formData });
       router.navigate({ to: "/customer_care", replace: true })
       /*  if (result === true) {
          redirect({ to: '/about' })

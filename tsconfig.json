@@ -1,5 +1,3 @@
-
-
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Recommended",
@@ -20,6 +18,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "~/*": [
+        "./*"
       ]
     },
     "lib": [
