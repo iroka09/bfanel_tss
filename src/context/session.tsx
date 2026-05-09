@@ -35,6 +35,7 @@ type SessionProviderProps = {
 export function SessionProvider({ initialSession, children }: SessionProviderProps) {
   const [session, setSession] = useState<SessionPayload | null>(initialSession);
   const router = useRouter();
+
   const signIn = useCallback(async (data: SignInInput, redirectTo?: string): Promise<AuthResult> => {
     const result = await loginFn({ data });
     if (!result.success) {
@@ -48,10 +49,12 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
 
 
   const signOut = useCallback(async (redirectTo?: string) => {
-    await logoutFn();
+    const result = await logoutFn();
     // Clear client state before navigation
-    setSession(null);
-    if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
+    if (result.success) {
+      setSession(null);
+      if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
+    }
   }, [router]);
 
   useEffect(() => {
