@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LearnIndexRouteImport } from './routes/learn/index'
 import { Route as Customer_careIndexRouteImport } from './routes/customer_care/index'
@@ -19,6 +20,11 @@ import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/customer_care': typeof Customer_careIndexRoute
   '/learn': typeof LearnIndexRoute
   '/login': typeof LoginIndexRoute
+  '/profile': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/customer_care/'
     | '/learn/'
     | '/login/'
+    | '/profile/'
     | '/api/user/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/customer_care' | '/learn' | '/login' | '/api/user/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/customer_care'
+    | '/learn'
+    | '/login'
+    | '/profile'
+    | '/api/user/$id'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/customer_care/'
     | '/learn/'
     | '/login/'
+    | '/profile/'
     | '/api/user/$id'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   Customer_careIndexRoute: typeof Customer_careIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
   ApiUserIdRoute: typeof ApiUserIdRoute
 }
 
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/': {
@@ -155,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   Customer_careIndexRoute: Customer_careIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
   ApiUserIdRoute: ApiUserIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,10 +1,9 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useLayoutEffect } from "react";
 import type { ReactNode } from "react";
-import { useRouter, redirect } from "@tanstack/react-router";
+import { useRouter, redirect, useLocation } from "@tanstack/react-router";
 import { loginFn, logoutFn, getSession } from "@/server/actions/session";
 import type { SessionPayload, AuthResult, SignInInput } from "@/server/actions/session";
-import { useLocation } from '@tanstack/react-router'
 
 
 
@@ -39,28 +38,38 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
   const [session, setSession] = useState<SessionPayload | null>(initialSession);
   const [blanked, setBlanked] = useState(false);
   const router = useRouter();
+  const pathname = useLocation({
+    select: (location) => {
+      return location.pathname
+    }
+  })
 
   const blank = useCallback(() => setBlanked(true), []);
   const unblank = useCallback(() => setBlanked(false), []);
 
 
-  const signIn = useCallback(async (data: SignInInput, redirectTo?: string): Promise<AuthResult> => {
-    const result = await loginFn({ data });
+  const signIn = useCallback(async (arg: { data: SignInInput, redirect: boolean }): Promise<AuthResult> => {
+    const result = await loginFn({ data: arg.data });
     if (!result.success) {
       return { success: false };
     }
     setSession(result.session);
-    if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
+    if (arg.redirect) await router.navigate({ to: pathname, replace: true });
     return { success: true };
   }, []);
 
 
-  const signOut = useCallback(async (redirectTo?: string) => {
+  const signOut = useCallback(async (arg = { redirect: false }) => {
     const result = await logoutFn();
     // Clear client state before navigation
     if (result.success) {
-      setSession(null);
-      if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
+      if (redirect) {
+        router.navigate({ to: "/login", replace: true })
+          .then(() => {
+            setSession(null)
+          })
+      }
+      else setSession(null)
     }
   }, []);
 
@@ -69,9 +78,9 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
   }, [])
 
   return (
-    <SessionInternalContext.Provider value={{ blank, unblank }}>
+    <SessionInternalContext.Provider value={{ pathname, blank, unblank }}>
       <SessionContext.Provider value={{ session, isAuthenticated: session !== null, signIn, signOut }}>
-        {blanked ? null : children}
+        {blanked ? <div className="h-screen w-full"></div> : children}
       </SessionContext.Provider>
     </SessionInternalContext.Provider>
   );
@@ -79,10 +88,7 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
 
 // ─── Hook ─────────────────────────────────────────────────────────
 
-export function useSession(arg?: { redirect: boolean | string }) {
-  const pathname = useLocation({
-    select: (location) => location.pathname
-  })
+export function useSession(arg?: { redirect: boolean }) {
   const router = useRouter();
   const ctx = useContext(SessionContext);
   const internal = useContext(SessionInternalContext);
@@ -91,14 +97,21 @@ export function useSession(arg?: { redirect: boolean | string }) {
   }
   if (arg?.redirect && !ctx.isAuthenticated) {
     internal.blank()
-    router.navigate({
-      to: "/login",
-      replace: true,
-      search: {
-        referer: (typeof arg.redirect === "string") ? arg.redirect : "/"
-      }
-    })
-      .then(() => internal.unblank())
   }
+  useEffect(() => {
+    // alert(internal.pathname)
+  })
+  useLayoutEffect(() => {
+    if (arg?.redirect && !ctx.isAuthenticated) {
+      router.navigate({
+        to: "/login",
+        replace: true,
+        search: {
+          redirect: arg.redirect ? internal.pathname : "/"
+        }
+      })
+        .then(() => internal.unblank())
+    }
+  }, [])
   return ctx;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getSession } from "@/server/actions/session"
-import { redirect } from '@tanstack/react-router'
-import { useRouter } from '@tanstack/react-router'
 import { useSession } from '@/context/session';
 import { z } from "zod";
 import { GoogleLogin } from '@react-oauth/google';
@@ -23,7 +21,7 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const searchSchema = z.object({
-  referer: z.string().optional()
+  redirect: z.string().optional()
 });
 
 
@@ -41,7 +39,7 @@ export const Route = createFileRoute('/login/')({
 
 function LoginForm() {
   const val = Route.useRouteContext()
-  const { referer } = Route.useSearch();
+  const { redirect } = Route.useSearch();
   const router = useRouter()
   const { signIn } = useSession()
   const [isPending, startTransition] = React.useTransition()
@@ -52,12 +50,13 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await signIn({ credentials: formData });
-      router.navigate({ to: referer || "/", replace: true })
+      const result = await signIn({ data: { credentials: formData }, redirect: true });
+      //router.navigate({ to: redirect || "/", replace: true })
     })
   };
   useEffect(() => {
     // alert( JSON.stringify(val))
+    alert(router.history.previous?.pathname)
   }, [])
   return (
     <div className="container pb-20">
@@ -89,7 +88,7 @@ function LoginForm() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="•••••••••"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -114,8 +113,7 @@ function LoginForm() {
                 picture: decoded.picture,
               }
             })
-            console.log("result: ", result)
-            if (result.success) router.navigate({ to: referer || "/", replace: true })
+            if (result.success) router.navigate({ to: redirect || "/", replace: true })
           }}
           onError={() => {
             console.log('Login Failed');

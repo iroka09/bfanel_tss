@@ -1,31 +1,25 @@
 
 import React from "react"
-import { createFileRoute } from '@tanstack/react-router'
-import * as z from "zod";
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import z from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CardFooter } from "@/components/ui/card";
-import { redirect, useRouter } from '@tanstack/react-router'
 import { getSession } from "@/server/actions/session"
 import { getAiMessage } from "@/server/actions/gemini_ai"
 import { cn } from "@/lib/utils"
 import { type DataSchemaType } from "@/server/actions/gemini_ai";
+import { ensureAuth } from '@/server/actions/session';
 import { toast } from "sonner"
 import { useSession } from '@/context/session';
 
 
 
-
 export const Route = createFileRoute('/customer_care/')({
-  /*beforeLoad: async ({ location }) => {
-      const result = await getSession()
-      console.log("/customer_care: ", result)
-      if (!result) throw redirect({
-          to: '/login',
-          search: { referer: location.href },
-        }) 
-  },*/
+  beforeLoad: async ({ location }) => {
+    await ensureAuth({ data: { redirect: location.href } })
+  },
   // loader: async () => await getAiMessage(),
   component: RouteComponent,
 })
@@ -35,7 +29,7 @@ type HistoryType = Pick<DataSchemaType, "history">
 
 
 function RouteComponent() {
-  const { signOut } = useSession({ redirect: "/customer_care" })
+  const { signOut } = useSession()
   const router = useRouter()
   const [message, setMessage] = React.useState("")
   const [history, setHistory] = React.useState<HistoryType>(fakeData || [])
@@ -96,7 +90,8 @@ function RouteComponent() {
           {
             role: "user",
             parts: [{ text: message }]
-          }]
+          }
+        ]
       })
       setMessage("")
     })

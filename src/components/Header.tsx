@@ -9,7 +9,6 @@ import { MdCheck as CheckIcon } from "react-icons/md"
 import { MdDarkMode as DarkModeIcon } from "react-icons/md"
 import ClickAwayListener from 'react-click-away-listener';
 import DrawerWithIcon from "@/components/Drawer"
-import { Button } from "@/components/ui/button"
 import Nav from "@/components/Nav"
 import Portal from "@/components/Portal"
 import { useSession } from '@/context/session';
@@ -19,42 +18,27 @@ import { cn } from "@/lib/utils"
 
 export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
-  const { session, signOut } = useSession()
+  const { session, isAuthenticated } = useSession()
   return (<>
-    {
-      session && (
-        <section className="px-5 py-2 space-y-2">
-          <div className="flex justify-between items-center gap-2">
-            <img src={session.picture} className="w-[40px] aspect-square rounded-full border-2" alt="avatar" />
-            <div className="text-ellipsis">{session.name}</div>
-          </div>
-          <div className="flex justify-between items-center gap-5">
-            <div className="text-ellipsis overflow-hidden whitespace-nowrap">{session.email}</div>
-            <Button
-              onClick={async () => {
-                await signOut()
-              }}
-            >
-              Sign Out
-            </Button>
-          </div>
-        </section>
+    <header
+      className={cn(
+        "sticky top-0 inset-x-0 pr-2 py-1 flex  whitespace-nowrap justify-between items-center gap-2 min-w-full z-50 transition-transform duration-300 bg-white/50 dark:bg-black/30 backdrop-blur-sm shadow-md",
+        pinned ? "translate-y-0" : "-translate-y-full"
       )}
-    <header className={`sticky top-0 inset-x-0 pr-2 py-1 flex justify-between items-center gap-2 min-w-full z-50 transition-transform duration-300 bg-white/50 dark:bg-black/30 backdrop-blur-md shadow-md ${pinned ? "translate-y-0" : "-translate-y-full"}`}>
-      <Link to="/" className="flex items-center">
+    >
+      <Link to="/" className="flex items-center overflow-hidden">
         <img src="/logo_low.png" width={60} height={20} alt="logo" loading="eager" />
-        <h1 className="font-bold">B-Fanel Industries</h1>
+        <h1 className="font-bold text-ellipsis overflow-hidden">B-Fanel Industries</h1>
       </Link>
       <div className="hidden md:block ml-auto">
         <Nav />
       </div>
-      <div className="flex gap-4 items-center">
-        {
-          session && (
-            <Link to="/login">
-              <img src={session.picture} className="w-[40px] aspect-square rounded-full border-2" alt="avatar" />
-            </Link>
-          )}
+      <div className="flex gap-3 items-center">
+        {isAuthenticated && (
+          <Link to="/profile">
+            <img src={session.picture} className="w-[30px] min-w-[30px] aspect-square rounded-full border-2" alt="avatar" />
+          </Link>
+        )}
         <ThemeButtonWrapper renderToBottomScreenOnly={true} />
         <div className="md:hidden">
           <DrawerWithIcon />
@@ -88,22 +72,11 @@ const themeButtons: { key: ThemeValuesType, title: string, icon: ReactNode }[] =
 
 function ThemeButtonWrapper({ renderToBottomScreenOnly = false }) {
   const isMediumScreen = useMediaQuery('(min-width: 768px)');
-  if (renderToBottomScreenOnly)
-    return (
-      <Portal>
-        <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
-      </Portal>
-    )
-  else {
-    return (
-      isMediumScreen ?
-        <Portal>
-          <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
-        </Portal>
-        :
-        <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
-    )
-  }
+  return (
+    <Portal disable={renderToBottomScreenOnly === false && !isMediumScreen}>
+      <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
+    </Portal>
+  )
 }
 
 
@@ -149,8 +122,8 @@ function ThemeButton({ renderToBottomScreenOnly }) {
     <div
       className={cn(
         renderToBottomScreenOnly
-          ? "relative fixed bottom-10 left-3 z-10 bg-black/50 rounded-md p-2 shadow-lg"
-          : "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg"
+          ? "relative fixed bottom-10 left-3 z-10 bg-black/50 dark:bg-white/20 dark:border dark:border-white/30 dark:backdrop-blur-sm rounded-md p-2 shadow-lg"
+          : "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:dark:bg-white/20 md:dark:border md:dark:border-white/30 md:dark:backdrop-blur-sm md:rounded-md md:p-2 md:shadow-lg"
       )}
     >
       <button onClick={() => setShow(true)}>

@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "@tanstack/react-router";
-
+import { useSession } from '@/context/session';
 
 
 const isDev = process.env.NODE_ENV === "development"
@@ -13,20 +13,21 @@ type NavLink = LinkType & {
 }
 
 
-
-const navLinks: NavLink[] = [
-  (isDev ? { label: "Login", to: "/login" } : null) as unknown as LinkType,
-  (isDev ? { label: "Learn", to: "/learn", preload: "intent" } : null) as unknown as LinkType,
-  (isDev ? { label: "customer care", to: "/customer_care", preload: "intent" } : null) as unknown as LinkType,
-  { label: "About Us", to: "/about" },
-  { label: "Products", to: "/#products" },
-  { label: "Services", to: "/#services" },
-  { label: "FAQs", to: "/#faqs" },
-  { label: "Contact", to: "/#contact" },
-];
-
-
 export default function Nav(): React.ReactNode {
+  const { isAuthenticated } = useSession()
+  const navLinks: NavLink[] = React.useMemo(() => [
+    ...isDev && ([
+      isAuthenticated ?null:{ label: "Login", to: "/login" },
+      { label: "Learn", to: "/learn", preload: "intent" },
+      { label: "Customer Care", to: "/customer_care", preload: "intent" }
+    ]),
+    (isAuthenticated && { label: "Profile", to: "/profile", preload: "intent" }),
+    { label: "About Us", to: "/about" },
+    { label: "Products", to: "/#products" },
+    { label: "Services", to: "/#services" },
+    { label: "FAQs", to: "/#faqs" },
+    { label: "Contact", to: "/#contact" },
+  ], [isAuthenticated]);
   return (
     <nav>
       <ul className="flex p-5 flex-col md:flex-row md:space-x-5 in-[.mobile]:divide-y in-[.mobile]:divide-black/20 in-[.mobile]:dark:divide-white/20">

@@ -24,7 +24,7 @@ export default function App() {
     })
   }
   return (
-    <footer className="dark bg-neutral-950 [&_*]:text-neutral-300 py-5">
+    <footer className="dark bg-neutral-900 [&_*]:text-neutral-300 py-5">
       <div className="container">
         <div className="flex justify-center my-3">
           <SocialMediaContacts />

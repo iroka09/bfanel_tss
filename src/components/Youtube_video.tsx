@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useInView } from "react-intersection-observer"
 import YouTube from "react-youtube"
-import { cn } from  "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { MdRefresh as RefreshIcon } from "react-icons/md"
 import { ClientOnly } from '@tanstack/react-router'
 
@@ -19,8 +19,7 @@ export default function App({ id, title }: { id: string, title: string }) {
     else videoObject.pauseVideo()
   }, [inView])
   useEffect(() => {
-    const x = window.screen
-    setTimeout(() => console.log(x), 1000)
+    //==
   }, [])
   return (
     <div

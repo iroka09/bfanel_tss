@@ -1,31 +1,28 @@
 
 import { createServerFn } from "@tanstack/react-start";
-import * as z from "zod";
+import z from "zod";
+
 
 
 // === submit email for newsletter ===
+
+const submittedEmails: string[] = []
+
+const zodSchema = z.object({
+  email: z.string().email({ error: (issue) => issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.' }).trim().lowercase()
+})
+
 interface SubmitEmailResponseType {
   success: boolean,
   result: string
 }
 
-const zodSchema = z.object({
-  email: z.string().email({
-    error: (issue) => {
-      return issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.'
-    }
-  }).trim().lowercase()
-})
-
-const submittedEmails: string[] = []
 export const submitEmail = createServerFn({ method: 'POST' })
   .inputValidator((data: z.infer<typeof zodSchema>) => data)
-  .handler(async ({ data: _data }): Promise<SubmitEmailResponseType> => {
-    console.log(_data)
+  .handler(async ({ data: inputData }): Promise<SubmitEmailResponseType> => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      const { success, data, ...res } = await zodSchema.safeParse(_data)
-      console.log(res)
+      const { success, data, ...res } = await zodSchema.safeParse(inputData)
       if (success === false) {
         return { success: false, result: res.error.issues[0].message }
       }

@@ -74,3 +74,12 @@ export const logoutFn = createServerFn({ method: 'POST' })
     await session.clear()
     return { success: true }
   })
+
+
+//protect a route
+export const ensureAuth = createServerFn({ method: 'POST' })
+  .inputValidator((data?: { redirect: `/${string}` }) => data)
+  .handler(async ({ data }): Promise<void | never> => {
+    const session = await getSession()
+    if (!session) throw redirect({ to: "/login", search: { redirect:data.redirect || "/" } })
+  })

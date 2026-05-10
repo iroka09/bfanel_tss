@@ -55,7 +55,7 @@ export default function FAQs() {
                 onClick={() => handleExpand(key)}
                 className="flex justify-between items-center gap-5 cursor-pointer"
               >
-                <h2 className="font-semibold text-lg leading-5">{faq.question}</h2>
+                <h2 className="text-lg">{faq.question}</h2>
                 <span className="text-3xl">
                   {
                     <IoClose
@@ -65,7 +65,7 @@ export default function FAQs() {
                 </span>
               </div>
               <Collapse in={expanded === key} unmountOnExit={false}>
-                <p className="block mt-4 px-3">{faq.answer}</p>
+                <p className="block mt-4 px-3 leading-6">{faq.answer}</p>
               </Collapse>
             </div>
           )
