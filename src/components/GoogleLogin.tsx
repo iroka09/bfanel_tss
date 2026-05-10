@@ -16,8 +16,8 @@ const options = {
 
 export default function App(): null {
   // const [loginData, setLoginData] = useState()
-  const { signIn } = useSession()
-  if (globalThis.window) {
+  const { isAuthenticated, signIn } = useSession()
+  if (globalThis.window && !isAuthenticated) {
     useGoogleOneTapLogin({
       googleAccountConfigs: options,
       onError: (error) => {
