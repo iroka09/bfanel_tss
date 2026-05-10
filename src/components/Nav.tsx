@@ -16,11 +16,11 @@ type NavLink = LinkType & {
 export default function Nav(): React.ReactNode {
   const { isAuthenticated } = useSession()
   const navLinks: NavLink[] = React.useMemo(() => [
-    ...isDev && ([
-      isAuthenticated ?null:{ label: "Login", to: "/login" },
+    ...isDev ? ([
+      isAuthenticated ? null : { label: "Login", to: "/login" },
       { label: "Learn", to: "/learn", preload: "intent" },
       { label: "Customer Care", to: "/customer_care", preload: "intent" }
-    ]),
+    ]) : [],
     (isAuthenticated && { label: "Profile", to: "/profile", preload: "intent" }),
     { label: "About Us", to: "/about" },
     { label: "Products", to: "/#products" },
