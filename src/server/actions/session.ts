@@ -81,5 +81,5 @@ export const ensureAuth = createServerFn({ method: 'POST' })
   .inputValidator((data?: { redirect: `/${string}` }) => data)
   .handler(async ({ data }): Promise<void | never> => {
     const session = await getSession()
-    if (!session) throw redirect({ to: "/login", search: { redirect:data.redirect || "/" } })
+    if (!session) throw redirect({ to: "/login", search: { redirect: data.redirect || "/" } })
   })

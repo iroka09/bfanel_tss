@@ -50,13 +50,12 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await signIn({ data: { credentials: formData }, redirect: true });
-      //router.navigate({ to: redirect || "/", replace: true })
+      const result = await signIn({ credentials: formData });
+    router.navigate({ to: redirect || "/", replace: true })
     })
   };
   useEffect(() => {
-    // alert( JSON.stringify(val))
-    alert(router.history.previous?.pathname)
+
   }, [])
   return (
     <div className="container pb-20">

@@ -9,8 +9,9 @@ import { useLocation } from '@tanstack/react-router'
 function GoogleOneTap({ signIn }) {
   useGoogleOneTapLogin({
     onSuccess: async (profile) => {
+    //  console.log(profile)
       const decoded = jwtDecode(profile.credential);
-     // console.log(decoded);
+      console.log(decoded);
       const result = await signIn({
         oneTapLogin: {
           name: decoded.name,
@@ -18,7 +19,7 @@ function GoogleOneTap({ signIn }) {
           picture: decoded.picture,
         }
       })
-    //  console.log("result: ", result)
+      console.log("result: ", result)
     },
     onError: () => {
       console.log('Login Failed');
@@ -32,4 +33,5 @@ export default function App(): ReactNode | null {
   const { isAuthenticated, signIn } = useSession()
   const pathname = useLocation({ select: x => x.pathname })
   return (isAuthenticated || pathname === "/login") ? null : <GoogleOneTap signIn={signIn} />
+  return <GoogleOneTap signIn={signIn} />
 }

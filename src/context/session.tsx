@@ -48,13 +48,13 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
   const unblank = useCallback(() => setBlanked(false), []);
 
 
-  const signIn = useCallback(async (arg: { data: SignInInput, redirect: boolean }): Promise<AuthResult> => {
-    const result = await loginFn({ data: arg.data });
+  const signIn = useCallback(async (data: SignInInput, redirect = false): Promise<AuthResult> => {
+    const result = await loginFn({ data });
     if (!result.success) {
       return { success: false };
     }
     setSession(result.session);
-    if (arg.redirect) await router.navigate({ to: pathname, replace: true });
+    if (redirect) await router.navigate({ to: pathname, replace: true });
     return { success: true };
   }, []);
 
