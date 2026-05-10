@@ -2,48 +2,10 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
 import SocialMediaContacts from "@/components/SocialMediaContacts"
-import { createServerFn } from "@tanstack/react-start";
-import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-
-
-
-interface ResponseType {
-  success: boolean,
-  result: string
-}
-
-
-const zodSchema = z.object({
-  email: z.string().email({
-    error: (issue) => {
-      return issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.'
-    }
-  }).trim()
-})
-
-
-const submitEmail = createServerFn({ method: 'POST' })
-  .inputValidator((data: z.infer<typeof zodSchema>) => data)
-  .handler(async ({ data }): Promise<ResponseType> => {
-    console.log(data)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const res = await zodSchema.safeParse(data)
-      // console.log(res)
-      if (res.success === false) {
-        return { success: false, result: res.error.issues[0].message }
-      }
-      return { success: true, result: 'You has subscribed successfully.' }
-    }
-    catch (error) {
-      console.error(error)
-      return { success: false, result: ' Ooops! something went wrong.' }
-    }
-  })
-
+import { submitEmail } from "@/server/actions";
 
 
 export default function App() {

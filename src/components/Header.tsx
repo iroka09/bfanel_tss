@@ -13,13 +13,12 @@ import { Button } from "@/components/ui/button"
 import Nav from "@/components/Nav"
 import Portal from "@/components/Portal"
 import { useSession } from '@/context/session';
-
+import { cn } from "@/lib/utils"
 
 
 
 export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
-  const isMediumScreen = useMediaQuery('(min-width: 768px)');
   const { session, signOut } = useSession()
   return (<>
     {
@@ -51,13 +50,12 @@ export default function App(): ReactNode {
       </div>
       <div className="flex gap-4 items-center">
         {
-          isMediumScreen ?
-            <Portal>
-              <ThemeButton />
-            </Portal>
-            :
-            <ThemeButton />
-        }
+          session && (
+            <Link to="/login">
+              <img src={session.picture} className="w-[40px] aspect-square rounded-full border-2" alt="avatar" />
+            </Link>
+          )}
+        <ThemeButtonWrapper renderToBottomScreenOnly={true} />
         <div className="md:hidden">
           <DrawerWithIcon />
         </div>
@@ -88,7 +86,28 @@ const themeButtons: { key: ThemeValuesType, title: string, icon: ReactNode }[] =
 ]
 
 
-function ThemeButton() {
+function ThemeButtonWrapper({ renderToBottomScreenOnly = false }) {
+  const isMediumScreen = useMediaQuery('(min-width: 768px)');
+  if (renderToBottomScreenOnly)
+    return (
+      <Portal>
+        <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
+      </Portal>
+    )
+  else {
+    return (
+      isMediumScreen ?
+        <Portal>
+          <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
+        </Portal>
+        :
+        <ThemeButton renderToBottomScreenOnly={renderToBottomScreenOnly} />
+    )
+  }
+}
+
+
+function ThemeButton({ renderToBottomScreenOnly }) {
   const [theme, setTheme] = useState<ThemeValuesType>("system")
   const [show, setShow] = useState(false)
   useEffect(() => {
@@ -126,8 +145,62 @@ function ThemeButton() {
       window.localStorage.setItem("theme", theme)
     }
   }, [theme])
-  return (<>
-    <div className="relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg">
+  return (
+    <div
+      className={cn(
+        renderToBottomScreenOnly
+          ? "relative fixed bottom-10 left-3 z-10 bg-black/50 rounded-md p-2 shadow-lg"
+          : "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg"
+      )}
+    >
+      <button onClick={() => setShow(true)}>
+        <PaletteIcon
+          className={cn(
+            renderToBottomScreenOnly
+              ? "icon text-2xl text-white"
+              : "icon text-2xl md:text-white"
+          )}
+        />
+      </button>
+      {show &&
+        <ClickAwayListener onClickAway={() => setShow(false)}>
+          <ul
+            className={cn(
+              renderToBottomScreenOnly
+                ? "absolute top-[initial] right-[initial] bottom-0 left-0 z-1 rounded-md overflow-hidden bg-white shadow-lg dark:bg-black *:relative *:pl-4 *:pr-14 *:py-3 text-primary *:whitespace-nowrap *:flex *:gap-3 hover:*:bg-slate-200/80 dark:hover:*:bg-slate-500/50"
+                : "absolute top-0 right-0 md:top-[initial] md:right-[initial] md:bottom-0 md:left-0 z-1 rounded-md overflow-hidden bg-white shadow-lg dark:bg-black *:relative *:pl-4 *:pr-14 *:py-3 text-primary *:whitespace-nowrap *:flex *:gap-3 hover:*:bg-slate-200/80 dark:hover:*:bg-slate-500/50"
+            )}
+          >
+            {themeButtons.map((obj, i) => (
+              <li
+                key={i}
+                onClick={() => {
+                  setTheme(obj.key)
+                }}
+              >
+                {<obj.icon />} <span>{obj.title}</span> {theme === obj.key &&
+                  <CheckIcon
+                    className={cn(
+                      "text-green-400 ml-auto absolute top-[50%] right-3 translate-y-[-50%]"
+                    )}
+                  />
+                }
+              </li>
+            ))}
+          </ul>
+        </ClickAwayListener>
+      }
+    </div>
+  )
+  /*return (<>
+    <div
+      className={cn(
+        renderToBottomScreenOnly ?
+          "relative fixed bottom-10 left-3 z-10 bg-black/50 rounded-md p-2 shadow-lg"
+          :
+          "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg"
+      )}
+    >
       <button onClick={() => setShow(true)}>
         <PaletteIcon className="icon text-2xl md:text-white" />
       </button>
@@ -148,5 +221,5 @@ function ThemeButton() {
         </ClickAwayListener>
       }
     </div >
-  </>)
+  </>)*/
 }

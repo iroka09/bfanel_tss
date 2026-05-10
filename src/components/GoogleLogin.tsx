@@ -29,9 +29,6 @@ function GoogleOneTap({ signIn }) {
 
 
 export default function App(): ReactNode | null {
-  // const [loginData, setLoginData] = useState()
   const { isAuthenticated, signIn } = useSession()
-  if (!isAuthenticated)
-  return <GoogleOneTap signIn={signIn} />
-  return null
+  return (isAuthenticated) ? null : <GoogleOneTap signIn={signIn} />
 }

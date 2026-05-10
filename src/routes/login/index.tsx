@@ -16,6 +16,9 @@ import { redirect } from '@tanstack/react-router'
 import { useRouter } from '@tanstack/react-router'
 import { useSession } from '@/context/session';
 import { z } from "zod";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+
 
 
 
@@ -99,6 +102,26 @@ function LoginForm() {
           </CardFooter>
         </Card>
       </form>
+      <div className="flex justify-center py-3">
+        <GoogleLogin
+          onSuccess={async (profile) => {
+            const decoded = jwtDecode(profile.credential);
+            console.log(decoded);
+            const result = await signIn({
+              oneTapLogin: {
+                name: decoded.name,
+                email: decoded.email,
+                picture: decoded.picture,
+              }
+            })
+            console.log("result: ", result)
+            if (result.success) router.navigate({ to: referer || "/", replace: true })
+          }}
+          onError={() => {
+            console.log('Login Failed');
+          }}
+        />
+      </div>
     </div>
   );
 }
