@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { root_metadatas } from '@/utils/root_metadatas.ts'
 import { getSession } from '@/server/actions/session'
 import { SessionProvider } from '@/context/session'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 
@@ -46,23 +47,25 @@ function RootDocument({ children }: PropsWithChildren): ReactNode {
         <HeadContent />
       </head>
       <body className="nice-font2 tet-xl p-0 m-0 dark:bg-neutral-950 dark:text-white/80 ">
-        <SessionProvider initialSession={session||null}>
-          <TanStackQueryProvider>
-            {/*
+        <SessionProvider initialSession={session || null}>
+          <GoogleOAuthProvider clientId='910193991072-542kbb03f4b1o8th2k2bui06u8eh9jng.apps.googleusercontent.com'>
+            <TanStackQueryProvider>
+              <GoogleLogin />
+              {/*
               <div className="flex gap-3 w-fit max-w-[80%] my-2 mx-auto rounded-md border border-red-500 text-red-500 p-3 text-sm font-bold skeleton-wave">
                 <MdInfo className="rotate-180 text-3xl" />
                 <span>This is not the official BFanel website.</span>
               </div>
               */
-            }
-            <Header />
-            {children}
-            <Footer />
-            <Events />
-            <Toaster />
-            <GoogleLogin />
-            <DevTools />
-          </TanStackQueryProvider>
+              }
+              <Header />
+              {children}
+              <Footer />
+              <Events />
+              <Toaster />
+              <DevTools />
+            </TanStackQueryProvider>
+          </GoogleOAuthProvider>
         </SessionProvider>
         <Scripts />
       </body>

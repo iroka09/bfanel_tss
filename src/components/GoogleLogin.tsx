@@ -1,40 +1,37 @@
 
-import { useState, useEffect } from "react"
-import { useGoogleOneTapLogin } from 'react-google-one-tap-login';
+import { useState, useEffect, type ReactNode } from "react"
+import { GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
 import { useSession } from '@/context/session';
+import { jwtDecode } from 'jwt-decode';
 
 
 
-const client_id = '910193991072-542kbb03f4b1o8th2k2bui06u8eh9jng.apps.googleusercontent.com'
+function GoogleOneTap({ signIn }) {
+  useGoogleOneTapLogin({
+    onSuccess: async (profile) => {
+      const decoded = jwtDecode(profile.credential);
+      console.log(decoded);
+      const result = await signIn({
+        oneTapLogin: {
+          name: decoded.name,
+          email: decoded.email,
+          picture: decoded.picture,
+        }
+      })
+      console.log("result: ", result)
+    },
+    onError: () => {
+      console.log('Login Failed');
+    },
+  });
+  return null
+}
 
-const options = {
-  client_id, // required
-  auto_select: false, // optional
-  cancel_on_tap_outside: false, // optional
-  context: 'signin', // optional
-};
 
-export default function App(): null {
+export default function App(): ReactNode | null {
   // const [loginData, setLoginData] = useState()
   const { isAuthenticated, signIn } = useSession()
-  if (globalThis.window && !isAuthenticated) {
-    useGoogleOneTapLogin({
-      googleAccountConfigs: options,
-      onError: (error) => {
-        console.error(error)
-      },
-      onSuccess: async (profile) => {
-        console.log("profile: ", profile)
-        const result = await signIn({
-          oneTapLogin: {
-            name: profile.name,
-            email: profile.email,
-            picture: profile.picture,
-          }
-        })
-        console.log("result: ", result)
-      }
-    })
-  }
+  if (!isAuthenticated)
+  return <GoogleOneTap signIn={signIn} />
   return null
 }
