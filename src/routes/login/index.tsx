@@ -15,17 +15,22 @@ import { getSession } from "@/server/actions/session"
 import { redirect } from '@tanstack/react-router'
 import { useRouter } from '@tanstack/react-router'
 import { useSession } from '@/context/session';
+import { z } from "zod";
 
 
 
+const searchSchema = z.object({
+  referer: z.string().optional()
+});
 
 
 export const Route = createFileRoute('/login/')({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const result = await getSession()
-    console.log("/login: ", result)
-    if (result) throw redirect({ to: "/customer_care" })
+    console.log("/login: ", location)
+    if (result) throw redirect({ to: "/" })
   },
+  validateSearch: searchSchema,
   component: LoginForm,
 })
 
@@ -33,6 +38,7 @@ export const Route = createFileRoute('/login/')({
 
 function LoginForm() {
   const val = Route.useRouteContext()
+  const { referer } = Route.useSearch();
   const router = useRouter()
   const { signIn } = useSession()
   const [isPending, startTransition] = React.useTransition()
@@ -44,11 +50,7 @@ function LoginForm() {
     e.preventDefault();
     startTransition(async () => {
       const result = await signIn({ credentials: formData });
-      router.navigate({ to: "/customer_care", replace: true })
-      /*  if (result === true) {
-         redirect({ to: '/about' })
-        }
-        console.log(result)*/
+      router.navigate({ to: referer || "/", replace: true })
     })
   };
   useEffect(() => {

@@ -10,30 +10,37 @@ import { Button } from "@/components/ui/button";
 
 
 
+interface ResponseType {
+  success: boolean,
+  result: string
+}
+
+
 const zodSchema = z.object({
-  email: z.email({
+  email: z.string().email({
     error: (issue) => {
       return issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.'
     }
   }).trim()
 })
 
-const submitEmail = createServerFn({ method: 'GET' })
+
+const submitEmail = createServerFn({ method: 'POST' })
   .inputValidator((data: z.infer<typeof zodSchema>) => data)
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<ResponseType> => {
     console.log(data)
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       const res = await zodSchema.safeParse(data)
       // console.log(res)
       if (res.success === false) {
-        return { result: res.error.issues[0].message }
+        return { success: false, result: res.error.issues[0].message }
       }
-      return { result: 'You has subscribed successfully.' }
+      return { success: true, result: 'You has subscribed successfully.' }
     }
     catch (error) {
       console.error(error)
-      return { result: ' Ooops! something went wrong.' }
+      return { success: false, result: ' Ooops! something went wrong.' }
     }
   })
 
@@ -49,11 +56,9 @@ export default function App() {
       return true
     }
     startTransition(async () => {
-      const { result } = await submitEmail({
-        data: { email }
-      })
-      console.log(result)
-      toast.success(result)
+      const { success, result } = await submitEmail({ data: { email } })
+      if (success) toast.success(result)
+      else toast.error(result)
     })
   }
   return (

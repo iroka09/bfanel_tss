@@ -1,11 +1,11 @@
 
-
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
-import { useRouter } from "@tanstack/react-router";
+import { createContext, useContext, useEffect, useState, useCallback, useLayoutEffect } from "react";
+import type { ReactNode } from "react";
+import { useRouter, redirect } from "@tanstack/react-router";
 import { loginFn, logoutFn, getSession } from "@/server/actions/session";
 import type { SessionPayload, AuthResult, SignInInput } from "@/server/actions/session";
+import { useLocation } from '@tanstack/react-router'
 
-// ─── Types ────────────────────────────────────────────────────────
 
 
 
@@ -15,17 +15,20 @@ type SessionContextValue = {
   isAuthenticated: boolean;
   signIn: (data: SignInInput, redirectTo?: string) => Promise<AuthResult>;
   signOut: (redirectTo?: string) => Promise<void>;
+  blank: () => void
 };
-
-// ─── Context ──────────────────────────────────────────────────────
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
-// ─── Provider ─────────────────────────────────────────────────────
+type SessionInternalValue = {
+  blank: () => void;
+  unblank: () => void;
+};
+
+const SessionInternalContext = createContext<SessionInternalValue | null>(null);
+
 
 type SessionProviderProps = {
-  // Comes from __root's beforeLoad/loader — already resolved on server,
-  // so there's zero loading state on mount
   initialSession: SessionPayload | null;
   children: ReactNode;
 };
@@ -34,18 +37,22 @@ type SessionProviderProps = {
 
 export function SessionProvider({ initialSession, children }: SessionProviderProps) {
   const [session, setSession] = useState<SessionPayload | null>(initialSession);
+  const [blanked, setBlanked] = useState(false);
   const router = useRouter();
+
+  const blank = useCallback(() => setBlanked(true), []);
+  const unblank = useCallback(() => setBlanked(false), []);
+
 
   const signIn = useCallback(async (data: SignInInput, redirectTo?: string): Promise<AuthResult> => {
     const result = await loginFn({ data });
     if (!result.success) {
       return { success: false };
     }
-    // Update client state immediately — no extra round trip needed
     setSession(result.session);
     if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
     return { success: true };
-  }, [router]);
+  }, []);
 
 
   const signOut = useCallback(async (redirectTo?: string) => {
@@ -55,26 +62,43 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
       setSession(null);
       if (redirectTo) await router.navigate({ to: redirectTo, replace: true });
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     console.log("sessionProvider=> ", session)
-    alert(JSON.stringify(session))
   }, [])
 
   return (
-    <SessionContext.Provider value={{ session, isAuthenticated: session !== null, signIn, signOut }}>
-      {children}
-    </SessionContext.Provider>
+    <SessionInternalContext.Provider value={{ blank, unblank }}>
+      <SessionContext.Provider value={{ session, isAuthenticated: session !== null, signIn, signOut }}>
+        {blanked ? null : children}
+      </SessionContext.Provider>
+    </SessionInternalContext.Provider>
   );
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────
 
-export function useSession() {
+export function useSession(arg?: { redirect: boolean | string }) {
+  const pathname = useLocation({
+    select: (location) => location.pathname
+  })
+  const router = useRouter();
   const ctx = useContext(SessionContext);
-  if (!ctx) {
+  const internal = useContext(SessionInternalContext);
+  if (!ctx || !internal) {
     throw new Error("useSession must be used within <SessionProvider>");
+  }
+  if (arg?.redirect && !ctx.isAuthenticated) {
+    internal.blank()
+    router.navigate({
+      to: "/login",
+      replace: true,
+      search: {
+        referer: (typeof arg.redirect === "string") ? arg.redirect : "/"
+      }
+    })
+      .then(() => internal.unblank())
   }
   return ctx;
 }

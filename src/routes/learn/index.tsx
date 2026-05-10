@@ -14,6 +14,7 @@ export const Route = createFileRoute('/learn/')({
     ]
   }),
   validateSearch: (raw) => {
+    console.log("raw: ",raw)
     return {
       page: Number(raw.page ?? 1),
       filter: (raw.filter as string) ?? 'all',

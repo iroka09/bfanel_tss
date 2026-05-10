@@ -18,13 +18,16 @@ import { useSession } from '@/context/session';
 
 
 export const Route = createFileRoute('/customer_care/')({
-  beforeLoad: async () => {
-    const result = await getSession()
-    console.log("/customer_care: ", result)
-    if (!result) throw redirect({ to: "/login" })
-  },
+  /*beforeLoad: async ({ location }) => {
+      const result = await getSession()
+      console.log("/customer_care: ", result)
+      if (!result) throw redirect({
+          to: '/login',
+          search: { referer: location.href },
+        }) 
+  },*/
+  // loader: async () => await getAiMessage(),
   component: RouteComponent,
-  // loader: async () => await getAiMessage()
 })
 
 
@@ -32,8 +35,8 @@ type HistoryType = Pick<DataSchemaType, "history">
 
 
 function RouteComponent() {
+  const { signOut } = useSession({ redirect: "/customer_care" })
   const router = useRouter()
-  const { signOut } = useSession()
   const [message, setMessage] = React.useState("")
   const [history, setHistory] = React.useState<HistoryType>(fakeData || [])
   const [isPending, startTransition] = React.useTransition()
@@ -70,7 +73,7 @@ function RouteComponent() {
         return
       }
       else {
-        alert(result.message)
+        toast.error(result.message)
         return
       }
       setHistory(_prev => {

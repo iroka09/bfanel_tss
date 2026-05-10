@@ -21,10 +21,6 @@ export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
   const isMediumScreen = useMediaQuery('(min-width: 768px)');
   const { session, signOut } = useSession()
-  useEffect(() => {
-    console.log("header=> ", session)
-    //alert(JSON.stringify(session))
-  }, [])
   return (<>
     {
       session && (
