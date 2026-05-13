@@ -11,6 +11,6 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
-
+drizzle/*
 # Local Netlify folder
 .netlify
