@@ -1,16 +1,11 @@
 import { neon } from "@neondatabase/serverless";
-//import { Pool } from "pg";
-import { drizzle } from "drizzle-orm/neon-http";
+import { Pool } from "pg";
+import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres"
 import * as schema from "./schema.ts";
 
+const isDev = process.env.NODE_ENV === "development";
 
-// clound storage
-const neonClient = neon(process.env.NEON_DATABASE_URL!);
-
-// localhost storage sql server
-// const poolClient = new Pool({ connectionString: process.env.DATABASE_URL! });
-
-export const db = drizzle(
-  neonClient, // replace with neonClient for cloud neon sever.
-  { schema }
-);
+export const db = isDev
+  ? drizzlePg(new Pool({ connectionString: process.env.DATABASE_URL! }), { schema })
+  : drizzleNeon(neon(process.env.NEON_DATABASE_URL!), { schema });

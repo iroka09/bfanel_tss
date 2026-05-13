@@ -1,4 +1,4 @@
-import type{ ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useSession } from '@/context/session'
 import { getUser, ensureAuth } from '@/server/actions/session'
@@ -15,7 +15,6 @@ import {
   CalendarDays,
   LogOut,
   Link as LinkIcon,
-  User as UserIcon,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/profile/')({
@@ -47,10 +46,21 @@ function StatCard({
   icon: ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 min-w-[100px]">
-      <div className="text-orange-400">{icon}</div>
-      <span className="text-2xl font-bold text-white">{value.toLocaleString()}</span>
-      <span className="text-xs text-slate-400 uppercase tracking-widest">{label}</span>
+    <div className="flex-1 flex flex-col items-center justify-center gap-1.5 py-5 px-4 relative group cursor-default">
+      {/* Divider between stats */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-px bg-white/10" />
+      <div
+        className="w-9 h-9 rounded-xl flex items-center justify-center mb-1"
+        style={{ background: 'rgba(249,115,22,0.15)', color: '#f97316' }}
+      >
+        {icon}
+      </div>
+      <span className="text-3xl font-black text-white tracking-tight leading-none">
+        {value.toLocaleString()}
+      </span>
+      <span className="text-xs font-semibold text-slate-400 uppercase tracking-[0.15em]">
+        {label}
+      </span>
     </div>
   )
 }
@@ -69,26 +79,44 @@ function SocialLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 text-slate-300 hover:text-orange-400 transition-colors duration-200 text-sm group"
+      className="group flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200"
+      style={{ background: 'rgba(255,255,255,0.04)' }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(249,115,22,0.12)'
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.04)'
+      }}
     >
-      <span className="text-slate-500 group-hover:text-orange-400 transition-colors">
-        {icon}
-      </span>
-      {label}
+      <div className="flex items-center gap-3">
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+          style={{ background: 'rgba(255,255,255,0.07)', color: '#94a3b8' }}
+        >
+          {icon}
+        </div>
+        <span className="text-sm font-semibold text-slate-300 group-hover:text-white transition-colors">
+          {label}
+        </span>
+      </div>
+      <svg
+        className="w-4 h-4 text-slate-600 group-hover:text-orange-400 transition-colors"
+        fill="none" stroke="currentColor" strokeWidth="2.5"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
     </a>
   )
 }
 
-function InfoRow({
-  icon,
-  text,
-}: {
-  icon: ReactNode
-  text: string
-}) {
+function InfoBadge({ icon, text }: { icon: ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-2 text-slate-400 text-sm">
-      <span className="text-orange-400/70">{icon}</span>
+    <div
+      className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-slate-300"
+      style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+    >
+      <span style={{ color: '#f97316' }}>{icon}</span>
       <span>{text}</span>
     </div>
   )
@@ -99,216 +127,325 @@ function Profile() {
   const { signOut } = useSession()
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: 'linear-gradient(135deg, #0d1420 0%, #1e2840 50%, #0d1420 100%)',
-        fontFamily: "'DM Sans', sans-serif",
-      }}
-    >
-      {/* Subtle background pattern */}
-      <div
-        className="fixed inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
+    <>
+      {/* Page-level styles injected once */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-      {/* Orange glow top */}
-      <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none opacity-20"
-        style={{
-          background: 'radial-gradient(ellipse, #f97316 0%, transparent 70%)',
-        }}
-      />
+        .profile-root {
+          min-height: 100vh;
+          background:
+            radial-gradient(ellipse 80% 40% at 50% 0%, rgba(249,115,22,0.12) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30,40,64,0.8) 0%, transparent 70%),
+            #080d18;
+          font-family: 'DM Sans', sans-serif;
+          color: white;
+        }
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-10">
+        .noise-overlay {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          opacity: 0.03;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          background-size: 200px;
+          z-index: 0;
+        }
 
-        {/* Header card */}
-        <div
-          className="rounded-3xl overflow-hidden border border-white/10 mb-4"
-          style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)' }}
-        >
-          {/* Banner */}
-          <div
-            className="h-28 w-full relative"
-            style={{
-              background: 'linear-gradient(120deg, #1e2840 0%, #f97316 50%, #1e2840 100%)',
-            }}
-          >
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                backgroundImage: `repeating-linear-gradient(
-                  45deg,
-                  transparent,
-                  transparent 10px,
-                  rgba(255,255,255,0.05) 10px,
-                  rgba(255,255,255,0.05) 20px
-                )`,
-              }}
-            />
-          </div>
+        .glass-card {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.09);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+        }
 
-          {/* Avatar + Name */}
-          <div className="px-6 pb-6">
-            <div className="flex items-end justify-between -mt-10 mb-4">
-              <div className="relative">
-                <img
-                  src={user.picture}
-                  alt={user.name}
-                  className="w-20 h-20 rounded-2xl border-4 object-cover shadow-2xl"
-                  style={{ borderColor: '#1e2840' }}
-                />
-                {user.isVerified && (
-                  <div className="absolute -bottom-1 -right-1 bg-orange-500 rounded-full p-0.5">
-                    <BadgeCheck size={16} className="text-white" />
-                  </div>
-                )}
-              </div>
+        .banner-gradient {
+          background: linear-gradient(
+            135deg,
+            #0d1420 0%,
+            #1e2840 30%,
+            #c2410c 60%,
+            #f97316 80%,
+            #fed7aa 100%
+          );
+        }
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => await signOut({ redirect: true })}
-                className="border-white/20 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl gap-2"
-              >
-                <LogOut size={14} />
-                Sign Out
-              </Button>
+        .avatar-ring {
+          box-shadow:
+            0 0 0 4px #080d18,
+            0 0 0 6px rgba(249,115,22,0.5),
+            0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .tag-badge {
+          background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.08));
+          border: 1px solid rgba(249,115,22,0.35);
+          color: #fb923c;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 3px 10px;
+          border-radius: 999px;
+        }
+
+        .sign-out-btn {
+          background: rgba(255,255,255,0.06) !important;
+          border: 1px solid rgba(255,255,255,0.12) !important;
+          color: #cbd5e1 !important;
+          font-weight: 600 !important;
+          font-size: 13px !important;
+          border-radius: 12px !important;
+          transition: all 0.2s !important;
+        }
+        .sign-out-btn:hover {
+          background: rgba(239,68,68,0.15) !important;
+          border-color: rgba(239,68,68,0.35) !important;
+          color: #fca5a5 !important;
+        }
+
+        .stat-divider:last-child .stat-divider-line {
+          display: none;
+        }
+
+        .info-grid-item {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 14px;
+          padding: 12px 14px;
+        }
+        .info-grid-label {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #475569;
+          margin-bottom: 4px;
+        }
+        .info-grid-value {
+          font-size: 14px;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+      `}</style>
+
+      <div className="profile-root">
+        <div className="noise-overlay" />
+
+        <div className="relative z-10 max-w-xl mx-auto px-4 py-10 pb-20">
+
+          {/* ── MAIN CARD ── */}
+          <div className="glass-card rounded-3xl overflow-hidden mb-4">
+
+            {/* Banner */}
+            <div className="banner-gradient h-36 relative overflow-hidden">
+              {/* Diagonal stripes */}
+              <div
+                className="absolute inset-0 opacity-20"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(
+                    -55deg,
+                    transparent,
+                    transparent 18px,
+                    rgba(255,255,255,0.08) 18px,
+                    rgba(255,255,255,0.08) 19px
+                  )`,
+                }}
+              />
+              {/* Orb in banner */}
+              <div
+                className="absolute -right-10 -top-10 w-48 h-48 rounded-full opacity-30"
+                style={{ background: 'radial-gradient(circle, #f97316, transparent 70%)' }}
+              />
             </div>
 
-            {/* Name & username */}
-            <div className="mb-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1
-                  className="text-2xl font-bold text-white"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+            <div className="px-6 pb-7">
+              {/* Avatar row */}
+              <div className="flex items-end justify-between -mt-12 mb-5">
+                <div className="relative">
+                  <img
+                    src={user.picture}
+                    alt={user.name}
+                    className="w-24 h-24 rounded-2xl object-cover avatar-ring"
+                  />
+                  {user.isVerified && (
+                    <div
+                      className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', boxShadow: '0 2px 8px rgba(249,115,22,0.5)' }}
+                    >
+                      <BadgeCheck size={15} className="text-white" />
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => await signOut({ redirect: true })}
+                  className="sign-out-btn gap-2"
                 >
-                  {user.name}
-                </h1>
-                {user.isVerified && (
-                  <span className="text-xs bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded-full">
-                    Verified
-                  </span>
+                  <LogOut size={14} />
+                  Sign Out
+                </Button>
+              </div>
+
+              {/* Name block */}
+              <div className="mb-4">
+                <div className="flex items-center gap-2.5 flex-wrap mb-1">
+                  <h1
+                    className="text-3xl font-black text-white leading-tight"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  >
+                    {user.name}
+                  </h1>
+                  {user.isVerified && <span className="tag-badge">Verified</span>}
+                </div>
+                {user.username ? (
+                  <p className="text-base font-semibold" style={{ color: '#f97316' }}>
+                    @{user.username}
+                  </p>
+                ) : (
+                  <p className="text-sm font-medium text-slate-600 italic">No username set</p>
                 )}
               </div>
-              {user.username ? (
-                <p className="text-orange-400 text-sm mt-0.5">@{user.username}</p>
+
+              {/* Bio */}
+              {user.bio ? (
+                <div
+                  className="mb-5 p-4 rounded-2xl relative"
+                  style={{ background: 'rgba(249,115,22,0.07)', borderLeft: '3px solid rgba(249,115,22,0.6)' }}
+                >
+                  <p className="text-sm font-medium text-slate-200 leading-relaxed">
+                    {user.bio}
+                  </p>
+                </div>
               ) : (
-                <p className="text-slate-600 text-sm mt-0.5 italic">No username set</p>
+                <p className="text-sm font-medium text-slate-600 italic mb-5">No bio yet.</p>
               )}
-            </div>
 
-            {/* Bio */}
-            {user.bio ? (
-              <p className="text-slate-300 text-sm leading-relaxed mb-4 border-l-2 border-orange-500/50 pl-3">
-                {user.bio}
-              </p>
-            ) : (
-              <p className="text-slate-600 text-sm italic mb-4">No bio yet.</p>
-            )}
+              {/* Info badges */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {user.location && (
+                  <InfoBadge icon={<MapPin size={13} />} text={user.location} />
+                )}
+                {user.website && (
+                  <InfoBadge icon={<Globe size={13} />} text={user.website.replace(/^https?:\/\//, '')} />
+                )}
+                <InfoBadge
+                  icon={<CalendarDays size={13} />}
+                  text={`Joined ${formatDate(user.createdAt)}`}
+                />
+              </div>
 
-            {/* Info rows */}
-            <div className="flex flex-col gap-2 mb-4">
-              {user.location && (
-                <InfoRow icon={<MapPin size={14} />} text={user.location} />
-              )}
-              {user.website && (
-                <InfoRow icon={<Globe size={14} />} text={user.website} />
-              )}
-              <InfoRow
-                icon={<CalendarDays size={14} />}
-                text={`Joined ${formatDate(user.createdAt)}`}
-              />
-            </div>
-
-            {/* Stats */}
-            <div className="flex gap-3 flex-wrap">
-              <StatCard
-                label="Followers"
-                value={user.followersCount}
-                icon={<Users size={16} />}
-              />
-              <StatCard
-                label="Following"
-                value={user.followingCount}
-                icon={<UserCheck size={16} />}
-              />
+              {/* Stats bar */}
+              <div
+                className="rounded-2xl overflow-hidden flex"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <StatCard
+                  label="Followers"
+                  value={user.followersCount}
+                  icon={<Users size={17} />}
+                />
+                <StatCard
+                  label="Following"
+                  value={user.followingCount}
+                  icon={<UserCheck size={17} />}
+                />
+              </div>
             </div>
           </div>
+
+          {/* ── SOCIAL LINKS CARD ── */}
+          {(user.twitterHandle || user.githubHandle || user.linkedinHandle || user.website) && (
+            <div className="glass-card rounded-3xl p-5 mb-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div
+                  className="w-1 h-4 rounded-full"
+                  style={{ background: 'linear-gradient(180deg, #f97316, #ea580c)' }}
+                />
+                <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.18em]">
+                  Social Links
+                </h2>
+              </div>
+              <div className="flex flex-col gap-2">
+                {user.twitterHandle && (
+                  <SocialLink
+                    href={`https://twitter.com/${user.twitterHandle}`}
+                    icon={<Twitter size={15} />}
+                    label={`@${user.twitterHandle}`}
+                  />
+                )}
+                {user.githubHandle && (
+                  <SocialLink
+                    href={`https://github.com/${user.githubHandle}`}
+                    icon={<Github size={15} />}
+                    label={`/${user.githubHandle}`}
+                  />
+                )}
+                {user.linkedinHandle && (
+                  <SocialLink
+                    href={`https://linkedin.com/in/${user.linkedinHandle}`}
+                    icon={<Linkedin size={15} />}
+                    label={`/in/${user.linkedinHandle}`}
+                  />
+                )}
+                {user.website && (
+                  <SocialLink
+                    href={user.website}
+                    icon={<LinkIcon size={15} />}
+                    label={user.website.replace(/^https?:\/\//, '')}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── ACCOUNT INFO CARD ── */}
+          <div className="glass-card rounded-3xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <div
+                className="w-1 h-4 rounded-full"
+                style={{ background: 'linear-gradient(180deg, #f97316, #ea580c)' }}
+              />
+              <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.18em]">
+                Account Info
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="info-grid-item">
+                <p className="info-grid-label">Role</p>
+                <p className="info-grid-value capitalize">{user.role ?? 'user'}</p>
+              </div>
+              <div className="info-grid-item">
+                <p className="info-grid-label">Status</p>
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{
+                      background: user.isActive ? '#4ade80' : '#f87171',
+                      boxShadow: user.isActive ? '0 0 6px #4ade80' : '0 0 6px #f87171',
+                    }}
+                  />
+                  <p
+                    className="info-grid-value"
+                    style={{ color: user.isActive ? '#4ade80' : '#f87171' }}
+                  >
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </p>
+                </div>
+              </div>
+              <div className="info-grid-item col-span-2">
+                <p className="info-grid-label">User ID</p>
+                <p className="text-xs font-bold text-slate-400 font-mono break-all tracking-wide">
+                  {user.userId}
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
-
-        {/* Social Links Card */}
-        {(user.twitterHandle || user.githubHandle || user.linkedinHandle || user.website) && (
-          <div
-            className="rounded-3xl border border-white/10 p-5 mb-4"
-            style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)' }}
-          >
-            <h2 className="text-xs text-slate-500 uppercase tracking-widest mb-4">
-              Social Links
-            </h2>
-            <div className="flex flex-col gap-3">
-              {user.twitterHandle && (
-                <SocialLink
-                  href={`https://twitter.com/${user.twitterHandle}`}
-                  icon={<Twitter size={15} />}
-                  label={`@${user.twitterHandle}`}
-                />
-              )}
-              {user.githubHandle && (
-                <SocialLink
-                  href={`https://github.com/${user.githubHandle}`}
-                  icon={<Github size={15} />}
-                  label={`/${user.githubHandle}`}
-                />
-              )}
-              {user.linkedinHandle && (
-                <SocialLink
-                  href={`https://linkedin.com/in/${user.linkedinHandle}`}
-                  icon={<Linkedin size={15} />}
-                  label={`/in/${user.linkedinHandle}`}
-                />
-              )}
-              {user.website && (
-                <SocialLink
-                  href={user.website}
-                  icon={<LinkIcon size={15} />}
-                  label={user.website.replace(/^https?:\/\//, '')}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Account Info Card */}
-        <div
-          className="rounded-3xl border border-white/10 p-5"
-          style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)' }}
-        >
-          <h2 className="text-xs text-slate-500 uppercase tracking-widest mb-4">
-            Account Info
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/5 rounded-2xl p-3">
-              <p className="text-xs text-slate-500 mb-1">Role</p>
-              <p className="text-sm text-white capitalize">{user.role ?? 'user'}</p>
-            </div>
-            <div className="bg-white/5 rounded-2xl p-3">
-              <p className="text-xs text-slate-500 mb-1">Status</p>
-              <p className={`text-sm font-medium ${user.isActive ? 'text-green-400' : 'text-red-400'}`}>
-                {user.isActive ? 'Active' : 'Inactive'}
-              </p>
-            </div>
-            <div className="bg-white/5 rounded-2xl p-3 col-span-2">
-              <p className="text-xs text-slate-500 mb-1">User ID</p>
-              <p className="text-xs text-slate-400 font-mono break-all">{user.userId}</p>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
+    </>
   )
 }
