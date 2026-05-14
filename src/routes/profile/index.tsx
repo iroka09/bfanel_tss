@@ -216,7 +216,7 @@ function EditProfileDrawer({ user }: { user: UserData }) {
             phone: toNull(form.phone),
             location: toNull(form.location),
             website: toNull(form.website),
-            gender: (toNull(form.gender) as 'male' | 'female' | 'non_binary' | 'prefer_not_to_say' | null),
+            gender: (toNull(form.gender) as 'male' | 'female' | 'other' | null),
             dateOfBirth: toNull(form.dateOfBirth),
             twitterHandle: toNull(form.twitterHandle),
             githubHandle: toNull(form.githubHandle),

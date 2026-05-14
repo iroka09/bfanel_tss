@@ -2,7 +2,7 @@ import { defineConfig } from "drizzle-kit";
 import * as dotenv from "dotenv";
 
 
-const isNeon = false
+const isNeon = true
 
 dotenv.config({ path: (isNeon) ? ".env.production.local" : ".env.development" });
 
