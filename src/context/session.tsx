@@ -74,7 +74,7 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
   }, []);
 
   useEffect(() => {
-    console.log("sessionProvider=> ", session)
+   // console.log("sessionProvider=> ", session)
   }, [])
 
   return (

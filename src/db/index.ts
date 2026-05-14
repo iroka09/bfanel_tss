@@ -2,7 +2,7 @@ import { neon } from "@neondatabase/serverless";
 import { Pool } from "pg";
 import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres"
-import * as schema from "./schema.ts";
+import * as schema from "./schema";
 
 const isDev = process.env.NODE_ENV === "development";
 

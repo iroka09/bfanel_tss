@@ -8,8 +8,7 @@ import {
   integer,
   pgEnum,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
-import { createId } from "@paralleldrive/cuid2"; // npm install @paralleldrive/cuid2
+import { createId } from "@paralleldrive/cuid2";
 
 // Enum for role
 export const userRoleEnum = pgEnum("user_role", ["user", "admin", "moderator"]);
@@ -19,7 +18,7 @@ export const genderEnum = pgEnum("gender", ["male", "female", "other"]);
 
 export const users = pgTable("users", {
   // IDs
-  id: serial("id").primaryKey(),                          // internal auto-increment
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),                          // internal auto-increment
   userId: text("user_id")                                 // public-facing unique ID
     .notNull()
     .unique()
@@ -28,15 +27,15 @@ export const users = pgTable("users", {
   // Required (from Google)
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  picture: text("picture").notNull(),
+  picture: text().notNull(),
 
   // Optional profile fields
   username: varchar("username", { length: 50 }).unique(), // user can set later
-  bio: text("bio"),                                       // profile description
+  bio: text(),                                       // profile description
   phone: varchar("phone", { length: 20 }),
   location: varchar("location", { length: 100 }),         // city/country
-  website: text("website"),                               // personal website URL
-  gender: genderEnum("gender"),                           // uses enum
+  website: text(),                               // personal website URL
+  gender: genderEnum(),                           // uses enum
   dateOfBirth: text("date_of_birth"),                     // "YYYY-MM-DD" string
 
   // Optional social links

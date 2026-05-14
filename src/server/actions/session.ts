@@ -100,14 +100,16 @@ export const loginFn = createServerFn({ method: 'POST' })
           name: z.string(),
           email: z.string().email(),
           picture: z.string()
-        }).parse(_data.oneTapLogin)
+        })
+          .strip() // but this is the default, it strips unknown fields from user
+          .parse(_data.oneTapLogin)
         // get user by email
         const existingUser = await db
           .select()
           .from(users)
           .where(eq(users.email, data.email))
           .limit(1);
-        console.log("existingUser: ", existingUser)
+        // console.log("existingUser: ", existingUser)
         // If found, return the existing user instead of inserting
         if (existingUser.length > 0) {
           return await getResult(data)
@@ -121,7 +123,7 @@ export const loginFn = createServerFn({ method: 'POST' })
             picture: data.picture,
           })
           .returning();
-        console.log("newUser: ", newUser)
+        //console.log("newUser: ", newUser)
         return await getResult(data)
         // Redirect to protected area
         //throw redirect({ to: "/customer_care" })

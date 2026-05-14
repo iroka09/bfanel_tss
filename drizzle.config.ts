@@ -7,7 +7,7 @@ const isNeon = false
 dotenv.config({ path: (isNeon) ? ".env.production.local" : ".env.development" });
 
 export default defineConfig({
-  schema: "./src/db/schema.ts",
+  schema: "./src/db/schema",
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {

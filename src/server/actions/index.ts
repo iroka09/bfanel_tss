@@ -1,12 +1,13 @@
 
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-
+import { db } from "@/db";
+import { newsletter } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 
 // === submit email for newsletter ===
 
-const submittedEmails: string[] = []
 
 const zodSchema = z.object({
   email: z.string().email({ error: (issue) => issue.input ? issue.input + ' is a wrong email address.' : 'This field is required.' }).trim().lowercase()
@@ -26,11 +27,25 @@ export const submitEmail = createServerFn({ method: 'POST' })
       if (success === false) {
         return { success: false, result: res.error.issues[0].message }
       }
-      if (submittedEmails.includes(data.email)) {
+      const submittedEmails = await db
+        .select({ email: newsletter.email })
+        .from(newsletter)
+        .where(eq(newsletter.email, data.email));
+      if (submittedEmails.length > 0) {
         return { success: false, result: "Email already existed." }
       }
-      submittedEmails.push(data.email)
-      return { success: true, result: 'You have subscribed successfully.' }
+      const newSaved = await db
+        .insert(newsletter)
+        .values({
+          email: data.email
+        })
+        .returning();
+      if (newSaved.length > 0)
+        return { success: true, result: 'You have subscribed successfully.' }
+      else {
+        console.log(newSaved)
+        return { success: false, result: 'Something went wrong.' }
+      }
     }
     catch (error) {
       console.error(error)

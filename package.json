@@ -14,8 +14,8 @@
     "lint": "eslint",
     "format": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
-    "postgres_start": "pg_ctl -D $PREFIX/var/lib/postgresql start",
-    "postgres_stop": "pg_ctl -D $PREFIX/var/lib/postgresql stop"
+    "pg_start": "pg_ctl -D $PREFIX/var/lib/postgresql start",
+    "pg_stop": "pg_ctl -D $PREFIX/var/lib/postgresql stop"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
