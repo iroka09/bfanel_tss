@@ -54,73 +54,70 @@ function LoginForm() {
       router.navigate({ to: redirect || "/", replace: true })
     })
   };
-  useEffect(() => {
-
-  }, [])
   return (
     <div className="container pb-20">
-      {process.env.NODE_ENV === "development"&&
+      {process.env.NODE_ENV === "development" &&
         <form onSubmit={handleSubmit}>
-      <Card className="w-full max-w-sm mx-auto mt-20">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account.
-          </CardDescription>
-        </CardHeader>
+          <Card className="w-full max-w-sm mx-auto mt-20">
+            <CardHeader>
+              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardDescription>
+                Enter your credentials to access your account.
+              </CardDescription>
+            </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
+            <CardContent className="space-y-4">
+              <div className="space-y-1">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="•••••••••"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Submitting..." : "Sign In"}
-          </Button>
-        </CardFooter>
-      </Card>
-    </form>
-    }
-<div className="flex justify-center py-3">
-  <GoogleLogin
-    onSuccess={async (profile) => {
-      const decoded = jwtDecode(profile.credential);
-      console.log(decoded);
-      const result = await signIn({
-        oneTapLogin: {
-          name: decoded.name,
-          email: decoded.email,
-          picture: decoded.picture,
-        }
-      })
-      if (result.success) router.navigate({ to: redirect || "/", replace: true })
-    }}
-    onError={() => {
-      console.log('Login Failed');
-    }}
-  />
-</div>
+              <div className="space-y-1">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="•••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Submitting..." : "Sign In"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
+      }
+      <div className="flex justify-center py-3">
+        <GoogleLogin
+          onSuccess={async (profile) => {
+            const decoded = jwtDecode(profile.credential);
+            console.log(decoded);
+            const result = await signIn({
+              oneTapLogin: {
+                name: decoded.name,
+                email: decoded.email,
+                picture: decoded.picture,
+              }
+            })
+            if (result.success) router.navigate({ to: redirect || "/", replace: true })
+          }}
+          onError={() => {
+            console.log('Login Failed');
+          }}
+        />
+      </div>
     </div >
   );
 }

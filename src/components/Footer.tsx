@@ -5,7 +5,7 @@ import SocialMediaContacts from "@/components/SocialMediaContacts"
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { submitEmail } from "@/server/actions";
+import { submitEmail } from "@/server/actions/newsletter";
 
 
 export default function App() {

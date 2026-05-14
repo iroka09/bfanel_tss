@@ -22,37 +22,26 @@ export const submitEmail = createServerFn({ method: 'POST' })
   .inputValidator((data: z.infer<typeof zodSchema>) => data)
   .handler(async ({ data: inputData }): Promise<SubmitEmailResponseType> => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const { success, data, ...res } = await zodSchema.safeParse(inputData)
-      if (success === false) {
-        return { success: false, result: res.error.issues[0].message }
-      }
-      const submittedEmails = await db
+      const data = await zodSchema.parse(inputData)
+      const selectedEmails = await db
         .select({ email: newsletter.email })
         .from(newsletter)
         .where(eq(newsletter.email, data.email));
-      if (submittedEmails.length > 0) {
+      if (selectedEmails.length > 0) {
         return { success: false, result: "Email already existed." }
       }
-      const newSaved = await db
+      const newSavedEmail = await db
         .insert(newsletter)
-        .values({
-          email: data.email
-        })
+        .values({ email: data.email })
         .returning();
-      if (newSaved.length > 0)
+      if (newSavedEmail.length > 0) {
         return { success: true, result: 'You have subscribed successfully.' }
-      else {
-        console.log(newSaved)
-        return { success: false, result: 'Something went wrong.' }
       }
+      console.log(newSavedEmail)
+      return { success: false, result: 'Something went wrong.' }
     }
     catch (error) {
       console.error(error)
       return { success: false, result: ' Ooops! something went wrong.' }
     }
   })
-//==========
-
-
-
