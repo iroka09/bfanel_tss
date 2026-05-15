@@ -22,7 +22,11 @@ export const submitEmail = createServerFn({ method: 'POST' })
   .inputValidator((data: z.infer<typeof zodSchema>) => data)
   .handler(async ({ data: inputData }): Promise<SubmitEmailResponseType> => {
     try {
-      const data = await zodSchema.parse(inputData)
+      const { success, data, error } = await zodSchema.safeParse(inputData)
+      if (success === false) {
+       // console.log(JSON.stringify(others, null, 3))
+        return { success: false, result: error.issues[0].message }
+      }
       const selectedEmails = await db
         .select({ email: newsletter.email })
         .from(newsletter)
