@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { type DataSchemaType } from "@/server/actions/gemini_ai";
 import { ensureSession } from '@/server/actions/session';
 import { toast } from "sonner"
-import { useSession } from '@/context/session';
+import { signOut } from '@/context/session';
 
 
 
@@ -29,7 +29,6 @@ type HistoryType = Pick<DataSchemaType, "history">
 
 
 function RouteComponent() {
-  const { signOut } = useSession()
   const router = useRouter()
   const [message, setMessage] = React.useState("")
   const [history, setHistory] = React.useState<HistoryType>(fakeData || [])

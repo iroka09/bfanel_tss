@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getSession } from "@/server/actions/session"
-import { useSession } from '@/context/session';
+import { signIn } from '@/context/session';
 import { z } from "zod";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
@@ -41,7 +41,6 @@ function LoginForm() {
   const val = Route.useRouteContext()
   const { redirect } = Route.useSearch();
   const router = useRouter()
-  const { signIn } = useSession()
   const [isPending, startTransition] = React.useTransition()
   const [formData, setFormData] = useState({ email: "", password: "", picture: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=30&q=20" });
   const handleChange = (e) => {

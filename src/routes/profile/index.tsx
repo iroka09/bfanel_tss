@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { useState, useTransition } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Drawer } from 'vaul'
-import { useSession } from '@/context/session'
+import { signOut } from '@/context/session'
 import { getUser, ensureSession } from '@/server/actions/session'
 import { updateProfile } from '@/server/actions/profile'
 import { Button } from '@/components/ui/button'
@@ -484,8 +484,6 @@ function EditProfileDrawer({ user }: { user: UserData }) {
 
 function Profile() {
   const user = Route.useLoaderData()
-  const { signOut } = useSession()
-
   return (
     <>
       <style>{`

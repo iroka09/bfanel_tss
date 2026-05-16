@@ -18,9 +18,9 @@ const config = defineConfig({
     devtools(),
     tailwindcss(),
     tanstackStart({
-      srcDirectory: 'src', // This is the default
+      srcDirectory: 'src', // "src" is the default
       router: {
-        routesDirectory: 'routes', // Defaults to "routes" but can be changed to "app" if routes are in app folder, relative to srcDirectory
+        routesDirectory: 'routes', // "routes" is the default
       },
     }),
     nitro(),
