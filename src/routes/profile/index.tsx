@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Drawer } from 'vaul'
 import { useSession } from '@/context/session'
-import { getUser, ensureAuth } from '@/server/actions/session'
+import { getUser, ensureSession } from '@/server/actions/session'
 import { updateProfile } from '@/server/actions/profile'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,7 +17,7 @@ import {
 
 export const Route = createFileRoute('/profile/')({
   beforeLoad: async ({ location }) => {
-    await ensureAuth({ data: { redirect: location.href } })
+    await ensureSession({ data: { redirect: location.href } })
   },
   loader: async () => {
     const user = await getUser()
@@ -598,7 +598,7 @@ function Profile() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ml-3">
                   {/* ── Edit Profile drawer trigger ── */}
                   <EditProfileDrawer user={user} />
 
@@ -614,8 +614,7 @@ function Profile() {
               {/* Name block */}
               <div className="mb-4">
                 <div className="flex items-center gap-2.5 flex-wrap mb-1">
-                  <h1 className="text-3xl font-black text-white leading-tight"
-                    style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <h1 className="text-3xl font-black text-white leading-tight">
                     {user.name}
                   </h1>
                   {user.isVerified && <span className="tag-badge">Verified</span>}

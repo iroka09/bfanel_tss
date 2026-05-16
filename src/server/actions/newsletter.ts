@@ -24,7 +24,6 @@ export const submitEmail = createServerFn({ method: 'POST' })
     try {
       const { success, data, error } = await zodSchema.safeParse(inputData)
       if (success === false) {
-       // console.log(JSON.stringify(others, null, 3))
         return { success: false, result: error.issues[0].message }
       }
       const selectedEmails = await db

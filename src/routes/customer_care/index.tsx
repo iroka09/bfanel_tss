@@ -10,7 +10,7 @@ import { getSession } from "@/server/actions/session"
 import { getAiMessage } from "@/server/actions/gemini_ai"
 import { cn } from "@/lib/utils"
 import { type DataSchemaType } from "@/server/actions/gemini_ai";
-import { ensureAuth } from '@/server/actions/session';
+import { ensureSession } from '@/server/actions/session';
 import { toast } from "sonner"
 import { useSession } from '@/context/session';
 
@@ -18,7 +18,7 @@ import { useSession } from '@/context/session';
 
 export const Route = createFileRoute('/customer_care/')({
   beforeLoad: async ({ location }) => {
-    await ensureAuth({ data: { redirect: location.href } })
+    await ensureSession({ data: { redirect: location.href } })
   },
   // loader: async () => await getAiMessage(),
   component: RouteComponent,

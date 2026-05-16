@@ -1,6 +1,6 @@
 
 import { createServerFn } from '@tanstack/react-start'
-import { redirect } from '@tanstack/react-router'
+import { redirect, isRedirect } from '@tanstack/react-router'
 import { useAppSession } from "@/server/server_only/use_session"
 import z from "zod"
 import { db } from "@/db";
@@ -150,9 +150,16 @@ export const logoutFn = createServerFn({ method: 'POST' })
 
 
 //protect a route
-export const ensureAuth = createServerFn({ method: 'POST' })
+export const ensureSession = createServerFn({ method: 'POST' })
   .inputValidator((data?: { redirect: `/${string}` }) => data)
   .handler(async ({ data }): Promise<void | never> => {
-    const session = await getSession()
-    if (!session) throw redirect({ to: "/login", search: { redirect: data.redirect || "/" } })
+    try {
+      const session = await getSession()
+      if (!session) throw redirect({ to: "/login", search: { redirect: data.redirect || "/" } })
+    }
+    catch (err) {
+      if (isRedirect(err)) throw err
+      console.log(err)
+      throw err
+    }
   })
