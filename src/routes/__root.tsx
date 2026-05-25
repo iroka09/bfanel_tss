@@ -35,9 +35,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: async () => {
     return await root_metadatas()
   },
-  beforeLoad: async () => {
-    const session = await getSession();
-    return { session };
+  beforeLoad: async ({ context }) => {
+  //  console.log("beforeLoad: ", context)
+    const sessionData = await getSession();
+    return { sessionData };
   },
   shellComponent: RootDocument,
 })
@@ -45,14 +46,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootDocument({ children }: PropsWithChildren): ReactNode {
-  const { session } = Route.useRouteContext();
+  const { sessionData } = Route.useRouteContext();
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body className="nice-font2 tet-xl p-0 m-0 dark:bg-neutral-950 dark:text-white/80 ">
-        <Providers initialSession={session || null}>
+        <Providers initialSession={sessionData}>
           {/*
               <div className="flex gap-3 w-fit max-w-[80%] my-2 mx-auto rounded-md border border-red-500 text-red-500 p-3 text-sm font-bold skeleton-wave">
                 <MdInfo className="rotate-180 text-3xl" />

@@ -4,6 +4,7 @@ import z from "zod";
 import { db } from "@/db";
 import { newsletter } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { sendEmailFn } from "@/server/actions/send_mail";
 
 
 // === submit email for newsletter ===
@@ -23,6 +24,9 @@ export const submitEmail = createServerFn({ method: 'POST' })
   .handler(async ({ data: inputData }): Promise<SubmitEmailResponseType> => {
     try {
       const { success, data, error } = await zodSchema.safeParse(inputData)
+      await sendEmailFn({ data: { email: data.email } })
+      return { success: true, result: "done" }
+
       if (success === false) {
         return { success: false, result: error.issues[0].message }
       }
@@ -31,7 +35,7 @@ export const submitEmail = createServerFn({ method: 'POST' })
         .from(newsletter)
         .where(eq(newsletter.email, data.email));
       if (selectedEmails.length > 0) {
-        return { success: false, result: "Email already existed." }
+        return { success: false, result: "Email already subscribed." }
       }
       const newSavedEmail = await db
         .insert(newsletter)

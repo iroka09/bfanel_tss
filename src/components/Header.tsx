@@ -1,7 +1,7 @@
 
-import { useState, useEffect, type ReactNode } from "react"
-import { useHeadroom, useMediaQuery } from "@mantine/hooks"
-import { Link } from "@tanstack/react-router"
+import { useState, useEffect, type ReactNode, type PropsWithChildren } from "react"
+import { useHeadroom, useMediaQuery, useWindowScroll } from "@mantine/hooks"
+import { Link, useLocation } from "@tanstack/react-router"
 import { MdPalette as PaletteIcon } from "react-icons/md"
 import { MdAppSettingsAlt as AppSettingsAltIcon } from "react-icons/md"
 import { MdLightMode as LightModeIcon } from "react-icons/md"
@@ -15,37 +15,56 @@ import { useSession } from '@/context/session';
 import { cn } from "@/lib/utils"
 
 
+function Wrapper({ children, isHome, ...props }: PropsWithChildren) {
+  if (!isHome) return children
+  return (
+   
+      children
+  
+  )
+}
+
 
 export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
   const { session, isAuthenticated } = useSession()
-  return (<>
-    <header
-      className={cn(
-        "sticky top-0 inset-x-0 pr-2 py-1 flex  whitespace-nowrap justify-between items-center gap-2 min-w-full z-50 transition-transform duration-300 bg-white/50 dark:bg-black/30 backdrop-blur-sm shadow-md",
-        pinned ? "translate-y-0" : "-translate-y-full"
-      )}
-    >
-      <Link to="/" className="flex items-center overflow-hidden">
-        <img src="/logo_low.png" width={60} height={20} alt="logo" loading="eager" />
-        <h1 className="font-bold text-ellipsis overflow-hidden">B-Fanel Industries</h1>
-      </Link>
-      <div className="hidden md:block ml-auto">
-        <Nav />
-      </div>
-      <div className="flex gap-3 items-center">
-        {isAuthenticated && (
-          <Link to="/profile">
-            <img src={session.picture} className="w-[30px] min-w-[30px] aspect-square rounded-full border-2" alt="avatar" />
-          </Link>
+  const pathname = useLocation({ select: loc => loc.pathname })
+  const isHome = pathname === "/"
+  const [scroll] = useWindowScroll();
+  const notAtTop = scroll.y >= 120;
+  return (
+    <Wrapper isHome={isHome}>
+      <header
+        className={cn(
+          "sticky top-0 inset-x-0 pr-2 py-1 flex  whitespace-nowrap justify-between items-center gap-2 min-w-full z-50 transition-transform duration-300 bg-white/50 dark:bg-black/30 shadow-md",
+          pinned ? "translate-y-0" : "-translate-y-full",
+          (isHome)
+            ? notAtTop && "backdrop-blur-sm"
+            : "backdrop-blur-sm"
+
         )}
-        <ThemeButtonWrapper renderToBottomScreenOnly={true} />
-        <div className="md:hidden">
-          <DrawerWithIcon />
+      >
+        <Link to="/" className="flex items-center overflow-hidden">
+          <img src="/logo_low.png" width={60} height={20} alt="logo" loading="eager" />
+          <h1 className="font-bold text-ellipsis overflow-hidden">B-Fanel Industries</h1>
+        </Link>
+        <div className="hidden md:block ml-auto">
+          <Nav />
         </div>
-      </div>
-    </header>
-  </>)
+        <div className="flex gap-3 items-center">
+          {isAuthenticated && (
+            <Link to="/profile">
+              <img src={session.picture} className="w-[30px] min-w-[30px] aspect-square rounded-full border-2" alt="avatar" />
+            </Link>
+          )}
+          <ThemeButtonWrapper renderToBottomScreenOnly={true} />
+          <div className="md:hidden">
+            <DrawerWithIcon />
+          </div>
+        </div>
+      </header>
+    </Wrapper>
+  )
 }
 
 
@@ -166,33 +185,33 @@ function ThemeButton({ renderToBottomScreenOnly }) {
     </div>
   )
   /*return (<>
-    <div
-      className={cn(
-        renderToBottomScreenOnly ?
-          "relative fixed bottom-10 left-3 z-10 bg-black/50 rounded-md p-2 shadow-lg"
-          :
-          "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg"
-      )}
-    >
-      <button onClick={() => setShow(true)}>
-        <PaletteIcon className="icon text-2xl md:text-white" />
-      </button>
-      {show &&
-        <ClickAwayListener onClickAway={() => setShow(false)}>
-          <ul className="absolute top-0 right-0 md:top-[initial] md:right-[initial] md:bottom-0 md:left-0 z-1 rounded-md overflow-hidden bg-white shadow-lg dark:bg-black *:relative *:pl-4 *:pr-14 *:py-3 text-primary *:whitespace-nowrap *:flex *:gap-3 hover:*:bg-slate-200/80 dark:hover:*:bg-slate-500/50">
-            {themeButtons.map((obj, i) => (
-              <li
-                key={i}
-                onClick={() => {
-                  setTheme(obj.key)
-                }}
-              >
-                {<obj.icon />} <span>{obj.title}</span> {theme === obj.key && <CheckIcon className="text-green-400 ml-auto absolute top-[50%] right-3 translate-y-[-50%]" />}
-              </li>
-            ))}
-          </ul>
-        </ClickAwayListener>
-      }
-    </div >
-  </>)*/
+          <div
+            className={cn(
+              renderToBottomScreenOnly ?
+                "relative fixed bottom-10 left-3 z-10 bg-black/50 rounded-md p-2 shadow-lg"
+                :
+                "relative md:fixed md:bottom-10 md:left-3 md:z-10 md:bg-black/50 md:rounded-md md:p-2 md:shadow-lg"
+            )}
+          >
+            <button onClick={() => setShow(true)}>
+              <PaletteIcon className="icon text-2xl md:text-white" />
+            </button>
+            {show &&
+              <ClickAwayListener onClickAway={() => setShow(false)}>
+                <ul className="absolute top-0 right-0 md:top-[initial] md:right-[initial] md:bottom-0 md:left-0 z-1 rounded-md overflow-hidden bg-white shadow-lg dark:bg-black *:relative *:pl-4 *:pr-14 *:py-3 text-primary *:whitespace-nowrap *:flex *:gap-3 hover:*:bg-slate-200/80 dark:hover:*:bg-slate-500/50">
+                  {themeButtons.map((obj, i) => (
+                    <li
+                      key={i}
+                      onClick={() => {
+                        setTheme(obj.key)
+                      }}
+                    >
+                      {<obj.icon />} <span>{obj.title}</span> {theme === obj.key && <CheckIcon className="text-green-400 ml-auto absolute top-[50%] right-3 translate-y-[-50%]" />}
+                    </li>
+                  ))}
+                </ul>
+              </ClickAwayListener>
+            }
+          </div >
+        </>)*/
 }

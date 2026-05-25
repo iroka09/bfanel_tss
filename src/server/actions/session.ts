@@ -1,7 +1,7 @@
 
 import { createServerFn } from '@tanstack/react-start'
 import { redirect, isRedirect } from '@tanstack/react-router'
-import { useAppSession } from "@/server/server_only/use_session"
+import { putSessionToContext, type SessionData } from "@/server/middlewares"
 import z from "zod"
 import { db } from "@/db";
 import { users, type User } from "@/db/schema";
@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 
 
 
-export type SessionPayload = {
+export type SessionOneTapLoginDatata = {
   email: string,
   name: string,
   picture: string
@@ -17,7 +17,7 @@ export type SessionPayload = {
 
 export type AuthResult =
   | { success: false }
-  | { success: true, session: SessionPayload }
+  | { success: true, session: SessionData }
 
 
 export type SignInInput = {
@@ -25,26 +25,35 @@ export type SignInInput = {
     email: string;
     password: string
   },
-  oneTapLogin?: SessionPayload
+  oneTapLogin?: SessionOneTapLoginDatata
+}
+
+
+
+function emptyObjToNull(obj: SessionData): SessionData | null {
+  return Object.keys(obj).length > 0
+    ? obj
+    : null
 }
 
 
 // Get current user
 export const getSession = createServerFn({ method: 'GET' })
-  .handler(async (): Promise<AuthResult | null> => {
-    const session = await useAppSession()
-    const data = session.data
-    return Object.keys(data).length > 0 ? data : null
+  .middleware([putSessionToContext])
+  .handler(async ({ context }): Promise<SessionData | null> => {
+    //  console.log("middleware: ", context)
+    return emptyObjToNull(context.session.data)
   })
 
 
 // ====  GET USER ======
 export const getUser = createServerFn({ method: 'POST' })
   .inputValidator((data?: { email: string }) => data)
-  .handler(async (arg): Promise<User> => {
-    if (arg.data) {
+  .middleware([putSessionToContext])
+  .handler(async ({ data, context }): Promise<User> => {
+    if (data) {
       // get another person's profile
-      z.string().email().parse(arg.data.email)
+      z.string().email().parse(data.email)
       const user = await db
         .select({
           userId: users.userId,
@@ -63,14 +72,14 @@ export const getUser = createServerFn({ method: 'POST' })
           createdAt: users.createdAt,
         })
         .from(users)
-        .where(eq(users.email, arg.data.email))
+        .where(eq(users.email, data.email))
       return user[0]
     }
     else {
       // get user's profile
-      const session = await getSession()
-      z.string().email().parse(session.email)
-      const user = await db.select().from(users).where(eq(users.email, session.email))
+      const sessionData = context.session.data
+      z.string().email().parse(sessionData.email)
+      const user = await db.select().from(users).where(eq(users.email, sessionData.email))
       return user[0]
     }
   })
@@ -80,11 +89,12 @@ export const getUser = createServerFn({ method: 'POST' })
 // ====  LOGIN ======
 export const loginFn = createServerFn({ method: 'POST' })
   .inputValidator((data: SignInInput) => data)
-  .handler(async ({ data: _data }): Promise<AuthResult> | never => {
+  .middleware([putSessionToContext])
+  .handler(async ({ data: _data, context }): Promise<AuthResult> | never => {
     //console.log("test users: ", Object.keys(users))
     // console.log("test email: ", users.email)
-    const session = await useAppSession()
-    const getResult = async (data) => {
+    const session = context.session
+    async function putToSessionAndReturnData(data) {
       const updatedSession = await session.update(data)
       return { success: true, session: updatedSession.data }
     }
@@ -93,8 +103,9 @@ export const loginFn = createServerFn({ method: 'POST' })
         const data = z.object({
           email: z.string().email(),
           password: z.string()
-        }).parse(_data.credentials)
-        return await getResult(data)
+        })
+          .parse(_data.credentials)
+        return await putToSessionAndReturnData(data)
       }
       else if (_data.oneTapLogin) {
         const data = z.object({
@@ -113,7 +124,7 @@ export const loginFn = createServerFn({ method: 'POST' })
         // console.log("existingUser: ", existingUser)
         // If found, return the existing user instead of inserting
         if (existingUser.length > 0) {
-          return await getResult(data)
+          return await putToSessionAndReturnData(data)
         }
         // Email is new — insert the user
         const newUser = await db
@@ -125,7 +136,7 @@ export const loginFn = createServerFn({ method: 'POST' })
           })
           .returning();
         //console.log("newUser: ", newUser)
-        return await getResult(data)
+        return await putToSessionAndReturnData(data)
         // Redirect to protected area
         //throw redirect({ to: "/customer_care" })
       }
@@ -142,9 +153,9 @@ export const loginFn = createServerFn({ method: 'POST' })
 // =====   LOGOUT ======
 export const logoutFn = createServerFn({ method: 'POST' })
   .inputValidator((data?: { to: string }) => data)
-  .handler(async ({ data }): Promise<Omit<AuthResult, "session">> => {
-    const session = await useAppSession()
-    await session.clear()
+  .middleware([putSessionToContext])
+  .handler(async ({ data, context }) => {
+    await context.session.clear()
     return { success: true }
   })
 
@@ -152,10 +163,11 @@ export const logoutFn = createServerFn({ method: 'POST' })
 //protect a route
 export const ensureSession = createServerFn({ method: 'POST' })
   .inputValidator((data?: { redirect: `/${string}` }) => data)
-  .handler(async ({ data }): Promise<void | never> => {
+  .middleware([putSessionToContext])
+  .handler(async ({ data, context }): Promise<void | never> => {
     try {
-      const session = await getSession()
-      if (!session) throw redirect({ to: "/login", search: { redirect: data.redirect || "/" } })
+      const sessionData = emptyObjToNull(context.session.data)
+      if (!sessionData) throw redirect({ to: "/login", search: { redirect: data.redirect || "/" } })
     }
     catch (err) {
       if (isRedirect(err)) throw err
@@ -163,3 +175,4 @@ export const ensureSession = createServerFn({ method: 'POST' })
       throw err
     }
   })
+

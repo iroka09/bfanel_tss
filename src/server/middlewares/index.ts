@@ -1,14 +1,14 @@
 
+import { createMiddleware } from '@tanstack/react-start'
 import { useSession } from '@tanstack/react-start/server'
 
 
-type SessionData = {
+export type SessionData = {
   userId?: string,
   email?: string,
   role?: string,
   image?: string
 }
-
 
 
 export function useAppSession() {
@@ -24,3 +24,11 @@ export function useAppSession() {
     },
   })
 }
+
+
+export const putSessionToContext = createMiddleware().server(async ({ next }) => {
+  const session = await useAppSession()
+  return await next({
+    context: { session }
+  })
+})
