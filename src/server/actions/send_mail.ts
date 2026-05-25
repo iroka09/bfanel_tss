@@ -1,6 +1,6 @@
 
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestURL } from '@tanstack/react-start/server'
+import { getRequest } from '@tanstack/react-start/server'
 import { Resend } from 'resend'
 import { EmailTemplate } from '@/components/email-template';
 import z from "zod"
@@ -15,9 +15,9 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export const sendEmailFn = createServerFn()
   .inputValidator(
     z.object({ email: z.string().email() })
-    )
+  )
   .handler(async ({ data: { email } }) => {
-    const url = getRequestURL()
+    const url = new URL(getRequest().url)
     const host = isDev ? "http://localhost:3000" : url.origin
     const verifyUrl = `${host}/api/verify_email?address=${encodeURIComponent(email)}`;
     const { data: result, error } = await resend.emails.send({
