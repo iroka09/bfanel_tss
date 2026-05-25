@@ -41,7 +41,8 @@ export const newsletter = pgTable("newsletter", {
   frequency: varchar("frequency", { length: 20 }).default("weekly"), // daily, weekly, monthly
 
   // Tracking
-  confirmationToken: text("confirmation_token"), // for email confirmation link
+  confirmationToken: text("confirmation_token")
+    .$defaultFn(() => createId()), // for email confirmation link
   unsubscribeToken: text("unsubscribe_token")    // for one-click unsubscribe link
     .$defaultFn(() => createId()),
   source: varchar("source", { length: 100 }),    // where they signed up e.g. "homepage", "checkout"

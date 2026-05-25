@@ -4,8 +4,8 @@ import z from "zod";
 import { db } from "@/db";
 import { newsletter } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { sendEmailFn } from "@/server/actions/send_mail";
-
+import { sendEmailFn } from "@/lib/send_mail";
+import { EmailTemplate } from '@/components/email-template';
 
 // === submit email for newsletter ===
 
@@ -19,32 +19,68 @@ interface SubmitEmailResponseType {
   result: string
 }
 
-export const submitEmail = createServerFn({ method: 'POST' })
-  .inputValidator((data: z.infer<typeof zodSchema>) => data)
-  .handler(async ({ data: inputData }): Promise<SubmitEmailResponseType> => {
-    try {
-      const { success, data, error } = await zodSchema.safeParse(inputData)
-      await sendEmailFn({ data: { email: data.email } })
-      return { success: true, result: "done" }
 
-      if (success === false) {
-        return { success: false, result: error.issues[0].message }
+const isDev = process.env.NODE_ENV === "development"
+
+export const submitEmail = createServerFn({ method: 'POST' })
+  .inputValidator(zodSchema)
+  .handler(async ({ request, data }): Promise<SubmitEmailResponseType> => {
+    try {
+      async function sendMail(dbData, data) {
+        const url = new URL(request.url)
+        const host = isDev ? "http://localhost:3000" : url.origin
+        const verifyUrl = `${host.replace(/\/+$/, "")}/api/verify_email?confirmation_token=${dbData.confirmationToken}`;
+        let messageSent = true
+        await sendEmailFn({
+          data: {
+            from: 'B-Fanel <no-reply@bfanel.info>',
+            to: data.email,
+            subject: "Email Confirmation",
+            react: EmailTemplate({
+              email: data.email,
+              verifyUrl
+            })
+          }
+        }).catch((e) => {
+          messageSent = false
+          console.log(e)
+        })
+        return messageSent
       }
-      const selectedEmails = await db
-        .select({ email: newsletter.email })
+      const [selectedEmail] = await db
+        .select({
+          email: newsletter.email,
+          confirmationToken: newsletter.confirmationToken,
+          isConfirmed: newsletter.isConfirmed
+        })
         .from(newsletter)
         .where(eq(newsletter.email, data.email));
-      if (selectedEmails.length > 0) {
-        return { success: false, result: "Email already subscribed." }
+      console.log("selectedEmails: ", selectedEmail)
+      if (selectedEmail) {
+        //FOUND
+        if (selectedEmail.isConfirmed)
+          return { success: false, result: "Email already subscribed." }
+        else {
+          await sendMail(selectedEmail, data)
+          return { success: false, result: "Email has been sent, you can go and verify it." }
+        }
       }
-      const newSavedEmail = await db
+      //NOT FOUND
+      const [newSavedEmail] = await db
         .insert(newsletter)
         .values({ email: data.email })
         .returning();
-      if (newSavedEmail.length > 0) {
-        return { success: true, result: 'You have subscribed successfully.' }
+      console.log("newSavedEmail: ", newSavedEmail)
+      if (newSavedEmail) {
+        //ADDED TO DB SUCCESSFULLY
+        const sent = await sendMail(newSavedEmail, data)
+        return {
+          success: sent,
+          result: sent
+            ? `Email has been sent to ${data.email}, if you don't see it check SPAM folder.`
+            : "It went successful but we couldn't send confirmation link to your email."
+        }
       }
-      console.log(newSavedEmail)
       return { success: false, result: 'Something went wrong.' }
     }
     catch (error) {
