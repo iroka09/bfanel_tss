@@ -1,22 +1,16 @@
 import { createStart, createMiddleware } from '@tanstack/react-start'
 
-const funcLogger = createMiddleware().server(async ({ next, data, context }) => {
- // console.log('from funcLogger middleware: ', data)
-  let xx = await next({
-    context: { type2: "functionMiddleware" }
+
+
+const putUrlToContext = createMiddleware().server(async ({ next, request, context }) => {
+  console.log("putUrlToContext", context)
+  const url = new URL(request.url)
+  return await next({
+    context: { url }
   })
-  return xx
 })
 
-const reqLogger = createMiddleware().server(async ({ next, data, request }) => {
-  let xx = await next({
-    context: { type: "requestMiddleware" }
-  })
-  // console.log("reqLogger data: ", data)
-  return xx
-})
 
 export const startInstance = createStart(() => ({
-  functionMiddleware: [funcLogger],
-  requestMiddleware: [reqLogger]
+  requestMiddleware: [putUrlToContext], //serverFn also uses this too
 }))

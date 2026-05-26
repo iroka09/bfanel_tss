@@ -1,7 +1,7 @@
 
 import { useState, useEffect, type ReactNode } from "react"
 import { GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
-import { useSession, signIn } from '@/context/session';
+import { useAppSession, signIn } from '@/context/session';
 import { jwtDecode } from 'jwt-decode';
 import { useLocation } from '@tanstack/react-router'
 
@@ -30,7 +30,7 @@ function GoogleOneTap() {
 
 
 export default function App(): ReactNode | null {
-  const { isAuthenticated } = useSession()
+  const { isAuthenticated } = useAppSession()
   const pathname = useLocation({ select: x => x.pathname })
   return (isAuthenticated || pathname === "/login") ? null : <GoogleOneTap signIn={signIn} />
   return <GoogleOneTap />

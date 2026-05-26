@@ -89,11 +89,11 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
 }
 
 
-export function useSession(arg = { redirect: false }) {
+export function useAppSession(arg = { redirect: false }) {
   const router = useRouter();
   const pathname = useLocation({ select: loc => loc.pathname })
   const ctx = useContext(SessionContext);
-  if (!ctx) throw new Error("useSession must be used within <SessionProvider>");
+  if (!ctx) throw new Error("useAppSession must be used within <SessionProvider>");
   if (arg?.redirect && !ctx.isAuthenticated) blank();
   useLayoutEffect(() => {
     if (arg?.redirect && !ctx.isAuthenticated)

@@ -8,9 +8,10 @@ import { eq } from "drizzle-orm"
 export const Route = createFileRoute('/api/verify_email/')({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const url = new URL(request.url)
+      GET: async ({ request, context: { url }, ...others }) => {
         const confirmationToken = url.searchParams.get('confirmation_token')
+        console.log("confirmationToken>> ", confirmationToken)
+        console.log("others>> ", others)
         if (!confirmationToken) {
           return new Response("Missing confirmation token", { status: 400 })
         }
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/api/verify_email/')({
           })
           .from(newsletter)
           .where(eq(newsletter.confirmationToken, confirmationToken));
+        //CONFIRMED
         if (selectedEmail.isConfirmed) {
           return new Response("Already confirmed", { status: 404 })
         }

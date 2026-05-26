@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "@tanstack/react-router";
-import { useSession } from '@/context/session';
+import { useAppSession } from '@/context/session';
 
 
 const isDev = process.env.NODE_ENV === "development"
@@ -14,7 +14,7 @@ type NavLink = LinkType & {
 
 
 export default function Nav(): React.ReactNode {
-  const { isAuthenticated } = useSession()
+  const { isAuthenticated } = useAppSession()
   const navLinks: NavLink[] = React.useMemo(() => [
     ...isDev ? ([
       isAuthenticated ? null : { label: "Login", to: "/login" },

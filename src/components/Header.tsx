@@ -11,7 +11,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import DrawerWithIcon from "@/components/Drawer"
 import Nav from "@/components/Nav"
 import Portal from "@/components/Portal"
-import { useSession } from '@/context/session';
+import { useAppSession } from '@/context/session';
 import { cn } from "@/lib/utils"
 
 
@@ -27,7 +27,7 @@ function Wrapper({ children, isHome, ...props }: PropsWithChildren) {
 
 export default function App(): ReactNode {
   const pinned = useHeadroom({ fixedAt: 120 })
-  const { session, isAuthenticated } = useSession()
+  const { session, isAuthenticated } = useAppSession()
   const pathname = useLocation({ select: loc => loc.pathname })
   const isHome = pathname === "/"
   const [scroll] = useWindowScroll();

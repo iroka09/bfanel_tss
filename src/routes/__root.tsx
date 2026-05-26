@@ -36,7 +36,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     return await root_metadatas()
   },
   beforeLoad: async ({ context }) => {
-  //  console.log("beforeLoad: ", context)
     const sessionData = await getSession();
     return { sessionData };
   },

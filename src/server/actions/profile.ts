@@ -1,9 +1,12 @@
+
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { getUser } from '@/server/actions/session'
+
+
 
 const updateProfileSchema = z.object({
   username: z.string().max(50).nullable().optional(),
@@ -18,10 +21,9 @@ const updateProfileSchema = z.object({
   linkedinHandle: z.string().max(50).nullable().optional(),
 })
 
-export type UpdateProfileInputType = z.infer<typeof updateProfileSchema>
 
 export const updateProfile = createServerFn({ method: 'POST' })
-  .inputValidator((data: UpdateProfileInputType) => updateProfileSchema.parse(data))
+  .inputValidator(updateProfileInputType)
   .handler(async ({ data }) => {
     const user = await getUser()
     if (!user) throw new Error('Unauthorized')

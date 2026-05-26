@@ -37,7 +37,7 @@ export default function HeroButtons() {
     <div className="flex flex-col md:flex-row gap-3 w-full">
       <Link
         to={shopNowLink}
-        className="flex items-center justify-center gap-3 py-2 px-9 text-lg text-white shadow-md rounded-full hover:opacity-80 transition active:translate-y-1.25 w-full bg-linear-to-r from-blue-800 to-yellow-400 font-semibold text-center uppercase"
+        className="flex items-center justify-center gap-3 py-2 px-9 text-lg text-white shadow-md rounded-full hover:opacity-80 transition active:translate-y-1.25 w-full bg-linear-to-r from-cyan-600/60 to-amber-300/60 font-semibold text-center uppercase"
       >
         <span className=""> Get in Touch </span> <FaArrowRightLong />
       </Link>
@@ -53,7 +53,7 @@ function LearnMoreButton({ title = "click me" }: { title: string }) {
       <Drawer.Trigger asChild>
         <button
           type="button"
-          className="inline-block px-5 py-2 text-lg border border-neutral-300 text-white rounded-full transition active:translate-y-1.25 w-full font-semibold hover:bg-neutral-300 hover:text-black uppercase"
+          className="inline-block px-5 py-2 text-lg border border-neutral-300/60 text-white/90 rounded-full transition active:translate-y-1.25 w-full font-semibold hover:bg-neutral-300 hover:text-black uppercase"
         >
           {title}
         </button>
