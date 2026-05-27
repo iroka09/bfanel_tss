@@ -23,23 +23,23 @@
   }
   
   .skeleton-wave {
-    background: linear-gradient(135deg, transparent, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.2) 85%, transparent);
-    animation: wave-skeleton 3s infinite linear;
+    background:
+      linear-gradient(rgba(255, 0, 0, 0.08), rgba(255, 0, 0, 0.08)),
+      linear-gradient(105deg, transparent 40%, rgba(255, 80, 80, 0.2) 50%, rgba(255, 140, 140, 0.3) 58%, transparent 70%);
+    background-size: 100% 100%, 200% 100%;
     background-repeat: no-repeat;
-    background-size: 200% 100%;
+    animation: wave-skeleton 3s infinite linear;
   }
-  
   
   @keyframes wave-skeleton {
     0% {
-      background-position: 200% 0%;
+      background-position: 0% 0%, 200% 0%;
     }
     
     30%,
     100% {
-      background-position: -100% 0;
+      background-position: 0% 0%, -100% 0%;
     }
   }
-  
   
 }

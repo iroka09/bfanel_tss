@@ -53,12 +53,13 @@ function RootDocument({ children }: PropsWithChildren): ReactNode {
       </head>
       <body className="nice-font2 tet-xl p-0 m-0 dark:bg-neutral-950 dark:text-white/80 ">
         <Providers initialSession={sessionData}>
-          {/*
-              <div className="flex gap-3 w-fit max-w-[80%] my-2 mx-auto rounded-md border border-red-500 text-red-500 p-3 text-sm font-bold skeleton-wave">
-                <MdInfo className="rotate-180 text-3xl" />
-                <span>This is not the official BFanel website.</span>
-              </div>
-              */
+          {
+            <div className="flex items-center gap-3 w-fit max-w-[80%] mx-auto my-3 px-4 py-3 rounded-xl border border-red-500/30 text-red-400 text-sm font-medium skeleton-wave">
+              <MdInfo className="rotate-180 text-xl shrink-0 animate-pulse" />
+              <span className="tracking-wide">
+                This is <span className="font-bold underline underline-offset-2">not</span> the official BFanel website, please visit <a href="https://bfanel.com" className="font-bold underline underline-offset-2 text-blue-400/70 dark:text-white/70" target="_blank">bfanel.com</a>
+              </span>
+            </div>
           }
           <Header />
           {children}

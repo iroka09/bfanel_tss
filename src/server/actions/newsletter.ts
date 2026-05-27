@@ -28,8 +28,8 @@ export const submitEmail = createServerFn({ method: 'POST' })
     try {
       async function sendMail(dbData, data) {
         const url = new URL(request.url)
-        const host = isDev ? "http://localhost:3000" : url.origin
-        const verifyUrl = `${host.replace(/\/+$/, "")}/api/verify_email?confirmation_token=${dbData.confirmationToken}`;
+        const origin = isDev ? "http://localhost:3000" : url.origin.replace(/\/+$/, "")
+        const verifyUrl = `${origin}/api/verify_email/?confirmation_token=${dbData.confirmationToken}`;
         let messageSent = true
         await sendEmailFn({
           data: {
@@ -55,7 +55,6 @@ export const submitEmail = createServerFn({ method: 'POST' })
         })
         .from(newsletter)
         .where(eq(newsletter.email, data.email));
-      console.log("selectedEmails: ", selectedEmail)
       if (selectedEmail) {
         //FOUND
         if (selectedEmail.isConfirmed)
@@ -70,7 +69,6 @@ export const submitEmail = createServerFn({ method: 'POST' })
         .insert(newsletter)
         .values({ email: data.email })
         .returning();
-      console.log("newSavedEmail: ", newSavedEmail)
       if (newSavedEmail) {
         //ADDED TO DB SUCCESSFULLY
         const sent = await sendMail(newSavedEmail, data)

@@ -15,7 +15,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LearnIndexRouteImport } from './routes/learn/index'
 import { Route as Customer_careIndexRouteImport } from './routes/customer_care/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
-import { Route as ApiVerify_emailIndexRouteImport } from './routes/api/verify_email/index'
+import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -48,9 +48,9 @@ const AboutIndexRoute = AboutIndexRouteImport.update({
   path: '/about/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiVerify_emailIndexRoute = ApiVerify_emailIndexRouteImport.update({
-  id: '/api/verify_email/',
-  path: '/api/verify_email/',
+const ApiVerify_emailRoute = ApiVerify_emailRouteImport.update({
+  id: '/api/verify_email',
+  path: '/api/verify_email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUserIdRoute = ApiUserIdRouteImport.update({
@@ -61,77 +61,77 @@ const ApiUserIdRoute = ApiUserIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/verify_email': typeof ApiVerify_emailRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
-  '/api/verify_email/': typeof ApiVerify_emailIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/verify_email': typeof ApiVerify_emailRoute
   '/about': typeof AboutIndexRoute
   '/customer_care': typeof Customer_careIndexRoute
   '/learn': typeof LearnIndexRoute
   '/login': typeof LoginIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
-  '/api/verify_email': typeof ApiVerify_emailIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/verify_email': typeof ApiVerify_emailRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/api/user/$id': typeof ApiUserIdRoute
-  '/api/verify_email/': typeof ApiVerify_emailIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/verify_email'
     | '/about/'
     | '/customer_care/'
     | '/learn/'
     | '/login/'
     | '/profile/'
     | '/api/user/$id'
-    | '/api/verify_email/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/verify_email'
     | '/about'
     | '/customer_care'
     | '/learn'
     | '/login'
     | '/profile'
     | '/api/user/$id'
-    | '/api/verify_email'
   id:
     | '__root__'
     | '/'
+    | '/api/verify_email'
     | '/about/'
     | '/customer_care/'
     | '/learn/'
     | '/login/'
     | '/profile/'
     | '/api/user/$id'
-    | '/api/verify_email/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiVerify_emailRoute: typeof ApiVerify_emailRoute
   AboutIndexRoute: typeof AboutIndexRoute
   Customer_careIndexRoute: typeof Customer_careIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ApiUserIdRoute: typeof ApiUserIdRoute
-  ApiVerify_emailIndexRoute: typeof ApiVerify_emailIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,11 +178,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/verify_email/': {
-      id: '/api/verify_email/'
+    '/api/verify_email': {
+      id: '/api/verify_email'
       path: '/api/verify_email'
-      fullPath: '/api/verify_email/'
-      preLoaderRoute: typeof ApiVerify_emailIndexRouteImport
+      fullPath: '/api/verify_email'
+      preLoaderRoute: typeof ApiVerify_emailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/user/$id': {
@@ -197,13 +197,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiVerify_emailRoute: ApiVerify_emailRoute,
   AboutIndexRoute: AboutIndexRoute,
   Customer_careIndexRoute: Customer_careIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ApiUserIdRoute: ApiUserIdRoute,
-  ApiVerify_emailIndexRoute: ApiVerify_emailIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
