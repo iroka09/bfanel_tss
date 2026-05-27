@@ -4,7 +4,7 @@ import { queryOpayPaymentStatus } from "@/server/actions/opay_payment";
 
 
 
-export const Route = createFileRoute("/payment/success")({
+export const Route = createFileRoute("/payment/opay_success")({
   component: PaymentSuccess,
 });
 

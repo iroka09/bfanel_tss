@@ -26,7 +26,7 @@ const config = defineConfig({
     }),
     nitro(),
     viteReact(),
-    VitePWA({
+    /*VitePWA({
       registerType: 'autoUpdate',
       manifest: {
         name: 'B-Fanel Industries',
@@ -39,7 +39,7 @@ const config = defineConfig({
           { src: '/logo_low.png', sizes: '192x192', type: 'image/png' }
         ]
       }
-    })
+    })*/
   ]
 })
 

@@ -15,6 +15,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LearnIndexRouteImport } from './routes/learn/index'
 import { Route as Customer_careIndexRouteImport } from './routes/customer_care/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as PaymentOpay_successRouteImport } from './routes/payment/opay_success'
 import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 
@@ -48,6 +49,11 @@ const AboutIndexRoute = AboutIndexRouteImport.update({
   path: '/about/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentOpay_successRoute = PaymentOpay_successRouteImport.update({
+  id: '/payment/opay_success',
+  path: '/payment/opay_success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiVerify_emailRoute = ApiVerify_emailRouteImport.update({
   id: '/api/verify_email',
   path: '/api/verify_email',
@@ -62,6 +68,7 @@ const ApiUserIdRoute = ApiUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about': typeof AboutIndexRoute
   '/customer_care': typeof Customer_careIndexRoute
   '/learn': typeof LearnIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
   '/learn/': typeof LearnIndexRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_success'
     | '/about/'
     | '/customer_care/'
     | '/learn/'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_success'
     | '/about'
     | '/customer_care'
     | '/learn'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_success'
     | '/about/'
     | '/customer_care/'
     | '/learn/'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiVerify_emailRoute: typeof ApiVerify_emailRoute
+  PaymentOpay_successRoute: typeof PaymentOpay_successRoute
   AboutIndexRoute: typeof AboutIndexRoute
   Customer_careIndexRoute: typeof Customer_careIndexRoute
   LearnIndexRoute: typeof LearnIndexRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/opay_success': {
+      id: '/payment/opay_success'
+      path: '/payment/opay_success'
+      fullPath: '/payment/opay_success'
+      preLoaderRoute: typeof PaymentOpay_successRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/verify_email': {
       id: '/api/verify_email'
       path: '/api/verify_email'
@@ -198,6 +218,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiVerify_emailRoute: ApiVerify_emailRoute,
+  PaymentOpay_successRoute: PaymentOpay_successRoute,
   AboutIndexRoute: AboutIndexRoute,
   Customer_careIndexRoute: Customer_careIndexRoute,
   LearnIndexRoute: LearnIndexRoute,
