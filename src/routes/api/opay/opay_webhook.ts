@@ -5,10 +5,10 @@ import type { WebhookPayload } from "@/server/opay.types";
 
 
 
-function response(msg, config, err) {
-  console.log("webhook: Missing signature")
-  if (err) console.log("webhook err: ", err)
-  return new Response(msg, config)
+function response(msg, responseHeaders, err) {
+  if (err) console.log("webhook catche(err): ", err)
+  console.log(msg)
+  return new Response(msg, responseHeaders)
 }
 
 
