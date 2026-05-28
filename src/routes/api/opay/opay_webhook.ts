@@ -1,13 +1,11 @@
 
 import { createFileRoute } from "@tanstack/react-router";
-import { verifyWebhookSignature } from "@/server/opay.server";
-import type { WebhookPayload } from "@/server/opay.types";
 import { sha3_512 } from "js-sha3";
 // js-sha3 supports HMAC-SHA3-512 via createHmac
 
 
 
-export interface OPayCallbackPayload {
+interface OPayCallbackPayload {
   amount: string;
   channel: string;
   country: string;
@@ -27,28 +25,30 @@ export interface OPayCallbackPayload {
 
 
 
-export interface OPayWebhookBody {
+interface OPayWebhookBody {
   payload: OPayCallbackPayload;
   sha512: string;
   type: string;
 }
 
-export function verifyWebhookSignature(
+function verifyWebhookSignature(
   body: OPayWebhookBody,
   privateKey: string
 ): boolean {
-  const { payload, sha512: receivedSig } = body;
+  const { payload, sha512 } = body;
   // OPay's exact format — capital keys, Refunded as t/f, NO quotes on booleans
   const signString = `{Amount:"${payload.amount}",Currency:"${payload.currency}",Reference:"${payload.reference}",Refunded:${payload.refunded ? "t" : "f"},Status:"${payload.status}",Timestamp:"${payload.timestamp}",Token:"${payload.token ?? ""}",TransactionID:"${payload.transactionId}"}`;
   const hmac = sha3_512.hmac(privateKey, signString); // HMAC-SHA3-512
-  return hmac.toLowerCase() === receivedSig.toLowerCase();
+  console.log("hmac: ", hmac)
+  console.log("sha512: ", sha512)
+  return hmac.toLowerCase() === sha512.toLowerCase();
 }
 
 
 function response(msg, responseHeaders, err) {
   if (err) console.log("webhook catche(err): ", err)
   console.log(msg)
-  return response(msg, responseHeaders)
+  return new Response(msg, responseHeaders)
 }
 
 
@@ -60,8 +60,9 @@ export const Route = createFileRoute("/api/opay/opay_webhook")({
         request.headers.forEach((value, key) => {
           console.log(`${key} = ${value}`);
         });
+        let body: OPayWebhookBody
         try {
-          body = await request.json();
+          body = await request.json() as OPayWebhookBody
         } catch (e) {
           return response("Invalid JSON", { status: 400 });
         }
@@ -86,7 +87,7 @@ export const Route = createFileRoute("/api/opay/opay_webhook")({
           case "SUCCESS":
             // ✅ Mark order as paid in your DB
             // e.g. await db.orders.update({ reference }, { status: "paid", paidAt: new Date() })
-            console.log(`webhook: ✅ Payment SUCCESS — ref: ${reference}, amount: ₦${amount?.total}`);
+            console.log(`webhook: ✅ Payment SUCCESS — ref: ${reference}, amount: ₦${amount}`);
             break;
           case "FAIL":
           case "CLOSE":

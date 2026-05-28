@@ -20,18 +20,6 @@ export function opayHeaders(payload?: object) {
   };
 }
 
-/** Verify Opay sends the webhook to us (uses public key for webhook sig) */
-export function verifyWebhookSignature(
-  payload: object,
-  receivedSig: string
-): boolean {
-  const expected = crypto
-    .createHmac("sha512", PUBLIC_KEY)
-    .update(JSON.stringify(payload))
-    .digest("hex");
-  console.log("verifyWebhookSignature: ", expected, " === ", receivedSig)
-  return expected === receivedSig;
-}
 
 /** Unique order reference generator */
 export function generateRef(prefix = "TXN"): string {

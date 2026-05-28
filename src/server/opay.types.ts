@@ -1,6 +1,6 @@
 export interface CreateOrderPayload {
   amount: {
-    total: string; // e.g. "5000.00"
+    total: number; // e.g. "5000.00"
     currency: "NGN";
   };
   callbackUrl: string;
@@ -36,7 +36,7 @@ export interface CreateOrderResponse {
 }
 
 export interface WebhookPayload {
-  amount: { total: string; currency: string };
+  amount: { total: number; currency: string };
   country: string;
   reference: string;
   status: "SUCCESS" | "FAIL" | "PENDING" | "CLOSE";
