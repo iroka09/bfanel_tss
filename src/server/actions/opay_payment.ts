@@ -42,7 +42,7 @@ export const initPayment = createServerFn({ method: "POST" })
           currency: "EGP" // NGN or EGP
         },
         returnUrl: `${APP_URL}/payment/opay_success?ref=${reference}`,
-        callbackUrl: `${APP_URL}/api/opay/opay_webhook`,
+        callbackUrl: `https://bfanel.vercel.app/api/opay/opay_webhook`,
         cancelUrl: `${APP_URL}/payment/opay_cancel?ref=${reference}`,
         expireAt: 300,
         userInfo: {

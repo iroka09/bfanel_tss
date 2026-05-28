@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { initPayment } from "@/server/actions/opay_payment";
 import type { InitPaymentInput } from "@/server/actions/opay_payment";
 import { toast } from "sonner";
@@ -13,7 +13,6 @@ interface OpayButtonProps extends InitPaymentInput {
 export function OpayButton({ label = "Pay Now", ...paymentData }: OpayButtonProps) {
   const [isPending, startTransition] = useTransition();
   const handlePay = () => {
-    setError(null);
     startTransition(async () => {
       try {
         const result = await initPayment({ data: paymentData });
