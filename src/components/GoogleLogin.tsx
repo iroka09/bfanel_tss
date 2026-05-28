@@ -32,6 +32,5 @@ function GoogleOneTap() {
 export default function App(): ReactNode | null {
   const { isAuthenticated } = useAppSession()
   const pathname = useLocation({ select: x => x.pathname })
-  return (isAuthenticated || pathname === "/login") ? null : <GoogleOneTap signIn={signIn} />
-  return <GoogleOneTap />
+  return (isAuthenticated || pathname === "/login") ? null : <GoogleOneTap />
 }
