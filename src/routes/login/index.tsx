@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import { getSession } from "@/server/actions/session"
+import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,13 +13,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSession } from "@/server/actions/session"
-import { signIn } from '@/context/session';
-import { z } from "zod";
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
-
-
+import { veryCredentialWithGoogle } from '@/server/actions/veryCredentialWithGoogle';
+import { toast } from "sonner"
 
 
 const searchSchema = z.object({
@@ -27,8 +25,8 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute('/login/')({
   beforeLoad: async ({ location }) => {
+    console.log("location: ", location)
     const result = await getSession()
-    console.log("/login: ", location)
     if (result) throw redirect({ to: "/" })
   },
   validateSearch: searchSchema,
@@ -101,16 +99,18 @@ function LoginForm() {
       <div className="flex justify-center py-3">
         <GoogleLogin
           onSuccess={async (profile) => {
-            const decoded = jwtDecode(profile.credential);
-            console.log(decoded);
-            const result = await signIn({
-              oneTapLogin: {
-                name: decoded.name,
-                email: decoded.email,
-                picture: decoded.picture,
+            try {
+              const result = await veryCredentialWithGoogle({
+                data: { credential: profile.credential }
+              })
+              if (result.success) {
+                router.navigate({ to: redirect || "/", replace: true })
               }
-            })
-            if (result.success) router.navigate({ to: redirect || "/", replace: true })
+              else toast.error("Unable to login")
+            }
+            catch (e) {
+              toast.error(e.message)
+            }
           }}
           onError={() => {
             console.log('Login Failed');

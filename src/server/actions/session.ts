@@ -82,7 +82,7 @@ export const getUser = createServerFnWithPOST
 export const loginFn = createServerFnWithPOST
   .inputValidator((data: SignInInput) => data)
   .handler(async ({ data: _data, context }): Promise<AuthResult> | never => {
-    async function putToSessionAndReturnData(data) {
+    async function updateSessionAndReturnData(data) {
       const session = context.session
       const updatedSession = await session.update(data)
       return { success: true, session: updatedSession.data }
@@ -94,39 +94,45 @@ export const loginFn = createServerFnWithPOST
           password: z.string()
         })
           .parse(_data.credentials)
-        return await putToSessionAndReturnData(data)
+        return await updateSessionAndReturnData(data)
       }
       else if (_data.oneTapLogin) {
         const data = z.object({
+          userId: z.string(),
           name: z.string(),
           email: z.string().email(),
-          picture: z.string()
+          picture: z.string(),
+          isVerified: z.literal(true),
         }).strip() //(default), it strips unknown fields
           .parse(_data.oneTapLogin)
         // get user by email
         const [existingUser] = await db
           .select({
+            userId: users.userId,
             name: users.name,
             email: users.email,
             picture: users.picture,
+            isVerified: users.isVerified,
           })
           .from(users)
           .where(eq(users.email, data.email))
           .limit(1);
         // If found, return the existing user instead of inserting
         if (existingUser) {
-          return await putToSessionAndReturnData(existingUser)
+          return await updateSessionAndReturnData(existingUser)
         }
         // Email is new — insert the user
         const [newUser] = await db
           .insert(users)
           .values({
+            userId: data.sub,
             name: data.name,
             email: data.email,
             picture: data.picture,
+            isVerified: true,
           })
           .returning();
-        return await putToSessionAndReturnData(newUser)
+        return await updateSessionAndReturnData(newUser)
       }
       else throw Error("data error")
     }

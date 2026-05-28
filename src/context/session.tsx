@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, useCallback, useLayoutEffect } from "react";
+import { createContext, useContext, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter, redirect, useLocation } from "@tanstack/react-router";
 import { loginFn, logoutFn, getSession } from "@/server/actions/session";
@@ -24,10 +24,11 @@ type SessionProviderProps = {
 
 export let signIn = (data: SignInInput, redirect = false): Promise<AuthResult> | null => null;
 export let signOut = (arg: { redirect: false }): Promise<void> => null;
-let blank = () => null
-let unblank = () => null
+export let refreshSession = async () => null;
+export let blank = () => null
+export let unblank = () => null
 
-
+let x = 0
 export function SessionProvider({ initialSession, children }: SessionProviderProps) {
   const [session, setSession] = useState<SessionPayload | null>(initialSession);
   const [blanked, setBlanked] = useState(false);
@@ -65,24 +66,22 @@ export function SessionProvider({ initialSession, children }: SessionProviderPro
       return false
     }
   }, []);
-  const refresh = useCallback(async (): Promise<boolean> => {
-    try {
-      const session = await getSession();
-      setSession(session)
-      return true
-    } catch (e) {
-      console.error(e)
-      return false
-    }
+  const _refreshSession = useCallback(async () => {
+    await router.invalidate() //re-runs beforeLoad of __root
+    //  await router.load()
   }, []);
   useLayoutEffect(() => {
     signIn = _signIn;
     signOut = _signOut;
+    refreshSession = _refreshSession;
     blank = () => setBlanked(true)
     unblank = () => setBlanked(false)
   }, [])
+  useEffect(() => {
+    setSession(initialSession)
+  }, [initialSession])
   return (
-    <SessionContext.Provider value={{ session, isAuthenticated: session !== null, refresh }}>
+    <SessionContext.Provider value={{ session, isAuthenticated: session !== null }}>
       {blanked ? <div className="h-screen w-full"></div> : children}
     </SessionContext.Provider>
   );

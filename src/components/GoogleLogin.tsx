@@ -1,25 +1,21 @@
 
 import { useState, useEffect, type ReactNode } from "react"
-import { GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
-import { useAppSession, signIn } from '@/context/session';
-import { jwtDecode } from 'jwt-decode';
+import { useGoogleOneTapLogin } from '@react-oauth/google';
+import { useAppSession, refreshSession } from '@/context/session';
+import { veryCredentialWithGoogle } from '@/server/actions/veryCredentialWithGoogle';
 import { useLocation } from '@tanstack/react-router'
+
 
 
 function GoogleOneTap() {
   useGoogleOneTapLogin({
     onSuccess: async (profile) => {
-      //  console.log(profile)
-      const decoded = jwtDecode(profile.credential);
-      console.log(decoded);
-      const result = await signIn({
-        oneTapLogin: {
-          name: decoded.name,
-          email: decoded.email,
-          picture: decoded.picture,
-        }
+      const result = await veryCredentialWithGoogle({
+        data: { credential: profile.credential }
       })
-      console.log("result>>: ", result)
+      if (result.success) {
+        await refreshSession()
+      }
     },
     onError: () => {
       console.log('Login Failed');

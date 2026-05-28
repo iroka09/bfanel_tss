@@ -1,5 +1,5 @@
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import YouTube from "@/components/Youtube_video"
 import Faqs from "@/components/Faqs"
 import Expertise from "@/components/Expertise"
@@ -19,6 +19,7 @@ export const Route = createFileRoute('/')({
 ///hero_image.jpg
 function App() {
   // return (<h1>testing</h1>)
+  const router = useRouter()
   return (
     <main className="text-lg">
 
