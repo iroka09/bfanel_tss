@@ -16,6 +16,7 @@ import { Route as LearnIndexRouteImport } from './routes/learn/index'
 import { Route as Customer_careIndexRouteImport } from './routes/customer_care/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as PaymentOpay_successRouteImport } from './routes/payment/opay_success'
+import { Route as PaymentOpay_cancelRouteImport } from './routes/payment/opay_cancel'
 import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 import { Route as ApiOpayOpay_webhookRouteImport } from './routes/api/opay/opay_webhook'
@@ -55,6 +56,11 @@ const PaymentOpay_successRoute = PaymentOpay_successRouteImport.update({
   path: '/payment/opay_success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentOpay_cancelRoute = PaymentOpay_cancelRouteImport.update({
+  id: '/payment/opay_cancel',
+  path: '/payment/opay_cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiVerify_emailRoute = ApiVerify_emailRouteImport.update({
   id: '/api/verify_email',
   path: '/api/verify_email',
@@ -74,6 +80,7 @@ const ApiOpayOpay_webhookRoute = ApiOpayOpay_webhookRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about': typeof AboutIndexRoute
   '/customer_care': typeof Customer_careIndexRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
+  '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
   '/about/': typeof AboutIndexRoute
   '/customer_care/': typeof Customer_careIndexRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_cancel'
     | '/payment/opay_success'
     | '/about/'
     | '/customer_care/'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_cancel'
     | '/payment/opay_success'
     | '/about'
     | '/customer_care'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/api/verify_email'
+    | '/payment/opay_cancel'
     | '/payment/opay_success'
     | '/about/'
     | '/customer_care/'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiVerify_emailRoute: typeof ApiVerify_emailRoute
+  PaymentOpay_cancelRoute: typeof PaymentOpay_cancelRoute
   PaymentOpay_successRoute: typeof PaymentOpay_successRoute
   AboutIndexRoute: typeof AboutIndexRoute
   Customer_careIndexRoute: typeof Customer_careIndexRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentOpay_successRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/opay_cancel': {
+      id: '/payment/opay_cancel'
+      path: '/payment/opay_cancel'
+      fullPath: '/payment/opay_cancel'
+      preLoaderRoute: typeof PaymentOpay_cancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/verify_email': {
       id: '/api/verify_email'
       path: '/api/verify_email'
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiVerify_emailRoute: ApiVerify_emailRoute,
+  PaymentOpay_cancelRoute: PaymentOpay_cancelRoute,
   PaymentOpay_successRoute: PaymentOpay_successRoute,
   AboutIndexRoute: AboutIndexRoute,
   Customer_careIndexRoute: Customer_careIndexRoute,
