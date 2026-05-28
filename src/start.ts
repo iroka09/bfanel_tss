@@ -3,7 +3,6 @@ import { createStart, createMiddleware } from '@tanstack/react-start'
 
 
 const putUrlToContext = createMiddleware().server(async ({ next, request, context }) => {
-  console.log("putUrlToContext", context)
   const url = new URL(request.url)
   return await next({
     context: { url }

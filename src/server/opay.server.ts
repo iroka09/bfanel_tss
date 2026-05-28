@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
-export const OPAY_BASE_URL = process.env.OPAY_BASE_URL!;
-export const MERCHANT_ID = process.env.OPAY_MERCHANT_ID!;
+
+const MERCHANT_ID = process.env.OPAY_MERCHANT_ID!;
 const PRIVATE_KEY = process.env.OPAY_PRIVATE_KEY!;
 const PUBLIC_KEY = process.env.OPAY_PUBLIC_KEY!;
 
@@ -14,9 +14,9 @@ export function signPayload(body: object): string {
 /** Headers required on every Opay request */
 export function opayHeaders(payload?: object) {
   return {
-    "Content-Type": "application/json",
     MerchantId: MERCHANT_ID,
-    Authorization: `Bearer ${body ? signPayload(payload) : PUBLIC_KEY}`, // signed payload is for querying payment status while PUBLIC_KEY is for creating new order
+    Authorization: `Bearer ${payload ? signPayload(payload) : PUBLIC_KEY}`, // signed payload is for querying payment status while PUBLIC_KEY is for creating new order
+    "Content-Type": "application/json",
   };
 }
 
@@ -29,6 +29,7 @@ export function verifyWebhookSignature(
     .createHmac("sha512", PUBLIC_KEY)
     .update(JSON.stringify(payload))
     .digest("hex");
+  console.log("verifyWebhookSignature: ", expected, " === ", receivedSig)
   return expected === receivedSig;
 }
 

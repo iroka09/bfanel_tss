@@ -22,7 +22,10 @@ function PaymentSuccess() {
       if (s === "SUCCESS") setStatus("success");
       else if (s === "PENDING") setStatus("pending");
       else setStatus("failed");
-    }).catch(() => setStatus("failed"));
+    }).catch((e) => {
+      setStatus("failed")
+      console.log(e)
+    });
   }, [ref]);
 
   return (

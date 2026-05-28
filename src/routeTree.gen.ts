@@ -18,6 +18,7 @@ import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as PaymentOpay_successRouteImport } from './routes/payment/opay_success'
 import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
+import { Route as ApiOpayOpay_webhookRouteImport } from './routes/api/opay/opay_webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const ApiUserIdRoute = ApiUserIdRouteImport.update({
   path: '/api/user/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOpayOpay_webhookRoute = ApiOpayOpay_webhookRouteImport.update({
+  id: '/api/opay/opay_webhook',
+  path: '/api/opay/opay_webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
+  '/api/opay/opay_webhook': typeof ApiOpayOpay_webhookRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/learn': typeof LearnIndexRoute
   '/login': typeof LoginIndexRoute
   '/profile': typeof ProfileIndexRoute
+  '/api/opay/opay_webhook': typeof ApiOpayOpay_webhookRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/learn/': typeof LearnIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
+  '/api/opay/opay_webhook': typeof ApiOpayOpay_webhookRoute
   '/api/user/$id': typeof ApiUserIdRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/login/'
     | '/profile/'
+    | '/api/opay/opay_webhook'
     | '/api/user/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/login'
     | '/profile'
+    | '/api/opay/opay_webhook'
     | '/api/user/$id'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/login/'
     | '/profile/'
+    | '/api/opay/opay_webhook'
     | '/api/user/$id'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   LearnIndexRoute: typeof LearnIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
+  ApiOpayOpay_webhookRoute: typeof ApiOpayOpay_webhookRoute
   ApiUserIdRoute: typeof ApiUserIdRoute
 }
 
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/opay/opay_webhook': {
+      id: '/api/opay/opay_webhook'
+      path: '/api/opay/opay_webhook'
+      fullPath: '/api/opay/opay_webhook'
+      preLoaderRoute: typeof ApiOpayOpay_webhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearnIndexRoute: LearnIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
+  ApiOpayOpay_webhookRoute: ApiOpayOpay_webhookRoute,
   ApiUserIdRoute: ApiUserIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -10,6 +10,7 @@ import Events from "@/components/Events"
 import { MdInfo } from "react-icons/md";
 import GoogleLogin from "@/components/GoogleLogin"
 import Footer from "@/components/Footer"
+import PaymentsWrapper from "@/components/PaymentsWrapper"
 import { Toaster } from "@/components/ui/sonner"
 import { getSession } from '@/server/actions/session'
 import Providers from '@/context/providers'
@@ -64,6 +65,7 @@ function RootDocument({ children }: PropsWithChildren): ReactNode {
           <Header />
           {children}
           <Footer />
+          <PaymentsWrapper />
           <GoogleLogin />
           <Toaster />
           <DevTools />

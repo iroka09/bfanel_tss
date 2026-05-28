@@ -26,7 +26,8 @@ const config = defineConfig({
     }),
     nitro(),
     viteReact(),
-    /*VitePWA({
+    //this makes browser to install the website as mobile app
+    VitePWA({
       registerType: 'autoUpdate',
       manifest: {
         name: 'B-Fanel Industries',
@@ -39,7 +40,7 @@ const config = defineConfig({
           { src: '/logo_low.png', sizes: '192x192', type: 'image/png' }
         ]
       }
-    })*/
+    })
   ]
 })
 

@@ -1,17 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
-  OPAY_BASE_URL,
   generateRef,
   opayHeaders,
-} from "@/lib/opay.server";
-import type { CreateOrderPayload, CreateOrderResponse } from "~/lib/opay.types";
-
+} from "@/server/opay.server";
+import type { CreateOrderPayload, CreateOrderResponse } from "~/server/opay.types";
 
 
 
 const InitPaymentSchema = z.object({
-  amountInKobo: z.number().positive(), // pass amount in kobo, e.g. 500000 = ₦5000
+  amount: z.string(),
   productId: z.string().min(1),
   productDescription: z.string().min(1),
   userEmail: z.string().email(),
@@ -20,64 +18,76 @@ const InitPaymentSchema = z.object({
   userMobile: z.string().min(10),
 });
 
-
-const isDev = process.env.NODE_ENV === "development"
-
-
 export type InitPaymentInput = z.infer<typeof InitPaymentSchema>;
 
 
+const isDev = process.env.NODE_ENV === "development"
+const OPAY_BASE_URL: string = process.env.OPAY_BASE_URL as string;
 
 
-export const initOpayPayment = createServerFn({ method: "POST" })
+
+export const initPayment = createServerFn({ method: "POST" })
   .inputValidator(InitPaymentSchema)
   .handler(async ({ data, context: { url } }) => {
-    const APP_URL = isDev ? "http://localhost:3000" : url.origin;
-    const reference = generateRef("BFANEL");
+    try {
+      const APP_URL = isDev ? "http://localhost:3000" : url.origin;
+      const reference = generateRef("BFANEL");
+      // console.log(OPAY_BASE_URL)
+      const body: CreateOrderPayload = {
+        displayName: "BFANEL PVC PIPE INDUSTRY",
+        country: "EG", // NG or EG
+        reference,
+        amount: {
+          total: Number(data.amount),
+          currency: "EGP" // NGN or EGP
+        },
+        returnUrl: `${APP_URL}/payment/opay_success?ref=${reference}`,
+        callbackUrl: `${APP_URL}/api/opay/opay_webhook`,
+        cancelUrl: `${APP_URL}/payment/opay_cancel?ref=${reference}`,
+        expireAt: 300,
+        userInfo: {
+          userEmail: data.userEmail,
+          userId: data.userId,
+          userMobile: data.userMobile,
+          userName: data.userName
+        },
+        productList: [
+          {
+            productId: data.productId,
+            name: "PVC Pipe",
+            description: data.productDescription,
+            price: 13000,
+            quantity: 2,
+            imageUrl: `${APP_URL}/conduit_pipes.jpg`
+          }
+        ],
+        // payMethod: "BankCard"
+      };
 
-    // Opay expects amount as a decimal string in Naira
-    const nairaAmount = (data.amountInKobo / 100).toFixed(2);
+      const res = await fetch(`${OPAY_BASE_URL}/api/v1/international/cashier/create`, {
+        method: "POST",
+        headers: opayHeaders(),
+        body: JSON.stringify(body),
+      }).catch(e => {
+        console.log(e)
+        throw e
+      });
 
-    const body: CreateOrderPayload = {
-      amount: { total: nairaAmount, currency: "NGN" },
-      callbackUrl: `${APP_URL}/api/opay/webhook`,
-      cancelUrl: `${APP_URL}/payment/failed?ref=${reference}`,
-      country: "NG",
-      productList: {
-        productId: data.productId,
-        description: data.productDescription,
-      },
-      reference,
-      returnUrl: `${APP_URL}/payment/success?ref=${reference}`,
-      userInfo: {
-        userEmail: data.userEmail,
-        userId: data.userId,
-        userName: data.userName,
-        userMobile: data.userMobile,
-      },
-      expireAt: 30,
-    };
+      if (!res.ok) {
+        throw new Error(`Opay API error: ${res.status} ${res.statusText}`);
+      }
 
-    const res = await fetch(`${OPAY_BASE_URL}/api/v1/international/cashier/create`, {
-      method: "POST",
-      headers: opayHeaders(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Opay API error: ${res.status} ${res.statusText}`);
+      const result: CreateOrderResponse = await res.json();
+      console.log("order cashier result: ", result)
+      if (result.code !== "00000" || !result.data?.cashierUrl) {
+        throw new Error(result.message ?? "Failed to create Opay order");
+      }
+      return result
     }
-
-    const result: CreateOrderResponse = await res.json();
-
-    if (result.code !== "00000" || !result.data?.cashierUrl) {
-      throw new Error(result.message ?? "Failed to create Opay order");
+    catch (e) {
+      console.log(e)
+      throw Error("Something went wrong.")
     }
-
-    return {
-      cashierUrl: result.data.cashierUrl,
-      reference: result.data.reference,
-    };
   });
 
 

@@ -25,7 +25,6 @@ function useSessionWrapper() {
 
 
 export const putSessionToContext = createMiddleware().server(async ({ next, context }) => {
-  console.log("putSessionToContext: ", context)
   const session = await useSessionWrapper()
   return await next({
     context: { session }

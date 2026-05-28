@@ -18,15 +18,15 @@ import { cn } from "@/lib/utils"
 function Wrapper({ children, isHome, ...props }: PropsWithChildren) {
   if (!isHome) return children
   return (
-   
-      children
-  
+
+    children
+
   )
 }
 
 
 export default function App(): ReactNode {
-  const pinned = useHeadroom({ fixedAt: 120 })
+  const pinned = useHeadroom({ fixedAt: 200 })
   const { session, isAuthenticated } = useAppSession()
   const pathname = useLocation({ select: loc => loc.pathname })
   const isHome = pathname === "/"
