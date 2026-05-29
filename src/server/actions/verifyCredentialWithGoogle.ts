@@ -8,7 +8,7 @@ import z from "zod"
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
-export const veryCredentialWithGoogle = createServerFn({ method: "POST" })
+export const verifyCredentialWithGoogle = createServerFn({ method: "POST" })
   .inputValidator(z.object({ credential: z.string().min(10) }))
   .handler(async ({ data: { credential } }): Promise<{ success: boolean } | null> => {
     try {

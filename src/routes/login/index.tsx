@@ -5,17 +5,12 @@ import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleLogin } from '@react-oauth/google';
-import { veryCredentialWithGoogle } from '@/server/actions/veryCredentialWithGoogle';
+import { verifyCredentialWithGoogle } from '@/server/actions/verifyCredentialWithGoogle';
 import { toast } from "sonner"
+
+
 
 
 const searchSchema = z.object({
@@ -23,9 +18,10 @@ const searchSchema = z.object({
 });
 
 
+
 export const Route = createFileRoute('/login/')({
   beforeLoad: async ({ location }) => {
-    console.log("location: ", location)
+    // console.log("location: ", location)
     const result = await getSession()
     if (result) throw redirect({ to: "/" })
   },
@@ -100,7 +96,7 @@ function LoginForm() {
         <GoogleLogin
           onSuccess={async (profile) => {
             try {
-              const result = await veryCredentialWithGoogle({
+              const result = await verifyCredentialWithGoogle({
                 data: { credential: profile.credential }
               })
               if (result.success) {
