@@ -1,7 +1,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
-import pkg from "js-sha3";
-const { sha3_512 } = pkg;
+import { createHmac } from "node:crypto"
+
 
 
 
@@ -38,7 +38,9 @@ function verifyWebhookSignature(
   const { payload, sha512 } = body;
   // OPay's exact format — capital keys, Refunded as t/f, NO quotes on booleans
   const signString = `{Amount:"${payload.amount}",Currency:"${payload.currency}",Reference:"${payload.reference}",Refunded:${payload.refunded ? "t" : "f"},Status:"${payload.status}",Timestamp:"${payload.timestamp}",Token:"${payload.token ?? ""}",TransactionID:"${payload.transactionId}"}`;
-  const hmac = sha3_512.hmac(privateKey, signString); // HMAC-SHA3-512
+  const hmac = createHmac("sha3-512", privateKey)
+    .update(signString)
+    .digest("hex")
   console.log("hmac: ", hmac)
   console.log("sha512: ", sha512)
   return hmac.toLowerCase() === sha512.toLowerCase();
