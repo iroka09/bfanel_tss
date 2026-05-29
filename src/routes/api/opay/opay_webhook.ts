@@ -1,7 +1,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
-import { sha3_512 } from "js-sha3";
-// js-sha3 supports HMAC-SHA3-512 via createHmac
+import pkg from "js-sha3";
+const { sha3_512 } = pkg;
 
 
 

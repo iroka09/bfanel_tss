@@ -23,7 +23,7 @@ const updateProfileSchema = z.object({
 
 
 export const updateProfile = createServerFn({ method: 'POST' })
-  .inputValidator(updateProfileInputType)
+  .inputValidator(updateProfileSchema)
   .handler(async ({ data }) => {
     const user = await getUser()
     if (!user) throw new Error('Unauthorized')

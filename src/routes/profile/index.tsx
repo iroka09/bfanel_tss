@@ -12,6 +12,9 @@ import {
   Users, UserCheck, BadgeCheck, CalendarDays,
   LogOut, Link as LinkIcon, Pencil, X,
 } from 'lucide-react'
+import { ProfileSkeleton } from './ProfileSkeleton.tsx'
+
+
 
 
 
@@ -24,6 +27,8 @@ export const Route = createFileRoute('/profile/')({
     return user
   },
   component: Profile,
+  pendingComponent: ProfileSkeleton,
+  pendingMinMs: 10000, // once shown, keep it for at least 500ms
 })
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
@@ -115,9 +120,8 @@ function Field({
       <div className="relative">
         {prefix && (
           <span
-            className={`absolute left-[11px] text-slate-600 text-[13px] font-semibold pointer-events-none ${
-              textarea ? 'top-[11px]' : 'top-1/2 -translate-y-1/2'
-            }`}
+            className={`absolute left-[11px] text-slate-600 text-[13px] font-semibold pointer-events-none ${textarea ? 'top-[11px]' : 'top-1/2 -translate-y-1/2'
+              }`}
           >
             {prefix}
           </span>
@@ -172,8 +176,8 @@ function EditProfileDrawer({ user }: { user: UserData }) {
 
   const set =
     (field: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-      setForm(prev => ({ ...prev, [field]: e.target.value }))
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+        setForm(prev => ({ ...prev, [field]: e.target.value }))
 
   const toNull = (s: string) => (s.trim() === '' ? null : s.trim())
 
@@ -384,11 +388,10 @@ function EditProfileDrawer({ user }: { user: UserData }) {
             <button
               onClick={handleSubmit}
               disabled={isPending}
-              className={`w-full py-[13px] rounded-[14px] border-none text-white text-[15px] font-extrabold font-[inherit] tracking-[0.02em] transition-all duration-200 ${
-                isPending
-                  ? 'bg-orange-500/40 cursor-not-allowed'
-                  : 'bg-gradient-to-br from-orange-500 to-orange-600 cursor-pointer shadow-[0_4px_20px_rgba(249,115,22,0.35)]'
-              }`}
+              className={`w-full py-[13px] rounded-[14px] border-none text-white text-[15px] font-extrabold font-[inherit] tracking-[0.02em] transition-all duration-200 ${isPending
+                ? 'bg-orange-500/40 cursor-not-allowed'
+                : 'bg-gradient-to-br from-orange-500 to-orange-600 cursor-pointer shadow-[0_4px_20px_rgba(249,115,22,0.35)]'
+                }`}
             >
               {isPending ? 'Saving…' : 'Save Changes'}
             </button>
@@ -540,11 +543,10 @@ function Profile() {
               <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-600 mb-1">Status</p>
               <div className="flex items-center gap-1.5">
                 <div
-                  className={`w-2 h-2 rounded-full ${
-                    user.isActive
-                      ? 'bg-green-400 shadow-[0_0_6px_#4ade80]'
-                      : 'bg-red-400 shadow-[0_0_6px_#f87171]'
-                  }`}
+                  className={`w-2 h-2 rounded-full ${user.isActive
+                    ? 'bg-green-400 shadow-[0_0_6px_#4ade80]'
+                    : 'bg-red-400 shadow-[0_0_6px_#f87171]'
+                    }`}
                 />
                 <p className={`text-sm font-bold ${user.isActive ? 'text-green-400' : 'text-red-400'}`}>
                   {user.isActive ? 'Active' : 'Inactive'}
