@@ -54,7 +54,7 @@ export const getSession = createServerFnWithGET
 // ====  GET USER ======
 export const getUser = createServerFnWithPOST
   .inputValidator((data?: { email: string }) => data)
-  .handler(async ({ data, context }): Promise<User> => {
+  .handler(async ({ data, context: { session, headers } }): Promise<User> => {
     if (data) {
       // get another person's profile
       z.string().email().parse(data.email)
@@ -66,12 +66,16 @@ export const getUser = createServerFnWithPOST
     }
     else {
       // get user's profile
-      const sessionData = context.session.data
+      const sessionData = session.data
       z.string().email().parse(sessionData.email)
       const [user] = await db
         .select()
         .from(users)
         .where(eq(users.email, sessionData.email))
+      if (!user) {
+        await logoutFn()
+        throw redirect({ to: "/login", replace: true, search: { redirect: headers.referer } })
+      }
       return user
     }
   })

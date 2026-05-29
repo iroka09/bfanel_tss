@@ -32,6 +32,42 @@ interface OPayWebhookBody {
 }
 
 
+/*
+
+2026-05-29 15:17:08.381 [info] webhook:  {
+  payload: {
+    country: 'EG',
+    amount: '11000',
+    instrumentType: 'BankCard',
+    payInstrumentAccount: '512345****0008',
+    fee: '548',
+    channel: 'Web',
+    errorCode: '',
+    feeCurrency: 'EGP',
+    displayedFailure: '',
+    transactionId: '260529148185838480283',
+    errorMsg: '',
+    token: '260529148185838480283',
+    reference: 'BFANEL_1780067659236_1b5e2e61',
+    updated_at: '2026-05-29T15:16:50Z',
+    currency: 'EGP',
+    refunded: false,
+    status: 'SUCCESS',
+    timestamp: '2026-05-29T15:16:50Z'
+  },
+  sha512: '1740c1596f1386d3ee064116c19975b54e9a86107387a6fbcdb83d9ac9bf8b45ac1ba6385b92ed16853510f0f2c7104ef2f5547099cf9d1cd0fe2986dab2d65e',
+  type: 'transaction-status'
+}
+2026-05-29 15:17:08.382 [info] hmac:  630635475e2f001fc4cae6a7589c8c04494e68e8c4bc8c09d6620db1faa047f6fce4d16d0804276a5a13bc6d0302104b6e464f5bc76da636bcc912abd64287d1
+2026-05-29 15:17:08.382 [info] hmac2:  935f46230b45d98a383d500f848f9b084291303a6f3ea54682ab02a9347a5af7c3c14dcadfc85c36b6dd1a20e88247f2b7b48a62289c4ed26b42abab41679056
+2026-05-29 15:17:08.382 [info] sha512:  1740c1596f1386d3ee064116c19975b54e9a86107387a6fbcdb83d9ac9bf8b45ac1ba6385b92ed16853510f0f2c7104ef2f5547099cf9d1cd0fe2986dab2d65e
+2026-05-29 15:17:08.382 [info] Invalid signature
+
+*/
+
+
+
+
 const ignoreVerification = false
 
 function verifyWebhookSignature(
