@@ -19,7 +19,7 @@
   --color-secondary-fixed: var(--secondary-fixed);
   --color-secondary-light: var(--secondary-light);
   --color-secondary-dark: var(--secondary-dark);
-
+  
   /* ── Navy (Dark Blue – the "S" letter color) ── */
   --color-navy-50: #eef0f5;
   --color-navy-100: #d5dae6;
@@ -32,7 +32,7 @@
   --color-navy-800: #1e2840;
   --color-navy-900: #141b2c;
   --color-navy-950: #0b0f18;
-
+  
   /* ── Mist (Cool Gray – the background color) ── */
   --color-mist-50: #f5f5f7;
   --color-mist-100: #eaebee;
@@ -45,7 +45,7 @@
   --color-mist-800: #54586a;
   --color-mist-900: #383b4a;
   --color-mist-950: #1e2030;
-
+  
 }
 
 :root {
@@ -135,7 +135,7 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-
+  
 }
 
 .dark {
@@ -170,21 +170,23 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-
+  
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-
+    
   }
+  
   body {
     @apply bg-background text-foreground;
-
+    
   }
+  
   html {
     @apply font-sans;
-
+    
   }
-
+  
 }

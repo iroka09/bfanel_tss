@@ -10,7 +10,7 @@ export default function PaymentsWrapper(props) {
   return (
     <div className="fixed w-full bottom-0 px-5 py-1 z-[100] bg-white/10 backdrop-blur-[2px] sm:max-w-[400px] sm:rounded-lg">
       <OpayButton
-        amount="26000"
+        amount="11000"
         productId="prod_123"
         productDescription="Premium subscription"
         userEmail="user@example.com"

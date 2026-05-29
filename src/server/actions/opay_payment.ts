@@ -8,7 +8,7 @@ import type { CreateOrderPayload, CreateOrderResponse } from "~/server/opay.type
 
 
 
-const InitPaymentSchema = z.object({
+const initPaymentSchema = z.object({
   amount: z.string(),
   productId: z.string().min(1),
   productDescription: z.string().min(1),
@@ -18,7 +18,7 @@ const InitPaymentSchema = z.object({
   userMobile: z.string().min(10),
 });
 
-export type InitPaymentInput = z.infer<typeof InitPaymentSchema>;
+export type InitPaymentInput = z.infer<typeof initPaymentSchema>;
 
 
 const isDev = process.env.NODE_ENV === "development"
@@ -27,7 +27,7 @@ const OPAY_BASE_URL: string = process.env.OPAY_BASE_URL as string;
 
 
 export const initPayment = createServerFn({ method: "POST" })
-  .inputValidator(InitPaymentSchema)
+  .inputValidator(initPaymentSchema)
   .handler(async ({ data, context: { url } }) => {
     try {
       const APP_URL = isDev ? "http://localhost:3000" : url.origin;
@@ -38,7 +38,7 @@ export const initPayment = createServerFn({ method: "POST" })
         country: "EG", // NG or EG
         reference,
         amount: {
-          total: Number(data.amount),
+          total: data.amount,
           currency: "EGP" // NGN or EGP
         },
         returnUrl: `${APP_URL}/payment/opay_success?ref=${reference}`,

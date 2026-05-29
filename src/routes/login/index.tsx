@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { GoogleLogin } from '@react-oauth/google';
 import { verifyCredentialWithGoogle } from '@/server/actions/verifyCredentialWithGoogle';
 import { toast } from "sonner"
-
+import { generateText } from 'ai';
 
 
 
@@ -25,6 +25,18 @@ export const Route = createFileRoute('/login/')({
     const result = await getSession()
     if (result) throw redirect({ to: "/" })
   },
+  /*loader: async () => {
+    try {
+      const { text } = await generateText({
+        model: 'openai/gpt-5.2',
+        prompt: 'What do you understand by current affairs.',
+      });
+      console.log(text)
+    }
+    catch (e) {
+      console.log(e)
+    }
+  },*/
   validateSearch: searchSchema,
   component: LoginForm,
 })

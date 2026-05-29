@@ -51,10 +51,10 @@ export const Route = createFileRoute('/learn/')({
   staleTime: 1000 * 60, // 60 seconds
   preloadStaleTime: 1000 * 20, // 20 seconds
   gcTime: 1000 * 60 * 10,
-  //preloadMaxAge: 1000 * 60,
-  //shouldReload: true,
   pendingMs: 0,
   pendingMinMs: 1000 * 5,
+  //shouldReload: true,
+  //preloadMaxAge: 1000 * 60,
   pendingComponent: () => (
     <div className="skeleton">loading...</div>
   ),

@@ -11,14 +11,6 @@
  * If using Tailwind v4 @theme, also add:
  *   @theme { --animate-shimmer: shimmer 1.8s infinite linear; }
  *   Then swap `animate-[shimmer_1.8s_infinite_linear]` → `animate-shimmer` everywhere.
- *
- * Usage in your route:
- *   import { ProfileSkeleton } from '@/components/ProfileSkeleton'
- *
- *   export const Route = createFileRoute('/profile/')({
- *     pendingComponent: ProfileSkeleton,
- *     ...
- *   })
  */
 
 /* ─── shimmer class string (reused on every bone) ─────────────────── */

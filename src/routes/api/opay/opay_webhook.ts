@@ -32,7 +32,7 @@ interface OPayWebhookBody {
 }
 
 
-const ignoreVerification = true
+const ignoreVerification = false
 
 function verifyWebhookSignature(
   body: OPayWebhookBody,
@@ -52,7 +52,7 @@ function verifyWebhookSignature(
 
 
 function response(msg, responseHeaders, err) {
-  if (err) console.log("webhook catche(err): ", err)
+  if (err) console.log("webhook catch(err): ", err)
   console.log(msg)
   return new Response(msg, responseHeaders)
 }

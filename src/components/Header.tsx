@@ -53,7 +53,7 @@ export default function App(): ReactNode {
         </div>
         <div className="flex gap-3 items-center">
           {isAuthenticated && (
-            <Link to="/profile">
+            <Link to="/profile" preload="intent">
               <img src={session.picture} className="w-[30px] min-w-[30px] aspect-square rounded-full border-2" alt="avatar" />
             </Link>
           )}

@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileSkeletonRouteImport } from './routes/ProfileSkeleton'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
@@ -22,11 +21,6 @@ import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
 import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 import { Route as ApiOpayOpay_webhookRouteImport } from './routes/api/opay/opay_webhook'
 
-const ProfileSkeletonRoute = ProfileSkeletonRouteImport.update({
-  id: '/ProfileSkeleton',
-  path: '/ProfileSkeleton',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -85,7 +79,6 @@ const ApiOpayOpay_webhookRoute = ApiOpayOpay_webhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/ProfileSkeleton': typeof ProfileSkeletonRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
   '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
@@ -99,7 +92,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/ProfileSkeleton': typeof ProfileSkeletonRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
   '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
@@ -114,7 +106,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/ProfileSkeleton': typeof ProfileSkeletonRoute
   '/api/verify_email': typeof ApiVerify_emailRoute
   '/payment/opay_cancel': typeof PaymentOpay_cancelRoute
   '/payment/opay_success': typeof PaymentOpay_successRoute
@@ -130,7 +121,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/ProfileSkeleton'
     | '/api/verify_email'
     | '/payment/opay_cancel'
     | '/payment/opay_success'
@@ -144,7 +134,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/ProfileSkeleton'
     | '/api/verify_email'
     | '/payment/opay_cancel'
     | '/payment/opay_success'
@@ -158,7 +147,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/ProfileSkeleton'
     | '/api/verify_email'
     | '/payment/opay_cancel'
     | '/payment/opay_success'
@@ -173,7 +161,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProfileSkeletonRoute: typeof ProfileSkeletonRoute
   ApiVerify_emailRoute: typeof ApiVerify_emailRoute
   PaymentOpay_cancelRoute: typeof PaymentOpay_cancelRoute
   PaymentOpay_successRoute: typeof PaymentOpay_successRoute
@@ -188,13 +175,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/ProfileSkeleton': {
-      id: '/ProfileSkeleton'
-      path: '/ProfileSkeleton'
-      fullPath: '/ProfileSkeleton'
-      preLoaderRoute: typeof ProfileSkeletonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -277,7 +257,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProfileSkeletonRoute: ProfileSkeletonRoute,
   ApiVerify_emailRoute: ApiVerify_emailRoute,
   PaymentOpay_cancelRoute: PaymentOpay_cancelRoute,
   PaymentOpay_successRoute: PaymentOpay_successRoute,

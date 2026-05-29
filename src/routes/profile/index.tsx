@@ -1,6 +1,5 @@
-import React from 'react'
-import type { ReactNode } from 'react'
-import { useState, useTransition } from 'react'
+
+import React, { useState, useTransition, type ReactNode } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Drawer } from 'vaul'
 import { signOut } from '@/context/session'
@@ -12,7 +11,7 @@ import {
   Users, UserCheck, BadgeCheck, CalendarDays,
   LogOut, Link as LinkIcon, Pencil, X,
 } from 'lucide-react'
-import { ProfileSkeleton } from './ProfileSkeleton.tsx'
+import ProfileSkeleton from './-ProfileSkeleton.tsx'
 
 
 
@@ -20,24 +19,33 @@ import { ProfileSkeleton } from './ProfileSkeleton.tsx'
 
 export const Route = createFileRoute('/profile/')({
   beforeLoad: async ({ location }) => {
+    console.log("beforeLoad....")
     await ensureSession({ data: { redirect: location.href } })
   },
   loader: async () => {
+    console.log("loader....")
     const user = await getUser()
     return user
   },
-  component: Profile,
+  staleTime: 1000 * 60, // 60 seconds
+  preloadStaleTime: 1000 * 20, // 20 seconds
+  gcTime: 1000 * 60 * 10,//stale time after unmount
+  pendingMs: 0,//delay before pendingComponent appears
+  pendingMinMs: 1000 * 5,//if pending shows, the min time for it to be visible
   pendingComponent: ProfileSkeleton,
-  pendingMinMs: 10000, // once shown, keep it for at least 500ms
+  component: Profile,
 })
 
-/* ─── helpers ──────────────────────────────────────────────────────── */
+
+
 
 function formatDate(date: Date | string) {
   return new Date(date).toLocaleDateString('en-NG', {
     year: 'numeric', month: 'long', day: 'numeric',
   })
 }
+
+
 
 function StatCard({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
   return (
@@ -55,6 +63,8 @@ function StatCard({ label, value, icon }: { label: string; value: number; icon: 
     </div>
   )
 }
+
+
 
 function SocialLink({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
   return (
@@ -85,6 +95,8 @@ function SocialLink({ href, icon, label }: { href: string; icon: ReactNode; labe
   )
 }
 
+
+
 function InfoBadge({ icon, text }: { icon: ReactNode; text: string }) {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-slate-300 bg-white/[0.06] border border-white/[0.08]">
@@ -94,7 +106,8 @@ function InfoBadge({ icon, text }: { icon: ReactNode; text: string }) {
   )
 }
 
-/* ─── EditProfileDrawer ─────────────────────────────────────────────── */
+
+
 
 type UserData = Awaited<ReturnType<typeof getUser>>
 
@@ -103,6 +116,8 @@ const inputCls =
 
 const labelCls =
   'block text-[11px] font-bold uppercase tracking-[0.1em] text-slate-500 mb-[6px]'
+
+
 
 function Field({
   label,
@@ -143,6 +158,8 @@ function Field({
   )
 }
 
+
+
 function SectionHeading({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center gap-2 mb-3">
@@ -153,6 +170,8 @@ function SectionHeading({ children }: { children: ReactNode }) {
     </div>
   )
 }
+
+
 
 function EditProfileDrawer({ user }: { user: UserData }) {
   const router = useRouter()
@@ -208,7 +227,6 @@ function EditProfileDrawer({ user }: { user: UserData }) {
       }
     })
   }
-
   return (
     <Drawer.Root open={open} onOpenChange={setOpen} shouldScaleBackground>
       {/* Trigger */}
@@ -402,11 +420,11 @@ function EditProfileDrawer({ user }: { user: UserData }) {
   )
 }
 
-/* ─── main Profile component ─────────────────────────────────────────── */
+
+
 
 function Profile() {
   const user = Route.useLoaderData()
-
   return (
     <div className="min-h-screen font-[DM_Sans,sans-serif] text-white bg-[#080d18] [background:radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(249,115,22,0.12)_0%,transparent_60%),radial-gradient(ellipse_60%_50%_at_80%_80%,rgba(30,40,64,0.8)_0%,transparent_70%),#080d18]">
 
