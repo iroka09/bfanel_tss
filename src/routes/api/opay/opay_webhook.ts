@@ -52,35 +52,43 @@ function response(msg, responseHeaders, err) {
 }
 
 
+//x-real-ip = 119.13.76.156 // opay's ip address
 export const Route = createFileRoute("/api/opay/opay_webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        console.log(`HEADERS`);
-        request.headers.forEach((value, key) => {
-          console.log(`${key} = ${value}`);
-        });
+
+        //PROTECTION 1
+        const OPAY_IP = request.headers.get("x-real-ip")
+        if (OPAY_IP !== "119.13.76.156") {
+          return response("Request not trusted", { status: 400 });
+        }
+
+        // PROTECTION 2
         let body: OPayWebhookBody
         try {
           body = await request.json() as OPayWebhookBody
         } catch (e) {
-          return response("Invalid JSON", { status: 400 });
+          return response("Invalid JSON", { status: 400 }, e);
         }
         // Signature is in body.sha512, NOT in any header
         const receivedSig = body.sha512;
         if (!receivedSig) {
           return response("Missing signature", { status: 401 });
         }
-        const privateKey = process.env.OPAY_PRIVATE_KEY!;
+        const privateKey = process.env.OPAY_PRIVATE_KEY || "OPAYPRV16168120782850.889353996330442";
         let isValid: boolean;
         try {
           isValid = verifyWebhookSignature(body, privateKey);
         } catch (e) {
-          return response("Signature error", { status: 500 });
+          return response("Signature error", { status: 500 }, e);
         }
         if (!isValid) {
           return response("Invalid signature", { status: 401 });
         }
+        // === PROTECTION ENDS ===
+
+        // === BELOW IS SAFE, HACKERS CAN'T GET DOWN HERE
         const { reference, status, amount } = body.payload;
         console.log("webhook amount: ", amount)
         switch (status) {
