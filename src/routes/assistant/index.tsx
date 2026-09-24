@@ -355,8 +355,8 @@ function AiAssistantRoute() {
               <div className="p-4 rounded-full bg-blue-50 dark:bg-slate-800/50 ring-1 ring-slate-200 dark:ring-slate-700">
                 <Bot className="w-12 h-12 text-blue-500 dark:text-blue-400 opacity-80" />
               </div>
-              <p className="text-lg font-medium text-slate-600 dark:text-slate-300">
-                How can I assist you with B-Fanel Industries today?
+              <p className="text-lg font-medium text-slate-600 text-center dark:text-slate-300">
+                How can I assist you today?
               </p>
             </div>
           ) : (
