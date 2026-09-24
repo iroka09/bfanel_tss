@@ -9,12 +9,13 @@ import HeroButtons from "@/components/HeroButtons"
 import ContactForm from "@/components/ContactForm"
 import Testimonials from "@/components/Testimonials"
 
-
-
-
 export const Route = createFileRoute('/')({
-  component: App
+  component: App,
 })
+
+function Test() {
+  return <h1>TESTING Index...</h1>
+}
 
 ///hero_image.jpg
 function App() {
@@ -22,25 +23,28 @@ function App() {
   const router = useRouter()
   return (
     <main className="text-lg">
-
       {/*" Hero Section "*/}
       <section
         className="relative text-primary w-full mb-5 overflow-hidden"
         style={{
           backgroundImage: 'url(/hero_image.jpg)',
-          backgroundSize: "auto 100%",
-          backgroundPosition: "80%",
-          backgroundRepeat: "no-repeat",
+          backgroundSize: 'auto 100%',
+          backgroundPosition: '80%',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <div className="absolute pointer-events-none inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent to-black/80 to-60%"></div>
         <div className="relative z-1 text-center md:text-left p-8 pt-60 text-white max-w-[800px]">
           <h1 className="text-5xl lg:text-7xl uppercase font-[700] bg-gradient-to-br from-white from-30% to-cyan-400 bg-clip-text text-transparent">
-            _Quality Pipes Built to Last.
+            Quality Pipes Built to Last.
           </h1>
           <p className="inline-block py-3 lg:text-lg">
-            Your <span className="text-secondary-fixed font-bold">Trusted</span> Partner in Electrical & Plumbing Piping Systems. <br />
-            Specializes in the production of top-quality plumbing and electrical conduit pipes. Our mission is to deliver durable, innovative, and environmentally friendly piping solutions while ensuring customer satisfaction.
+            Your <span className="text-secondary-fixed font-bold">Trusted</span>{' '}
+            Partner in Electrical & Plumbing Piping Systems. <br />
+            Specializes in the production of top-quality plumbing and electrical
+            conduit pipes. Our mission is to deliver durable, innovative, and
+            environmentally friendly piping solutions while ensuring customer
+            satisfaction.
           </p>
           <HeroButtons />
         </div>
@@ -49,10 +53,7 @@ function App() {
       <div className="">
         {/*" Video */}
         <section id="video" className="py-5">
-          <YouTube
-            id="Bkg9yt2FJGc"
-            title="B-Fanel Industries"
-          />
+          <YouTube id="Bkg9yt2FJGc" title="B-Fanel Industries" />
         </section>
         {/*" About Us "*/}
         <section id="about" className="py-5">
@@ -79,6 +80,6 @@ function App() {
           <ContactForm />
         </section>
       </div>
-    </main >
-  );
+    </main>
+  )
 }

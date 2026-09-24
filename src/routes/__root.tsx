@@ -78,7 +78,6 @@ function RootDocument({ children }: PropsWithChildren): ReactNode {
 }
 
 
-
 async function root_metadatas(key = "all") {
   const title = "B-Fanel Industries Limited"
   const description = "B-Fanel Industries manufactures durable plumbing and electrical conduit pipes in multiple sizes for residential, commercial, and industrial construction across Nigeria."

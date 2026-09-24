@@ -120,7 +120,6 @@ export const Route = createFileRoute("/api/opay/opay_webhook")({
           return response("Missing signature", { status: 401 });
         }
         const privateKey = process.env.OPAY_PRIVATE_KEY
-          || "OPAYPRV16168120782850.889353996330442" // this one is the fallback and for testMode
         let isValid: boolean;
         try {
           isValid = verifyWebhookSignature(body, privateKey);
