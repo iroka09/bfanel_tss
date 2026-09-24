@@ -19,6 +19,7 @@ import {
 import websiteContext from '@/about_bfanel.md?raw'
 import ReactMarkdown from 'react-markdown'
 import { useAppSession } from '@/context/session'
+import remarkGfm from 'remark-gfm'
 
 // 1. Declare the ?raw module right here so TypeScript doesn't complain.
 declare module '*?raw' {
@@ -146,7 +147,7 @@ function ExpandableMessage({
         }`}
       >
         <div className="whitespace-pre-wrap">
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
         </div>
       </div>
       {isOverflowing && !isTyping && (
