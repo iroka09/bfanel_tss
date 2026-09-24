@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useRouter, Link } from '@tanstack/react-router'
 import YouTube from '@/components/Youtube_video'
 import Faqs from '@/components/Faqs'
 import Expertise from '@/components/Expertise'
