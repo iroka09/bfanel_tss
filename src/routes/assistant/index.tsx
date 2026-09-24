@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import websiteContext from '@/about_bfanel.md?raw'
 import ReactMarkdown from 'react-markdown'
+import { useAppSession } from '@/context/session'
 
 // 1. Declare the ?raw module right here so TypeScript doesn't complain.
 declare module '*?raw' {
@@ -103,7 +104,7 @@ function AiAssistantRoute() {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
+  const { session, isAuthenticated } = useAppSession()
   // Smooth auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -216,15 +217,14 @@ function AiAssistantRoute() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900">
-      {/* Sleek Glassmorphism Header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+      <header className="flex items-center justify-between px-6 py-4 bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-xl font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400">
-              B-Fanel AI
+              B-Fanel AI ASSISTANT
             </h1>
             <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
               Powered by Nemotron-3 Ultra
@@ -266,7 +266,15 @@ function AiAssistantRoute() {
                   {/* User Avatar */}
                   {msg.role === 'user' && (
                     <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 ring-1 ring-slate-300 dark:ring-slate-600 shadow-sm mt-1">
-                      <User className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                      {isAuthenticated ? (
+                        <img
+                          src={session.picture}
+                          className="w-5 h-5 rounded-full border-2"
+                          alt="avatar"
+                        />
+                      ) : (
+                        <User className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                      )}
                     </div>
                   )}
 
@@ -346,7 +354,7 @@ function AiAssistantRoute() {
       </main>
 
       {/* Floating Glassmorphism Input Bar */}
-      <footer className="sticky bottom-6 left-0 right-0 z-20 px-4 sm:px-6">
+      <footer className="sticky bottom-5 mb-5 left-0 right-0 z-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={handleSubmit}
