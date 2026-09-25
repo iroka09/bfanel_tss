@@ -203,7 +203,7 @@ function ExpandableMessage({
         <div className={`w-full ${isOverflowing && !isExpanded ? 'pb-4' : ''}`}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            // rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
+             rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
             components={{
               table: ({ node, ...props }) => (
                 <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
