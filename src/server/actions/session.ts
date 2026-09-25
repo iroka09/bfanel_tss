@@ -35,23 +35,15 @@ const createServerFnWithPOST = createServerFn({ method: 'POST' }).middleware([
   putSessionToContext,
 ])
 
+//converts {} to null
 function emptyObjToNull(obj: SessionData): SessionData | null {
   return Object.keys(obj || {}).length > 0 ? obj : null
 }
 
-console.log('render ooooo')
-
 // Get current user
 export const getSession = createServerFnWithGET.handler(
   async ({ context }): Promise<SessionData | null> => {
-    try {
-      const data = emptyObjToNull(context.session?.data)
-      console.log('11111111: ', data)
-      return data
-    } catch (e) {
-      console.log('2222222222 ', e)
-      return null
-    }
+    return emptyObjToNull(context.session?.data)
   },
 )
 
@@ -176,4 +168,3 @@ export const ensureSession = createServerFnWithPOST
       throw err
     }
   })
-

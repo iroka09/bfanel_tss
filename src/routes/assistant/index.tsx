@@ -15,6 +15,12 @@ import {
   Pencil,
   X,
   Check,
+  Copy,
+  Share2,
+  ChevronDown,
+  ChevronUp,
+  Volume2,
+  Square,
 } from 'lucide-react'
 import websiteContext from '@/about_bfanel.md?raw'
 import ReactMarkdown from 'react-markdown'
@@ -109,7 +115,28 @@ const formatDateTime = (date: Date) => {
   })
 }
 
-// Expandable Content Component
+// Helper to strip Markdown for Text-to-Speech
+const stripMarkdown = (md: string) => {
+  if (!md) return ''
+  return md
+    .replace(/```[\s\S]*?```/g, ' [Code block omitted] ') // Remove code blocks
+    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Extract text from links
+    .replace(/#{1,6}\s+/g, '') // Remove headers
+    .replace(/(\*\*|__)(.*?)\1/g, '$2') // Remove bold
+    .replace(/(\*|_)(.*?)\1/g, '$2') // Remove italics
+    .replace(/~~(.*?)~~/g, '$1') // Remove strikethrough
+    .replace(/`([^`]+)`/g, '$1') // Remove inline code ticks
+    .replace(/^\s*>\s+/gm, '') // Remove blockquotes
+    .replace(/^\s*[-*+]\s+/gm, '') // Remove unordered list markers
+    .replace(/^\s*\d+\.\s+/gm, '') // Remove ordered list markers
+    .replace(/\|/g, ' ') // Remove table pipes
+    .replace(/[-]{3,}/g, ' ') // Remove table row dividers
+    .replace(/\n{2,}/g, ' . ') // Add pauses for multiple newlines
+    .trim()
+}
+
+// Expandable Content Component with Markdown overriding for Tables and Links
 function ExpandableMessage({
   content,
   isTyping,
@@ -139,26 +166,90 @@ function ExpandableMessage({
   }, [content])
 
   return (
-    <div className="flex flex-col">
+    <div className="relative flex flex-col w-full max-w-full">
       <div
         ref={contentRef}
-        className={`transition-[max-height] duration-500 ease-in-out overflow-hidden ${
+        className={`transition-[max-height] duration-500 ease-in-out overflow-hidden break-words w-full ${
           isExpanded ? 'max-h-[3000px]' : 'max-h-[250px]'
         }`}
+        style={{
+          WebkitMaskImage:
+            !isExpanded && isOverflowing && !isTyping
+              ? 'linear-gradient(180deg, #000 65%, transparent 100%)'
+              : 'none',
+          maskImage:
+            !isExpanded && isOverflowing && !isTyping
+              ? 'linear-gradient(180deg, #000 65%, transparent 100%)'
+              : 'none',
+        }}
       >
-        <div className="whitespace-pre-wrap">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+        <div className={`w-full ${isOverflowing && !isExpanded ? 'pb-4' : ''}`}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              table: ({ node, ...props }) => (
+                <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
+                  <table
+                    className="w-full min-w-[450px] border-collapse text-sm text-left"
+                    {...props}
+                  />
+                </div>
+              ),
+              th: ({ node, ...props }) => (
+                <th
+                  className="px-4 py-3 bg-slate-100 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200"
+                  {...props}
+                />
+              ),
+              td: ({ node, ...props }) => (
+                <td
+                  className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 last:border-0"
+                  {...props}
+                />
+              ),
+              a: ({ node, ...props }) => (
+                <a
+                  className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  {...props}
+                />
+              ),
+              p: ({ node, ...props }) => (
+                <p className="mb-3 last:mb-0 whitespace-pre-wrap" {...props} />
+              ),
+              ul: ({ node, ...props }) => (
+                <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />
+              ),
+              ol: ({ node, ...props }) => (
+                <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />
+              ),
+            }}
+          >
+            {content}
+          </ReactMarkdown>
         </div>
       </div>
+
+      {/* Expand/Collapse Arrow Icon Button */}
       {isOverflowing && !isTyping && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`mt-2 text-xs font-semibold underline underline-offset-2 opacity-80 hover:opacity-100 transition-opacity ${
-            isUser ? 'self-end' : 'self-start'
-          }`}
-        >
-          {isExpanded ? 'Show less' : 'Read more'}
-        </button>
+        <div className="flex justify-end w-full -mt-3 relative z-10">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={`p-1 rounded-full shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center justify-center ${
+              isUser
+                ? 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-md'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 border border-slate-200/60 dark:border-slate-700/60'
+            }`}
+            title={isExpanded ? 'Show less' : 'Read more'}
+          >
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
+        </div>
       )}
     </div>
   )
@@ -171,15 +262,26 @@ function AiAssistantRoute() {
   const [isStreaming, setIsStreaming] = useState(false)
   const [showScrollButton, setShowScrollButton] = useState(false)
 
-  // State for message editing
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
-  const [editInput, setEditInput] = useState('')
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(
+    null,
+  )
 
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const userScrolledUpRef = useRef(false)
   const { session, isAuthenticated } = useAppSession()
 
-  // Find the last user message ID to allow editing
+  // Clean up Text-to-Speech on unmount
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
+
   const lastUserMsgId = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'user') return messages[i].id
@@ -187,7 +289,6 @@ function AiAssistantRoute() {
     return null
   }, [messages])
 
-  // Scroll exclusively inside the chat container box
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -197,7 +298,6 @@ function AiAssistantRoute() {
     }
   }, [])
 
-  // Detect user scroll position inside the chat box
   const handleScroll = () => {
     if (!chatContainerRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current
@@ -214,7 +314,67 @@ function AiAssistantRoute() {
     }
   }, [messages, scrollToBottom])
 
-  // Unified send message function mapping both normal and edit flows
+  // Utility Actions
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedMessageId(id)
+    setTimeout(() => setCopiedMessageId(null), 2000)
+  }
+
+  const handleShare = async (text: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'B-Fanel AI Response',
+          text: text,
+        })
+      } catch (err) {
+        console.error('Error sharing:', err)
+      }
+    } else {
+      handleCopy(text, 'share-fallback')
+      alert(
+        "Text copied to clipboard because native sharing isn't supported on this browser.",
+      )
+    }
+  }
+
+  const handleReadAloud = (text: string, id: string) => {
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-speech is not supported in your browser.')
+      return
+    }
+
+    if (speakingMessageId === id) {
+      // Stop speaking if it's already playing this message
+      window.speechSynthesis.cancel()
+      setSpeakingMessageId(null)
+    } else {
+      // Stop anything currently playing, strip markdown, and start new synthesis
+      window.speechSynthesis.cancel()
+      
+      const cleanText = stripMarkdown(text)
+      const utterance = new SpeechSynthesisUtterance(cleanText)
+
+      utterance.onend = () => setSpeakingMessageId(null)
+      utterance.onerror = () => setSpeakingMessageId(null)
+
+      setSpeakingMessageId(id)
+      window.speechSynthesis.speak(utterance)
+    }
+  }
+
+  const handleStartEdit = (msg: Message) => {
+    setInput(msg.content)
+    setEditingMessageId(msg.id)
+    inputRef.current?.focus()
+  }
+
+  const cancelEdit = () => {
+    setInput('')
+    setEditingMessageId(null)
+  }
+
   const sendMessage = async (
     text: string,
     options?: { replaceId?: string; isEdit?: boolean },
@@ -235,17 +395,14 @@ function AiAssistantRoute() {
     setEditingMessageId(null)
     setIsStreaming(true)
 
-    // Calculate history up to the point of edit or just standard previous state
     let historyForApi = messages
 
     if (options?.isEdit && options.replaceId) {
-      // Truncate messages to replace everything from the edited message onwards
       const idx = messages.findIndex((m) => m.id === options.replaceId)
       if (idx !== -1) {
         historyForApi = messages.slice(0, idx)
       }
     } else if (options?.replaceId) {
-      // Standard resend (failed message), just remove the failed attempt
       historyForApi = messages.filter((m) => m.id !== options.replaceId)
     }
 
@@ -321,12 +478,14 @@ function AiAssistantRoute() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    sendMessage(input)
+    sendMessage(input, {
+      replaceId: editingMessageId || undefined,
+      isEdit: !!editingMessageId,
+    })
   }
 
   return (
     <div className="relative flex flex-col h-screen h-[100dvh] overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900">
-      {/* Header - Fixed Height */}
       <header className="flex-shrink-0 flex items-center justify-between px-6 py-4 bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm z-20">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
@@ -343,11 +502,10 @@ function AiAssistantRoute() {
         </div>
       </header>
 
-      {/* Chat Area - Isolated Scroll Box */}
       <main
         ref={chatContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 scroll-smooth"
+        className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6 scroll-smooth"
       >
         <div className="max-w-4xl mx-auto space-y-8 pb-4">
           {messages.length === 0 ? (
@@ -361,15 +519,15 @@ function AiAssistantRoute() {
             </div>
           ) : (
             messages.map((msg) => {
-              const isEditing = editingMessageId === msg.id
               const canEdit = msg.id === lastUserMsgId && !isStreaming
+              const isCurrentlyBeingEdited = editingMessageId === msg.id
 
               return (
                 <div
                   key={msg.id}
                   className={`flex flex-col gap-1 group animate-in fade-in slide-in-from-bottom-2 duration-300 ${
                     msg.role === 'user' ? 'items-end' : 'items-start'
-                  }`}
+                  } ${isCurrentlyBeingEdited ? 'opacity-50' : 'opacity-100'}`}
                 >
                   <div
                     className={`flex gap-4 w-full relative ${
@@ -378,14 +536,12 @@ function AiAssistantRoute() {
                         : 'flex-row justify-start'
                     }`}
                   >
-                    {/* AI Avatar */}
                     {msg.role === 'assistant' && (
                       <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-violet-100 dark:from-slate-800 dark:to-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 shadow-sm mt-1">
                         <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                     )}
 
-                    {/* User Avatar */}
                     {msg.role === 'user' && (
                       <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 ring-1 ring-slate-300 dark:ring-slate-600 shadow-sm mt-1 overflow-hidden">
                         {isAuthenticated && session?.picture ? (
@@ -400,27 +556,39 @@ function AiAssistantRoute() {
                       </div>
                     )}
 
-                    {/* Message Bubble container */}
-                    <div className="relative group/bubble max-w-[85%] sm:max-w-[75%]">
-                      {/* Hover Edit Button for Last User Message */}
-                      {msg.role === 'user' && canEdit && !isEditing && (
-                        <div className="absolute top-2 right-[100%] mr-2 opacity-0 group-hover/bubble:opacity-100 transition-opacity">
+                    <div
+                      className={`relative group/bubble flex flex-col ${msg.role === 'assistant' ? 'max-w-[88%] sm:max-w-[80%]' : 'max-w-[85%] sm:max-w-[75%]'}`}
+                    >
+                      {/* User Bubble Hover Actions (Copy & Edit) */}
+                      {msg.role === 'user' && (
+                        <div className="absolute top-2 right-full mr-2 flex flex-col gap-2 opacity-0 scale-95 group-hover/bubble:opacity-100 group-hover/bubble:scale-100 transition-all duration-200 ease-out origin-right z-10">
                           <button
-                            onClick={() => {
-                              setEditingMessageId(msg.id)
-                              setEditInput(msg.content)
-                            }}
-                            className="p-1.5 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm"
-                            title="Edit and Resend"
+                            onClick={() => handleCopy(msg.content, msg.id)}
+                            className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm hover:shadow-md transition-all"
+                            title="Copy message"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            {copiedMessageId === msg.id ? (
+                              <Check className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
                           </button>
+
+                          {canEdit && (
+                            <button
+                              onClick={() => handleStartEdit(msg)}
+                              className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm hover:shadow-md transition-all"
+                              title="Edit message"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       )}
 
                       {/* Actual Message Bubble styling */}
                       <div
-                        className={`px-5 py-4 text-[15px] font-normal leading-relaxed shadow-sm ${
+                        className={`px-5 py-4 text-[15px] font-normal leading-relaxed shadow-sm flex-1 overflow-hidden w-full ${
                           msg.role === 'user'
                             ? 'bg-gradient-to-br from-blue-600 to-violet-600 text-white rounded-3xl rounded-tr-md shadow-blue-500/20'
                             : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-md'
@@ -434,38 +602,6 @@ function AiAssistantRoute() {
                             <span className="w-2 h-2 rounded-full bg-blue-500/60 dark:bg-blue-400/60 animate-bounce [animation-delay:-0.15s]"></span>
                             <span className="w-2 h-2 rounded-full bg-blue-500/60 dark:bg-blue-400/60 animate-bounce"></span>
                           </div>
-                        ) : isEditing ? (
-                          <div className="flex flex-col gap-2 min-w-[200px] sm:min-w-[300px]">
-                            <textarea
-                              value={editInput}
-                              onChange={(e) => setEditInput(e.target.value)}
-                              className="w-full bg-black/10 dark:bg-black/20 text-white border border-white/20 rounded-xl p-2 outline-none focus:border-white/50 resize-none text-sm"
-                              rows={3}
-                              autoFocus
-                            />
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => setEditingMessageId(null)}
-                                className="p-1.5 bg-black/10 hover:bg-black/20 rounded-full transition-colors"
-                                title="Cancel"
-                              >
-                                <X className="w-4 h-4 text-white" />
-                              </button>
-                              <button
-                                onClick={() =>
-                                  sendMessage(editInput, {
-                                    replaceId: msg.id,
-                                    isEdit: true,
-                                  })
-                                }
-                                disabled={!editInput.trim()}
-                                className="p-1.5 bg-white/20 hover:bg-white/30 rounded-full transition-colors disabled:opacity-50"
-                                title="Save & Resend"
-                              >
-                                <Check className="w-4 h-4 text-white" />
-                              </button>
-                            </div>
-                          </div>
                         ) : (
                           <>
                             <ExpandableMessage
@@ -473,9 +609,11 @@ function AiAssistantRoute() {
                               isTyping={msg.status === 'typing'}
                               isUser={msg.role === 'user'}
                             />
+
+                            {/* AI Error Alert */}
                             {msg.role === 'assistant' &&
                               msg.status === 'error' && (
-                                <div className="mt-3 text-sm text-red-500 flex items-center gap-1 bg-red-50/50 dark:bg-red-950/30 p-2 rounded-lg">
+                                <div className="mt-3 text-sm text-red-500 flex items-center gap-1 bg-red-50/50 dark:bg-red-950/30 p-2 rounded-lg relative z-10">
                                   <AlertCircle className="w-4 h-4" />
                                   {msg.errorMessage}
                                 </div>
@@ -483,20 +621,60 @@ function AiAssistantRoute() {
                           </>
                         )}
                       </div>
+
+                      {/* AI Action Buttons Outside Bubble */}
+                      {msg.role === 'assistant' && msg.status !== 'typing' && (
+                        <div className="mt-1.5 ml-2 flex items-center gap-1">
+                          <button
+                            onClick={() => handleReadAloud(msg.content, msg.id)}
+                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-slate-200/50 dark:hover:text-blue-400 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+                            title={
+                              speakingMessageId === msg.id
+                                ? 'Stop reading'
+                                : 'Read aloud'
+                            }
+                          >
+                            {speakingMessageId === msg.id ? (
+                              <Square className="w-4 h-4 fill-blue-500 text-blue-500" />
+                            ) : (
+                              <Volume2 className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleCopy(msg.content, msg.id)}
+                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 dark:hover:text-slate-200 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+                            title="Copy"
+                          >
+                            {copiedMessageId === msg.id ? (
+                              <Check className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleShare(msg.content)}
+                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 dark:hover:text-slate-200 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+                            title="Share"
+                          >
+                            <Share2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Status & Timestamp Indicators (Date included) */}
                   <div
                     className={`text-[11px] flex items-center gap-1.5 px-14 font-medium transition-opacity ${
                       msg.role === 'user'
-                        ? 'text-slate-400 flex-row-reverse'
+                        ? 'text-slate-400 flex-row-reverse mt-1'
                         : 'text-slate-400'
                     }`}
                   >
                     <span>{formatDateTime(msg.timestamp)}</span>
 
-                    {msg.role === 'user' && !isEditing && (
+                    {msg.role === 'user' && (
                       <>
                         {msg.status === 'sending' && (
                           <Clock className="w-3 h-3 text-slate-400" />
@@ -532,7 +710,6 @@ function AiAssistantRoute() {
         </div>
       </main>
 
-      {/* Floating Scroll-to-Bottom Button */}
       {showScrollButton && (
         <button
           type="button"
@@ -540,7 +717,7 @@ function AiAssistantRoute() {
             userScrolledUpRef.current = false
             scrollToBottom('smooth')
           }}
-          className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/80 rounded-full shadow-lg hover:bg-slate-100 dark:hover:bg-slate-700/90 active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/80 rounded-full shadow-lg hover:bg-slate-100 dark:hover:bg-slate-700/90 active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
           aria-label="Scroll to bottom"
         >
           <ArrowDown className="w-3.5 h-3.5 text-blue-500" />
@@ -548,18 +725,40 @@ function AiAssistantRoute() {
         </button>
       )}
 
-      {/* Footer / Input Bar - Fixed at Bottom */}
-      <footer className="flex-shrink-0 z-20 px-4 sm:px-6 py-4 bg-transparent">
-        <div className="max-w-3xl mx-auto">
+      {/* FOOTER UPDATED HERE: Z-index lowered to 10, sticky positioning added, bottom margins aligned */}
+      <footer className="sticky bottom-4 mb-4 z-10 flex-shrink-0 px-4 sm:px-6 bg-transparent">
+        <div className="max-w-3xl mx-auto flex flex-col drop-shadow-xl">
+          {editingMessageId && (
+            <div className="flex items-center justify-between px-5 py-2.5 text-[13px] bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 border-x border-t border-blue-200 dark:border-slate-700 rounded-t-3xl backdrop-blur-md">
+              <span className="font-medium flex items-center gap-2">
+                <Pencil className="w-3.5 h-3.5" />
+                Editing previous message...
+              </span>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="p-1 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors text-blue-500 dark:text-slate-400"
+                title="Cancel Edit"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
           <form
             onSubmit={handleSubmit}
-            className={`flex items-center gap-3 p-2 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border rounded-[2rem] shadow-xl transition-all duration-300 ${
+            className={`flex items-center gap-3 p-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border transition-all duration-300 ${
+              editingMessageId
+                ? 'rounded-b-[2rem] border-blue-200 dark:border-slate-700 border-t-0 shadow-inner'
+                : 'rounded-[2rem] border-white/60 dark:border-slate-700/60'
+            } ${
               isStreaming
-                ? 'border-slate-200 dark:border-slate-800 opacity-80 cursor-not-allowed'
-                : 'border-white/60 dark:border-slate-700/60 shadow-slate-200/50 dark:shadow-black/40 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50'
+                ? 'opacity-80 cursor-not-allowed'
+                : 'focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 shadow-slate-200/50 dark:shadow-black/40'
             }`}
           >
             <input
+              ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -574,10 +773,16 @@ function AiAssistantRoute() {
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/30 hover:shadow-lg hover:scale-105 disabled:opacity-40 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed transition-all duration-200 mr-1"
+              className={`flex items-center justify-center w-12 h-12 rounded-full text-white shadow-md transition-all duration-200 mr-1 ${
+                editingMessageId
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-emerald-500/30 hover:shadow-emerald-500/40'
+                  : 'bg-gradient-to-r from-blue-600 to-violet-600 shadow-blue-500/30 hover:shadow-lg'
+              } hover:scale-105 disabled:opacity-40 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed`}
             >
               {isStreaming ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : editingMessageId ? (
+                <Check className="w-5 h-5" />
               ) : (
                 <Send className="w-5 h-5 ml-1" />
               )}
