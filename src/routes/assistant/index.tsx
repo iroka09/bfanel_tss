@@ -26,6 +26,7 @@ import websiteContext from '@/about_bfanel.md?raw'
 import { useAppSession } from '@/context/session'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 
 const schema = {
@@ -202,7 +203,7 @@ function ExpandableMessage({
         <div className={`w-full ${isOverflowing && !isExpanded ? 'pb-4' : ''}`}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-           // rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
+            // rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
             components={{
               table: ({ node, ...props }) => (
                 <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
