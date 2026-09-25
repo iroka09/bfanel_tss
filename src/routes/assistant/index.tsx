@@ -23,10 +23,26 @@ import {
   Square,
 } from 'lucide-react'
 import websiteContext from '@/about_bfanel.md?raw'
-import ReactMarkdown from 'react-markdown'
 import { useAppSession } from '@/context/session'
+import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 
+const schema = {
+  ...defaultSchema,
+  tagNames: [...defaultSchema.tagNames, 'iframe'],
+  attributes: {
+    ...defaultSchema.attributes,
+    iframe: [
+      'src',
+      'width',
+      'height',
+      'allow',
+      'allowFullScreen',
+      'frameBorder',
+    ],
+  },
+}
 // 1. Declare the ?raw module right here so TypeScript doesn't complain.
 declare module '*?raw' {
   const src: string
@@ -186,6 +202,7 @@ function ExpandableMessage({
         <div className={`w-full ${isOverflowing && !isExpanded ? 'pb-4' : ''}`}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+           // rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
             components={{
               table: ({ node, ...props }) => (
                 <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
@@ -223,6 +240,16 @@ function ExpandableMessage({
               ),
               ol: ({ node, ...props }) => (
                 <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />
+              ),
+              iframe: ({ node, ...props }) => (
+                <div className="relative w-full my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 aspect-video">
+                  <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-presentation"
+                    {...props}
+                  />
+                </div>
               ),
             }}
           >
@@ -352,7 +379,7 @@ function AiAssistantRoute() {
     } else {
       // Stop anything currently playing, strip markdown, and start new synthesis
       window.speechSynthesis.cancel()
-      
+
       const cleanText = stripMarkdown(text)
       const utterance = new SpeechSynthesisUtterance(cleanText)
 
