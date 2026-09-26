@@ -1,30 +1,29 @@
-
 import { createServerOnlyFn } from '@tanstack/react-start'
 import nodemailer from 'nodemailer'
-import z from "zod"
+import z from 'zod'
 
-
-export const dataSchema = z.object({
-  from: z.string(),
-  to: z.string().email(),
-  subject: z.string(),
-  html: z.string().optional(),
-  react: z.any().optional()
-}).superRefine((data, ctx) => {
-  if (!data.html && !data.react) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Either html or react must be provided',
-      path: ['html'],
-    })
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Either html or react must be provided',
-      path: ['react'],
-    })
-  }
-})
-
+export const dataSchema = z
+  .object({
+    from: z.string(),
+    to: z.string().email(),
+    subject: z.string(),
+    html: z.string().optional(),
+    react: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.html && !data.react) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Either html or react must be provided',
+        path: ['html'],
+      })
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Either html or react must be provided',
+        path: ['react'],
+      })
+    }
+  })
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -34,30 +33,28 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-
-export const sendEmailFn = createServerOnlyFn(async ({ data }: { data: z.infer<typeof dataSchema> }) => {
-  await dataSchema.parse(data)
-  let html = data.html
-  // if react component is passed, render it to HTML string
-  if (!html) {
-    const { renderToStaticMarkup } = await import('react-dom/server')
-    html = renderToStaticMarkup(data.react)
-  }
-  const info = await transporter.sendMail({
-    from: data.from,
-    to: data.to,
-    subject: data.subject,
-    html,
-  })
- // console.log(info.messageId)
-  return { success: true, id: info.messageId }
-})
-
-
-
+export const sendEmailFn = createServerOnlyFn(
+  async ({ data }: { data: z.infer<typeof dataSchema> }) => {
+    await dataSchema.parse(data)
+    let html = data.html
+    // if react component is passed, render it to HTML string
+    if (!html) {
+      const { renderToStaticMarkup } = await import('react-dom/server')
+      html = renderToStaticMarkup(data.react)
+    }
+    const info = await transporter.sendMail({
+      from: data.from,
+      to: data.to,
+      subject: data.subject,
+      html,
+    })
+    // console.log(info.messageId)
+    return { success: true, id: info.messageId }
+  },
+)
 
 /*
-// This is prefered for production, although the upper one can be used too
+// This is prefered for production because it uses "resend" lib which is best for production, although the upper one can be used too
 
 import { createServerOnlyFn } from '@tanstack/react-start'
 import { Resend } from 'resend'

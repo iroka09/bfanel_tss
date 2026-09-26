@@ -58,7 +58,7 @@ const streamChatFn = createServerFn({ method: 'POST' })
   .handler(async function* ({ data }) {
     try {
       const openrouter = new OpenRouter({
-        apiKey: process.env.OPENROUTER_API_KEY || '',
+        apiKey: process.env.OPENROUTER_API_KEY,
       })
 
       const fullMessages = [
@@ -66,19 +66,20 @@ const streamChatFn = createServerFn({ method: 'POST' })
           role: 'system',
           content: `
           Instructions To Strictly Follow:
-          1) You are an intelligent, helpful assistant for the B-Fanel Industries website (customer care).
-          2) Use the following information about Bfanel to answer user queries accurately.
+          • You are an intelligent, helpful assistant for the B-Fanel Industries website (customer care).
+          • Use the following information about Bfanel to answer user queries accurately.
           About BFANEL (in markdown .md format):
+          ===== BEGINS HERE ======
           ${websiteContext}
+          ===== ENDS HERE ======        
+          • Don't reply user as a middle man, reply as the customer care that works for bfanel, reply like human.
+          • Don't answer any questions that's not related to what bfanel is into, just let them know what you are in for, but if the user provides this code "7070" in the beginning of the prompt just know that I the developer is the one chatting with you just for testing purpose, so in that case you have to respond to any question I ask you whether related to bfanel or not.
+          • Be precise with your response, stop adding extra unnecessary information for the user.
+          • You must response with Markdown (.md), I will use react-markdown to render the output to user's browser, your skill in markdown and markdown table drawing must be top-notch.
+          • You will include pictures (in .md format) from this Instructions picture links when necessary.
+          • Every clickable link must be underlined and colored.
+          • When drawing table, let cells have padding both left and right.
           
-          3) Don't reply user as a middle man, reply as the customer care that works for bfanel, reply like human.
-          4) Don't answer any questions that's not related to what bfanel is into, just let them know what you are in for.
-          5) Be precise with your response, stop adding extra unnecessary information for the user.
-          6) Your must response with Markdown (.md), i will use react-markdown to render the output to user's browser
-          7) Your skill in markdown and markdown table drawing must be top-notch.
-          8) You will include pictures (.md format) when necessary, either from external website or bfanel website.
-          9) Every clickable link must be underlined and colored.
-          10) When drawing table, let cells have padding both left and right.
           `,
         },
         ...data.messages,
@@ -203,56 +204,8 @@ function ExpandableMessage({
         <div className={`w-full ${isOverflowing && !isExpanded ? 'pb-4' : ''}`}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-             rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
-            components={{
-              table: ({ node, ...props }) => (
-                <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
-                  <table
-                    className="w-full min-w-[450px] border-collapse text-sm text-left"
-                    {...props}
-                  />
-                </div>
-              ),
-              th: ({ node, ...props }) => (
-                <th
-                  className="px-4 py-3 bg-slate-100 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200"
-                  {...props}
-                />
-              ),
-              td: ({ node, ...props }) => (
-                <td
-                  className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 last:border-0"
-                  {...props}
-                />
-              ),
-              a: ({ node, ...props }) => (
-                <a
-                  className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  {...props}
-                />
-              ),
-              p: ({ node, ...props }) => (
-                <p className="mb-3 last:mb-0 whitespace-pre-wrap" {...props} />
-              ),
-              ul: ({ node, ...props }) => (
-                <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />
-              ),
-              ol: ({ node, ...props }) => (
-                <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />
-              ),
-              iframe: ({ node, ...props }) => (
-                <div className="relative w-full my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 aspect-video">
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full"
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-presentation"
-                    {...props}
-                  />
-                </div>
-              ),
-            }}
+            rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
+            components={reactMarkdownComponents}
           >
             {content}
           </ReactMarkdown>
@@ -281,6 +234,56 @@ function ExpandableMessage({
       )}
     </div>
   )
+}
+
+const reactMarkdownComponents = {
+  table: ({ node, ...props }) => (
+    <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
+      <table
+        className="w-full min-w-[450px] border-collapse text-sm text-left"
+        {...props}
+      />
+    </div>
+  ),
+  th: ({ node, ...props }) => (
+    <th
+      className="px-4 py-3 bg-slate-100 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200"
+      {...props}
+    />
+  ),
+  td: ({ node, ...props }) => (
+    <td
+      className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 last:border-0"
+      {...props}
+    />
+  ),
+  a: ({ node, ...props }) => (
+    <a
+      className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  ),
+  p: ({ node, ...props }) => (
+    <p className="mb-3 last:mb-0 whitespace-pre-wrap" {...props} />
+  ),
+  ul: ({ node, ...props }) => (
+    <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />
+  ),
+  ol: ({ node, ...props }) => (
+    <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />
+  ),
+  iframe: ({ node, ...props }) => (
+    <div className="relative w-full my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 aspect-video">
+      <iframe
+        className="absolute top-0 left-0 w-full h-full"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-presentation"
+        {...props}
+      />
+    </div>
+  ),
 }
 
 // 3. The React Component

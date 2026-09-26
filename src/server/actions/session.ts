@@ -121,6 +121,8 @@ export const loginFn = createServerFnWithPOST
           .where(eq(users.email, data.email))
           .limit(1)
         // If found, return the existing user instead of inserting
+        
+        console.log ("existingUser",existingUser)
         if (existingUser) {
           return await updateSessionAndReturnData(existingUser)
         }

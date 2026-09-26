@@ -8,15 +8,17 @@ export type SessionData = {
   image?: string
 }
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 function useSessionWrapper() {
   return useSession<SessionData>({
     name: 'app-session',
     password: process.env.SESSION_SECRET,
-    // Optional 👇
+    // Optional
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
+      httpOnly: isProduction,
       sameSite: 'lax',
-      httpOnly: process.env.NODE_ENV === 'production',
     },
   })
 }
