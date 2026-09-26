@@ -1,29 +1,36 @@
-import React from "react";
-import { Link } from "@tanstack/react-router";
-import SocialMediaContacts from "@/components/SocialMediaContacts";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { submitEmail } from "@/server/actions/newsletter";
+import React from 'react'
+import { Link } from '@tanstack/react-router'
+import SocialMediaContacts from '@/components/SocialMediaContacts'
+import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { submitEmail } from '@/server/actions/newsletter'
+import { useLocation } from '@tanstack/react-router'
+
+const excludedPathnames = ['/assistant']
 
 export default function Footer() {
-  const [email, setEmail] = React.useState("");
-  const [isSubmitting, startTransition] = React.useTransition();
+  const pathname = useLocation({ select: (x) => x.pathname })
+  if (excludedPathnames.includes(pathname)) {
+    return null
+  }
+  const [email, setEmail] = React.useState('')
+  const [isSubmitting, startTransition] = React.useTransition()
 
   const handleSubmit = (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!email.trim()) {
-      toast.error("Email field can't be empty.");
-      return;
+      toast.error("Email field can't be empty.")
+      return
     }
     startTransition(async () => {
-      const { success, result } = await submitEmail({ data: { email } });
+      const { success, result } = await submitEmail({ data: { email } })
       if (success) {
-        toast.success(result);
-        setEmail("");
-      } else toast.error(result);
-    });
-  };
+        toast.success(result)
+        setEmail('')
+      } else toast.error(result)
+    })
+  }
 
   return (
     <footer className="relative bg-[#0f1520] text-neutral-300 overflow-hidden">
@@ -34,7 +41,6 @@ export default function Footer() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(249,115,22,0.07),transparent)] pointer-events-none" />
 
       <div className="relative container max-w-5xl mx-auto px-6 py-14">
-
         {/* Brand block */}
         <div className="text-center mb-10">
           <h2 className="font-['Playfair_Display'] text-2xl font-bold text-white tracking-wide">
@@ -63,8 +69,7 @@ export default function Footer() {
               {label}
             </Link>
           ))}
-        </nav>*/
-        }
+        </nav>*/}
         {/* Divider */}
         <div className="h-px bg-white/5 mb-10" />
 
@@ -104,7 +109,7 @@ export default function Footer() {
                   Sending...
                 </span>
               ) : (
-                "Subscribe"
+                'Subscribe'
               )}
             </Button>
           </div>
@@ -121,8 +126,8 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-neutral-500">
           <p>
-            &copy; {new Date().getFullYear()} B-Fanel Industries Limited.{" "}
-            All Rights Reserved.
+            &copy; {new Date().getFullYear()} B-Fanel Industries Limited. All
+            Rights Reserved.
           </p>
           <Link
             to="https://wa.me/+2349014864168"
@@ -131,8 +136,7 @@ export default function Footer() {
             Built by Iroka Ntomchukwu
           </Link>
         </div>
-
       </div>
     </footer>
-  );
+  )
 }
