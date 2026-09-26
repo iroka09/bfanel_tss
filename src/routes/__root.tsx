@@ -36,7 +36,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   },
   beforeLoad: async ({ context }) => {
      const sessionData = await getSession()
-    return { sessionData: null }
+    return { sessionData}
   },
   shellComponent: RootDocument,
 })
