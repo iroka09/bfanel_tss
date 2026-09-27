@@ -125,7 +125,13 @@ BFANEL PVC operates a nationwide product distribution network, partnering with c
 
 ## 8. Geolocation
 
- 5.823660, 6.957214
+5.823660, 6.957214
+
+---
+
+---
+
+---
 
 # BFANEL Website Image Manifest
 

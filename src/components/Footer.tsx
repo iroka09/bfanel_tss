@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button'
 import { submitEmail } from '@/server/actions/newsletter'
 import { useLocation } from '@tanstack/react-router'
 
-const excludedPathnames = ['/assistant']
+const excludedPages = ['/assistant']
 
 export default function Footer() {
   const pathname = useLocation({ select: (x) => x.pathname })
-  if (excludedPathnames.includes(pathname)) {
+  if (excludedPages.includes(pathname)) {
     return null
   }
   const [email, setEmail] = React.useState('')

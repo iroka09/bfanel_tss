@@ -4,8 +4,6 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { OpenRouter } from '@openrouter/sdk'
 import {
   Send,
-  Bot,
-  User,
   Sparkles,
   CheckCheck,
   Clock,
@@ -21,9 +19,14 @@ import {
   ChevronUp,
   Volume2,
   Square,
+  Plus,
+  Mic,
+  ThumbsUp,
+  ThumbsDown,
+  MoreVertical,
+  FileText,
 } from 'lucide-react'
 import websiteContext from '@/about_bfanel.md?raw'
-import { useAppSession } from '@/context/session'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -44,6 +47,7 @@ const schema = {
     ],
   },
 }
+
 // 1. Declare the ?raw module right here so TypeScript doesn't complain.
 declare module '*?raw' {
   const src: string
@@ -122,47 +126,34 @@ type Message = {
   timestamp: Date
 }
 
-// Helper for formatting date + time
-const formatDateTime = (date: Date) => {
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-// Helper to strip Markdown for Text-to-Speech
+// Helper to strip Markdown for Text-to-Speech & Raw Copying
 const stripMarkdown = (md: string) => {
   if (!md) return ''
   return md
-    .replace(/```[\s\S]*?```/g, ' [Code block omitted] ') // Remove code blocks
-    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Extract text from links
-    .replace(/#{1,6}\s+/g, '') // Remove headers
-    .replace(/(\*\*|__)(.*?)\1/g, '$2') // Remove bold
-    .replace(/(\*|_)(.*?)\1/g, '$2') // Remove italics
-    .replace(/~~(.*?)~~/g, '$1') // Remove strikethrough
-    .replace(/`([^`]+)`/g, '$1') // Remove inline code ticks
-    .replace(/^\s*>\s+/gm, '') // Remove blockquotes
-    .replace(/^\s*[-*+]\s+/gm, '') // Remove unordered list markers
-    .replace(/^\s*\d+\.\s+/gm, '') // Remove ordered list markers
-    .replace(/\|/g, ' ') // Remove table pipes
-    .replace(/[-]{3,}/g, ' ') // Remove table row dividers
-    .replace(/\n{2,}/g, ' . ') // Add pauses for multiple newlines
+    .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/#{1,6}\s+/g, '')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/~~(.*?)~~/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^\s*>\s+/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\|/g, ' ')
+    .replace(/[-]{3,}/g, ' ')
+    .replace(/\n{2,}/g, ' . ')
     .trim()
 }
 
-// Expandable Content Component with Markdown overriding for Tables and Links
+// Expandable Content Component
 function ExpandableMessage({
   content,
   isTyping,
-  isUser,
 }: {
   content: string
   isTyping?: boolean
-  isUser?: boolean
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
@@ -171,8 +162,7 @@ function ExpandableMessage({
   useEffect(() => {
     const checkOverflow = () => {
       if (contentRef.current) {
-        // threshold 250px
-        setIsOverflowing(contentRef.current.scrollHeight > 250)
+        setIsOverflowing(contentRef.current.scrollHeight > 350)
       }
     }
 
@@ -188,7 +178,7 @@ function ExpandableMessage({
       <div
         ref={contentRef}
         className={`transition-[max-height] duration-500 ease-in-out overflow-hidden break-words w-full ${
-          isExpanded ? 'max-h-[3000px]' : 'max-h-[250px]'
+          isExpanded ? 'max-h-[3000px]' : 'max-h-[350px]'
         }`}
         style={{
           WebkitMaskImage:
@@ -212,22 +202,20 @@ function ExpandableMessage({
         </div>
       </div>
 
-      {/* Expand/Collapse Arrow Icon Button */}
       {isOverflowing && !isTyping && (
-        <div className="flex justify-end w-full -mt-3 relative z-10">
+        <div className="flex justify-start w-full mt-1 relative z-10">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`p-1 rounded-full shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center justify-center ${
-              isUser
-                ? 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-md'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 border border-slate-200/60 dark:border-slate-700/60'
-            }`}
-            title={isExpanded ? 'Show less' : 'Read more'}
+            className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
           >
             {isExpanded ? (
-              <ChevronUp className="w-4 h-4" />
+              <>
+                Show less <ChevronUp className="w-4 h-4" />
+              </>
             ) : (
-              <ChevronDown className="w-4 h-4" />
+              <>
+                Read more <ChevronDown className="w-4 h-4" />
+              </>
             )}
           </button>
         </div>
@@ -237,7 +225,7 @@ function ExpandableMessage({
 }
 
 const reactMarkdownComponents = {
-  table: ({ node, ...props }) => (
+  table: ({ node, ...props }: any) => (
     <div className="overflow-x-auto my-4 w-full rounded-lg border border-slate-200 dark:border-slate-700">
       <table
         className="w-full min-w-[450px] border-collapse text-sm text-left"
@@ -245,36 +233,36 @@ const reactMarkdownComponents = {
       />
     </div>
   ),
-  th: ({ node, ...props }) => (
+  th: ({ node, ...props }: any) => (
     <th
-      className="px-4 py-3 bg-slate-100 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200"
+      className="px-4 py-3 bg-slate-100 dark:bg-[#2f2f2f] font-semibold border-b border-slate-200 dark:border-[#3d3d3d]"
       {...props}
     />
   ),
-  td: ({ node, ...props }) => (
+  td: ({ node, ...props }: any) => (
     <td
-      className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 last:border-0"
+      className="px-4 py-3 border-b border-slate-200 dark:border-[#3d3d3d] last:border-0"
       {...props}
     />
   ),
-  a: ({ node, ...props }) => (
+  a: ({ node, ...props }: any) => (
     <a
-      className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+      className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:text-blue-800 transition-colors"
       target="_blank"
       rel="noopener noreferrer"
       {...props}
     />
   ),
-  p: ({ node, ...props }) => (
+  p: ({ node, ...props }: any) => (
     <p className="mb-3 last:mb-0 whitespace-pre-wrap" {...props} />
   ),
-  ul: ({ node, ...props }) => (
+  ul: ({ node, ...props }: any) => (
     <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />
   ),
-  ol: ({ node, ...props }) => (
+  ol: ({ node, ...props }: any) => (
     <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />
   ),
-  iframe: ({ node, ...props }) => (
+  iframe: ({ node, ...props }: any) => (
     <div className="relative w-full my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 aspect-video">
       <iframe
         className="absolute top-0 left-0 w-full h-full"
@@ -298,15 +286,24 @@ function AiAssistantRoute() {
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(
     null,
   )
+  const [feedbackState, setFeedbackState] = useState<
+    Record<string, 'up' | 'down'>
+  >({})
+  
+  // NEW: State to manage the open 3-dots menu
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
-  const chatContainerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const userScrolledUpRef = useRef(false)
-  const { session, isAuthenticated } = useAppSession()
+  const abortStreamRef = useRef(false)
 
-  // Clean up Text-to-Speech on unmount
+  // Clean up Text-to-Speech on unmount and click listener for the dots menu
   useEffect(() => {
+    const handleOutsideClick = () => setOpenMenuId(null)
+    document.addEventListener('click', handleOutsideClick)
+    
     return () => {
+      document.removeEventListener('click', handleOutsideClick)
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel()
       }
@@ -320,24 +317,28 @@ function AiAssistantRoute() {
     return null
   }, [messages])
 
+  // Top level window scrolling implementation
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior,
-      })
-    }
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior,
+    })
   }, [])
 
-  const handleScroll = () => {
-    if (!chatContainerRef.current) return
-    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current
-    const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+  useEffect(() => {
+    const handleWindowScroll = () => {
+      const distanceFromBottom =
+        document.documentElement.scrollHeight -
+        window.scrollY -
+        window.innerHeight
+      const isScrolledUp = distanceFromBottom > 140
+      setShowScrollButton(isScrolledUp)
+      userScrolledUpRef.current = isScrolledUp
+    }
 
-    const isScrolledUp = distanceFromBottom > 140
-    setShowScrollButton(isScrolledUp)
-    userScrolledUpRef.current = isScrolledUp
-  }
+    window.addEventListener('scroll', handleWindowScroll)
+    return () => window.removeEventListener('scroll', handleWindowScroll)
+  }, [])
 
   useEffect(() => {
     if (!userScrolledUpRef.current) {
@@ -350,6 +351,17 @@ function AiAssistantRoute() {
     navigator.clipboard.writeText(text)
     setCopiedMessageId(id)
     setTimeout(() => setCopiedMessageId(null), 2000)
+  }
+
+  const handleSelectText = (id: string) => {
+    const el = document.getElementById(`msg-${id}`)
+    if (el) {
+      const selection = window.getSelection()
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    }
   }
 
   const handleShare = async (text: string) => {
@@ -375,24 +387,25 @@ function AiAssistantRoute() {
       alert('Text-to-speech is not supported in your browser.')
       return
     }
-
     if (speakingMessageId === id) {
-      // Stop speaking if it's already playing this message
       window.speechSynthesis.cancel()
       setSpeakingMessageId(null)
     } else {
-      // Stop anything currently playing, strip markdown, and start new synthesis
       window.speechSynthesis.cancel()
-
       const cleanText = stripMarkdown(text)
       const utterance = new SpeechSynthesisUtterance(cleanText)
-
       utterance.onend = () => setSpeakingMessageId(null)
       utterance.onerror = () => setSpeakingMessageId(null)
-
       setSpeakingMessageId(id)
       window.speechSynthesis.speak(utterance)
     }
+  }
+
+  const handleFeedback = (id: string, type: 'up' | 'down') => {
+    setFeedbackState((prev) => ({
+      ...prev,
+      [id]: prev[id] === type ? undefined : type,
+    }))
   }
 
   const handleStartEdit = (msg: Message) => {
@@ -406,12 +419,63 @@ function AiAssistantRoute() {
     setEditingMessageId(null)
   }
 
+  const handleInputResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    e.target.style.height = 'auto'
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`
+  }
+
+  // --- REGENERATING A RESPONSE ---
+  const handleRegenerate = (assistantMsgId: string) => {
+    const msgIndex = messages.findIndex((m) => m.id === assistantMsgId)
+    if (msgIndex <= 0) return
+    const userMsg = messages[msgIndex - 1]
+    
+    // Safety check to ensure the preceding message is a user prompt
+    if (userMsg?.role !== 'user') return
+
+    // Resend the prompt using replaceId—which natively trims history at that point
+    sendMessage(userMsg.content, { replaceId: userMsg.id, isEdit: true })
+  }
+
+  // --- STOP GENERATING AND RETURN TO TEXTAREA ---
+  const handleStop = () => {
+    abortStreamRef.current = true // Break stream loops
+
+    setMessages((prev) => {
+      const newMessages = [...prev]
+      const lastUserIndex = newMessages.map((m) => m.role).lastIndexOf('user')
+
+      if (lastUserIndex !== -1) {
+        const lastUserMsg = newMessages[lastUserIndex]
+        // Put text back into input
+        setInput(lastUserMsg.content)
+        // Slice away the user message and everything after it
+        return newMessages.slice(0, lastUserIndex)
+      }
+      return prev
+    })
+
+    setIsStreaming(false)
+    setEditingMessageId(null)
+    
+    // Needs a slight timeout to focus and auto-resize after state reflects
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.style.height = 'auto'
+        inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 120)}px`
+        inputRef.current.focus()
+      }
+    }, 0)
+  }
+
   const sendMessage = async (
     text: string,
     options?: { replaceId?: string; isEdit?: boolean },
   ) => {
     if (!text.trim() || isStreaming) return
 
+    abortStreamRef.current = false // Reset abort signal
     userScrolledUpRef.current = false
     const userId = options?.replaceId || crypto.randomUUID()
     const userMessage: Message = {
@@ -423,6 +487,8 @@ function AiAssistantRoute() {
     }
 
     setInput('')
+    if (inputRef.current) inputRef.current.style.height = 'auto'
+
     setEditingMessageId(null)
     setIsStreaming(true)
 
@@ -450,6 +516,11 @@ function AiAssistantRoute() {
         data: { messages: apiMessages },
       })
 
+      // IMPORTANT FIX: Prevent ghost typing if stop was clicked while awaiting the initial API response
+      if (abortStreamRef.current) {
+        return
+      }
+
       setMessages((prev) =>
         prev.map((m) => (m.id === userId ? { ...m, status: 'sent' } : m)),
       )
@@ -466,7 +537,11 @@ function AiAssistantRoute() {
         },
       ])
 
+      // When loop breaks internally, reading stream ends which cuts HTTP network connection via the browser cleanly
       for await (const chunk of stream) {
+        if (abortStreamRef.current) {
+          break
+        }
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId ? { ...m, content: m.content + chunk } : m,
@@ -474,36 +549,46 @@ function AiAssistantRoute() {
         )
       }
 
-      setMessages((prev) =>
-        prev.map((m) => (m.id === assistantId ? { ...m, status: 'sent' } : m)),
-      )
-    } catch (error: any) {
-      setMessages((prev) => {
-        const hasAssistantStarted = prev.some(
-          (m) => m.role === 'assistant' && m.status === 'typing',
+      if (!abortStreamRef.current) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, status: 'sent' } : m,
+          ),
         )
+        setIsStreaming(false)
+      }
+    } catch (error: any) {
+      if (!abortStreamRef.current) {
+        setMessages((prev) => {
+          const hasAssistantStarted = prev.some(
+            (m) => m.role === 'assistant' && m.status === 'typing',
+          )
 
-        if (hasAssistantStarted) {
-          return prev.map((m) =>
-            m.status === 'typing'
-              ? { ...m, status: 'error', errorMessage: 'Stream disconnected.' }
-              : m,
-          )
-        } else {
-          return prev.map((m) =>
-            m.id === userId
-              ? {
-                  ...m,
-                  status: 'error',
-                  errorMessage:
-                    'Message failed to send. Check your connection.',
-                }
-              : m,
-          )
-        }
-      })
-    } finally {
-      setIsStreaming(false)
+          if (hasAssistantStarted) {
+            return prev.map((m) =>
+              m.status === 'typing'
+                ? {
+                    ...m,
+                    status: 'error',
+                    errorMessage: 'Stream disconnected.',
+                  }
+                : m,
+            )
+          } else {
+            return prev.map((m) =>
+              m.id === userId
+                ? {
+                    ...m,
+                    status: 'error',
+                    errorMessage:
+                      'Message failed to send. Check your connection.',
+                  }
+                : m,
+            )
+          }
+        })
+        setIsStreaming(false)
+      }
     }
   }
 
@@ -516,231 +601,250 @@ function AiAssistantRoute() {
   }
 
   return (
-    <div className="relative flex flex-col h-screen h-[100dvh] overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900">
-      <header className="flex-shrink-0 flex items-center justify-between px-6 py-4 bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm z-20">
+    <div className="relative min-h-screen bg-white dark:bg-[#212121] text-slate-900 dark:text-gray-100 font-sans transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900 flex flex-col">
+      <header className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 bg-white/80 dark:bg-[#212121]/80 backdrop-blur-md border-b border-slate-200/50 dark:border-transparent">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 shadow-sm">
+            <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400">
-              B-Fanel AI ASSISTANT
+            <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+              B-Fanel AI
             </h1>
-            <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
-              Powered by Nemotron-3 Ultra
-            </p>
           </div>
         </div>
       </header>
 
-      <main
-        ref={chatContainerRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6 scroll-smooth"
-      >
-        <div className="max-w-4xl mx-auto space-y-8 pb-4">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[55vh] text-slate-400 dark:text-slate-500 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="p-4 rounded-full bg-blue-50 dark:bg-slate-800/50 ring-1 ring-slate-200 dark:ring-slate-700">
-                <Bot className="w-12 h-12 text-blue-500 dark:text-blue-400 opacity-80" />
-              </div>
-              <p className="text-lg font-medium text-slate-600 text-center dark:text-slate-300">
-                How can I assist you today?
-              </p>
-            </div>
-          ) : (
-            messages.map((msg) => {
-              const canEdit = msg.id === lastUserMsgId && !isStreaming
-              const isCurrentlyBeingEdited = editingMessageId === msg.id
+      {/* Main chat window - full document scroll instead of boxed scroll */}
+      <main className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-8 flex-1 pb-[140px] flex flex-col gap-6">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[50vh] text-slate-400 dark:text-slate-500 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Sparkles className="w-10 h-10 text-blue-500/50 dark:text-blue-400/50" />
+            <p className="text-lg font-medium text-slate-600 dark:text-slate-300">
+              How can I help you today?
+            </p>
+          </div>
+        ) : (
+          messages.map((msg) => {
+            const canEdit = msg.id === lastUserMsgId && !isStreaming
+            const isCurrentlyBeingEdited = editingMessageId === msg.id
 
-              return (
+            return (
+              <div
+                key={msg.id}
+                className={`flex flex-col group animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+                  msg.role === 'user' ? 'items-end' : 'items-start'
+                } ${isCurrentlyBeingEdited ? 'opacity-50' : 'opacity-100'}`}
+              >
                 <div
-                  key={msg.id}
-                  className={`flex flex-col gap-1 group animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-                    msg.role === 'user' ? 'items-end' : 'items-start'
-                  } ${isCurrentlyBeingEdited ? 'opacity-50' : 'opacity-100'}`}
+                  className={`relative group/bubble flex flex-col ${
+                    msg.role === 'assistant'
+                      ? 'max-w-full sm:max-w-[85%]'
+                      : 'max-w-[85%] sm:max-w-[75%]'
+                  }`}
                 >
-                  <div
-                    className={`flex gap-4 w-full relative ${
-                      msg.role === 'user'
-                        ? 'flex-row-reverse justify-start'
-                        : 'flex-row justify-start'
-                    }`}
-                  >
-                    {msg.role === 'assistant' && (
-                      <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-violet-100 dark:from-slate-800 dark:to-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 shadow-sm mt-1">
-                        <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      </div>
-                    )}
-
-                    {msg.role === 'user' && (
-                      <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 ring-1 ring-slate-300 dark:ring-slate-600 shadow-sm mt-1 overflow-hidden">
-                        {isAuthenticated && session?.picture ? (
-                          <img
-                            src={session.picture}
-                            className="w-full h-full object-cover"
-                            alt="avatar"
-                          />
-                        ) : (
-                          <User className="w-5 h-5 text-slate-600 dark:text-slate-300" />
-                        )}
-                      </div>
-                    )}
-
-                    <div
-                      className={`relative group/bubble flex flex-col ${msg.role === 'assistant' ? 'max-w-[88%] sm:max-w-[80%]' : 'max-w-[85%] sm:max-w-[75%]'}`}
-                    >
-                      {/* User Bubble Hover Actions (Copy & Edit) */}
-                      {msg.role === 'user' && (
-                        <div className="absolute top-2 right-full mr-2 flex flex-col gap-2 opacity-0 scale-95 group-hover/bubble:opacity-100 group-hover/bubble:scale-100 transition-all duration-200 ease-out origin-right z-10">
-                          <button
-                            onClick={() => handleCopy(msg.content, msg.id)}
-                            className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm hover:shadow-md transition-all"
-                            title="Copy message"
-                          >
-                            {copiedMessageId === msg.id ? (
-                              <Check className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <Copy className="w-4 h-4" />
-                            )}
-                          </button>
-
-                          {canEdit && (
-                            <button
-                              onClick={() => handleStartEdit(msg)}
-                              className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm hover:shadow-md transition-all"
-                              title="Edit message"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                          )}
+                  {/* Message Body */}
+                  {msg.role === 'assistant' ? (
+                    <div className="px-1 py-1 text-[16px] leading-relaxed text-slate-800 dark:text-gray-100">
+                      {msg.status === 'typing' && msg.content === '' ? (
+                        <div className="flex gap-1.5 items-center h-6">
+                          <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce [animation-delay:-0.3s]"></span>
+                          <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce [animation-delay:-0.15s]"></span>
+                          <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce"></span>
                         </div>
+                      ) : (
+                        <>
+                          <ExpandableMessage
+                            content={msg.content}
+                            isTyping={msg.status === 'typing'}
+                          />
+                          {msg.status === 'error' && (
+                            <div className="mt-3 text-sm text-red-500 flex items-center gap-1 bg-red-50 dark:bg-red-950/30 p-2 rounded-lg inline-flex">
+                              <AlertCircle className="w-4 h-4" />
+                              {msg.errorMessage}
+                            </div>
+                          )}
+                        </>
                       )}
+                    </div>
+                  ) : (
+                    <div
+                      id={`msg-${msg.id}`}
+                      className="px-5 py-3 text-[16px] font-normal leading-relaxed bg-[#1a56db] text-white rounded-3xl rounded-tr-md"
+                    >
+                      {msg.content}
+                    </div>
+                  )}
 
-                      {/* Actual Message Bubble styling */}
-                      <div
-                        className={`px-5 py-4 text-[15px] font-normal leading-relaxed shadow-sm flex-1 overflow-hidden w-full ${
-                          msg.role === 'user'
-                            ? 'bg-gradient-to-br from-blue-600 to-violet-600 text-white rounded-3xl rounded-tr-md shadow-blue-500/20'
-                            : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-md'
-                        }`}
+                  {/* USER Context Menu (Hover Dropdown style) */}
+                  {msg.role === 'user' && (
+                    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#2f2f2f] rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 flex flex-col overflow-hidden opacity-0 scale-95 pointer-events-none group-hover/bubble:opacity-100 group-hover/bubble:scale-100 group-hover/bubble:pointer-events-auto transition-all duration-200 origin-top-right z-50 py-1.5">
+                      <button
+                        onClick={() => handleCopy(msg.content, msg.id)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
                       >
-                        {msg.role === 'assistant' &&
-                        msg.status === 'typing' &&
-                        msg.content === '' ? (
-                          <div className="flex gap-1.5 items-center h-6 px-2">
-                            <span className="w-2 h-2 rounded-full bg-blue-500/60 dark:bg-blue-400/60 animate-bounce [animation-delay:-0.3s]"></span>
-                            <span className="w-2 h-2 rounded-full bg-blue-500/60 dark:bg-blue-400/60 animate-bounce [animation-delay:-0.15s]"></span>
-                            <span className="w-2 h-2 rounded-full bg-blue-500/60 dark:bg-blue-400/60 animate-bounce"></span>
-                          </div>
+                        {copiedMessageId === msg.id ? (
+                          <Check className="w-4 h-4 text-green-500" />
                         ) : (
-                          <>
-                            <ExpandableMessage
-                              content={msg.content}
-                              isTyping={msg.status === 'typing'}
-                              isUser={msg.role === 'user'}
-                            />
+                          <Copy className="w-4 h-4" />
+                        )}
+                        Copy
+                      </button>
+                      <button
+                        onClick={() => handleSelectText(msg.id)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Select text
+                      </button>
+                      {canEdit && (
+                        <button
+                          onClick={() => handleStartEdit(msg)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                        >
+                          <Pencil className="w-4 h-4" />
+                          Edit message
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleShare(msg.content)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                      >
+                        <Share2 className="w-4 h-4" />
+                        Share prompt
+                      </button>
+                    </div>
+                  )}
 
-                            {/* AI Error Alert */}
-                            {msg.role === 'assistant' &&
-                              msg.status === 'error' && (
-                                <div className="mt-3 text-sm text-red-500 flex items-center gap-1 bg-red-50/50 dark:bg-red-950/30 p-2 rounded-lg relative z-10">
-                                  <AlertCircle className="w-4 h-4" />
-                                  {msg.errorMessage}
-                                </div>
-                              )}
-                          </>
+                  {/* ASSISTANT Action Buttons (Below text) */}
+                  {msg.role === 'assistant' && msg.status !== 'typing' && (
+                    <div className="mt-3 flex items-center gap-4 text-slate-400 dark:text-gray-400 pl-1">
+                      <button
+                        onClick={() => handleCopy(msg.content, msg.id)}
+                        title="Copy"
+                      >
+                        {copiedMessageId === msg.id ? (
+                          <Check className="w-[18px] h-[18px] text-green-500" />
+                        ) : (
+                          <Copy className="w-[18px] h-[18px] hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleFeedback(msg.id, 'up')}
+                        title="Good response"
+                      >
+                        <ThumbsUp
+                          className={`w-[18px] h-[18px] transition-colors ${feedbackState[msg.id] === 'up' ? 'text-blue-500 fill-blue-500/20' : 'hover:text-slate-700 dark:hover:text-gray-200'}`}
+                        />
+                      </button>
+                      <button
+                        onClick={() => handleFeedback(msg.id, 'down')}
+                        title="Bad response"
+                      >
+                        <ThumbsDown
+                          className={`w-[18px] h-[18px] transition-colors ${feedbackState[msg.id] === 'down' ? 'text-red-500 fill-red-500/20' : 'hover:text-slate-700 dark:hover:text-gray-200'}`}
+                        />
+                      </button>
+                      <button
+                        onClick={() => handleReadAloud(msg.content, msg.id)}
+                        title={
+                          speakingMessageId === msg.id
+                            ? 'Stop reading'
+                            : 'Read aloud'
+                        }
+                      >
+                        {speakingMessageId === msg.id ? (
+                          <Square className="w-[18px] h-[18px] fill-current text-blue-500" />
+                        ) : (
+                          <Volume2 className="w-[18px] h-[18px] hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleShare(msg.content)}
+                        title="Share"
+                      >
+                        <Share2 className="w-[18px] h-[18px] hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
+                      </button>
+                      
+                      {/* MORE OPTIONS MENU */}
+                      <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+                        <button 
+                          onClick={() => setOpenMenuId(openMenuId === msg.id ? null : msg.id)}
+                          title="More options"
+                          className="p-1 -ml-1 rounded-md hover:bg-slate-200 dark:hover:bg-[#3d3d3d] transition-colors"
+                        >
+                          <MoreVertical className="w-[18px] h-[18px] text-slate-400 hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
+                        </button>
+                        
+                        {openMenuId === msg.id && (
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-36 bg-white dark:bg-[#2f2f2f] rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 flex flex-col py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
+                            <button
+                              onClick={() => {
+                                handleRegenerate(msg.id)
+                                setOpenMenuId(null)
+                              }}
+                              className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              Regenerate
+                            </button>
+                            <button
+                              onClick={() => {
+                                handleCopy(stripMarkdown(msg.content), msg.id)
+                                setOpenMenuId(null)
+                              }}
+                              className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              Copy Raw
+                            </button>
+                            <div className="h-px w-full bg-slate-100 dark:bg-white/10 my-1" />
+                            <button
+                              onClick={() => {
+                                alert('Response reported.')
+                                setOpenMenuId(null)
+                              }}
+                              className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-red-600 dark:text-red-400 hover:bg-slate-50 dark:hover:bg-[#3d3d3d] transition-colors"
+                            >
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              Report
+                            </button>
+                          </div>
                         )}
                       </div>
+                    </div>
+                  )}
 
-                      {/* AI Action Buttons Outside Bubble */}
-                      {msg.role === 'assistant' && msg.status !== 'typing' && (
-                        <div className="mt-1.5 ml-2 flex items-center gap-1">
+                  {/* Sending/Error states for User */}
+                  {msg.role === 'user' && (
+                    <div className="mt-1 flex justify-end px-2">
+                      {msg.status === 'sending' && (
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      )}
+                      {msg.status === 'error' && (
+                        <div className="flex items-center gap-1.5 text-xs text-red-500">
+                          <AlertCircle className="w-3 h-3" />
+                          <span>Failed</span>
                           <button
-                            onClick={() => handleReadAloud(msg.content, msg.id)}
-                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-slate-200/50 dark:hover:text-blue-400 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
-                            title={
-                              speakingMessageId === msg.id
-                                ? 'Stop reading'
-                                : 'Read aloud'
+                            onClick={() =>
+                              sendMessage(msg.content, { replaceId: msg.id })
                             }
+                            className="underline ml-1"
                           >
-                            {speakingMessageId === msg.id ? (
-                              <Square className="w-4 h-4 fill-blue-500 text-blue-500" />
-                            ) : (
-                              <Volume2 className="w-4 h-4" />
-                            )}
-                          </button>
-
-                          <button
-                            onClick={() => handleCopy(msg.content, msg.id)}
-                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 dark:hover:text-slate-200 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
-                            title="Copy"
-                          >
-                            {copiedMessageId === msg.id ? (
-                              <Check className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <Copy className="w-4 h-4" />
-                            )}
-                          </button>
-
-                          <button
-                            onClick={() => handleShare(msg.content)}
-                            className="p-1.5 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 dark:hover:text-slate-200 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
-                            title="Share"
-                          >
-                            <Share2 className="w-4 h-4" />
+                            Resend
                           </button>
                         </div>
                       )}
                     </div>
-                  </div>
-
-                  <div
-                    className={`text-[11px] flex items-center gap-1.5 px-14 font-medium transition-opacity ${
-                      msg.role === 'user'
-                        ? 'text-slate-400 flex-row-reverse mt-1'
-                        : 'text-slate-400'
-                    }`}
-                  >
-                    <span>{formatDateTime(msg.timestamp)}</span>
-
-                    {msg.role === 'user' && (
-                      <>
-                        {msg.status === 'sending' && (
-                          <Clock className="w-3 h-3 text-slate-400" />
-                        )}
-                        {msg.status === 'sent' && (
-                          <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
-                        )}
-                        {msg.status === 'error' && (
-                          <div className="flex items-center gap-1.5 text-red-500 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">
-                            <AlertCircle className="w-3 h-3" />
-                            <span>{msg.errorMessage}</span>
-                            <span className="mx-1 text-slate-300 dark:text-slate-600">
-                              |
-                            </span>
-                            <button
-                              onClick={() =>
-                                sendMessage(msg.content, { replaceId: msg.id })
-                              }
-                              className="flex items-center gap-1 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                            >
-                              <RotateCcw className="w-3 h-3" />
-                              Resend
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+                  )}
                 </div>
-              )
-            })
-          )}
-        </div>
+              </div>
+            )
+          })
+        )}
       </main>
 
+      {/* Floating Scroll Button */}
       {showScrollButton && (
         <button
           type="button"
@@ -748,28 +852,26 @@ function AiAssistantRoute() {
             userScrolledUpRef.current = false
             scrollToBottom('smooth')
           }}
-          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/80 rounded-full shadow-lg hover:bg-slate-100 dark:hover:bg-slate-700/90 active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center w-10 h-10 bg-white/90 dark:bg-[#2f2f2f]/90 border border-slate-200 dark:border-transparent rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-slate-50 dark:hover:bg-[#383838] transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
           aria-label="Scroll to bottom"
         >
-          <ArrowDown className="w-3.5 h-3.5 text-blue-500" />
-          <span>Scroll to bottom</span>
+          <ArrowDown className="w-4 h-4 text-slate-700 dark:text-gray-200" />
         </button>
       )}
 
-      {/* FOOTER UPDATED HERE: Z-index lowered to 10, sticky positioning added, bottom margins aligned */}
-      <footer className="sticky bottom-4 mb-4 z-10 flex-shrink-0 px-4 sm:px-6 bg-transparent">
-        <div className="max-w-3xl mx-auto flex flex-col drop-shadow-xl">
+      {/* Floating Bottom Input Area */}
+      <footer className="fixed bottom-0 left-0 w-full bg-gradient-to-t from-white via-white dark:from-[#212121] dark:via-[#212121] to-transparent pt-8 pb-4 px-4 sm:px-6 z-50 pointer-events-none">
+        <div className="max-w-3xl mx-auto flex flex-col pointer-events-auto relative">
           {editingMessageId && (
-            <div className="flex items-center justify-between px-5 py-2.5 text-[13px] bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 border-x border-t border-blue-200 dark:border-slate-700 rounded-t-3xl backdrop-blur-md">
+            <div className="flex items-center justify-between px-5 py-2 text-[13px] bg-slate-100 dark:bg-[#2f2f2f] text-slate-600 dark:text-gray-300 rounded-t-2xl mx-2 mb-[-10px] pb-4">
               <span className="font-medium flex items-center gap-2">
                 <Pencil className="w-3.5 h-3.5" />
-                Editing previous message...
+                Editing message
               </span>
               <button
                 type="button"
                 onClick={cancelEdit}
-                className="p-1 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors text-blue-500 dark:text-slate-400"
-                title="Cancel Edit"
+                className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-[#3d3d3d] transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -778,46 +880,75 @@ function AiAssistantRoute() {
 
           <form
             onSubmit={handleSubmit}
-            className={`flex items-center gap-3 p-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border transition-all duration-300 ${
-              editingMessageId
-                ? 'rounded-b-[2rem] border-blue-200 dark:border-slate-700 border-t-0 shadow-inner'
-                : 'rounded-[2rem] border-white/60 dark:border-slate-700/60'
-            } ${
-              isStreaming
-                ? 'opacity-80 cursor-not-allowed'
-                : 'focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 shadow-slate-200/50 dark:shadow-black/40'
-            }`}
+            className="flex items-end gap-1.5 p-1.5 bg-slate-100 dark:bg-[#2f2f2f] rounded-[26px] border border-transparent focus-within:border-slate-300 dark:focus-within:border-[#424242] shadow-sm transition-all relative z-10"
           >
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={
-                isStreaming
-                  ? 'B-Fanel AI is typing...'
-                  : 'Message B-Fanel AI...'
-              }
-              disabled={isStreaming}
-              className="flex-1 bg-transparent px-5 py-3 text-[15px] font-normal outline-none disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
-            />
+            {/* Plus Button - Now alerts user as Nemotron free tier is text-only */}
             <button
-              type="submit"
-              disabled={!input.trim() || isStreaming}
-              className={`flex items-center justify-center w-12 h-12 rounded-full text-white shadow-md transition-all duration-200 mr-1 ${
-                editingMessageId
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-emerald-500/30 hover:shadow-emerald-500/40'
-                  : 'bg-gradient-to-r from-blue-600 to-violet-600 shadow-blue-500/30 hover:shadow-lg'
-              } hover:scale-105 disabled:opacity-40 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed`}
+              type="button"
+              onClick={() =>
+                alert(
+                  'File upload is not supported by the current free text-only model.',
+                )
+              }
+              className="p-2.5 flex-shrink-0 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white bg-slate-200/50 dark:bg-[#3d3d3d]/50 hover:dark:bg-[#3d3d3d] rounded-full ml-1 mb-1 transition-colors"
+              title="Add attachment"
+              disabled={isStreaming}
             >
-              {isStreaming ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : editingMessageId ? (
-                <Check className="w-5 h-5" />
-              ) : (
-                <Send className="w-5 h-5 ml-1" />
-              )}
+              <Plus className="w-5 h-5" />
             </button>
+
+            {/* Input Field */}
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={handleInputResize}
+              placeholder="Message B-Fanel AI..."
+              disabled={isStreaming}
+              rows={1}
+              className="flex-1 bg-transparent px-2 py-3 min-h-[44px] max-h-[120px] text-[16px] outline-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400 resize-none overflow-y-auto mb-0.5"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  if (input.trim() && !isStreaming) handleSubmit(e)
+                }
+              }}
+            />
+
+            {/* Actions (Mic / Send / Stop) */}
+            <div className="flex items-center gap-1 pr-1 pb-1 flex-shrink-0">
+              {!isStreaming && (
+                <button
+                  type="button"
+                  className="p-2.5 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white rounded-full transition-colors"
+                  title="Voice input"
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+              )}
+
+              {isStreaming ? (
+                <button
+                  type="button"
+                  onClick={handleStop}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-[#424242] dark:text-gray-200 dark:hover:bg-[#525252] dark:hover:text-white transition-all shadow-sm"
+                  title="Stop generating"
+                >
+                  <Square className="w-4 h-4 fill-current" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!input.trim()}
+                  className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${
+                    input.trim()
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-slate-300 text-slate-500 dark:bg-[#424242] dark:text-gray-500'
+                  }`}
+                >
+                  <Send className="w-4 h-4 ml-0.5" />
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </footer>
