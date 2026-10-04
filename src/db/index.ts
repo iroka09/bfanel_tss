@@ -6,7 +6,7 @@ import * as schema from './schema'
 
 const isDev = process.env.NODE_ENV === 'development'
 
-console.log(process.env.DATABASE_URL)
+
 
 export const db = isDev
   ? drizzlePg(process.env.DATABASE_URL)

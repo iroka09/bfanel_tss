@@ -11,9 +11,6 @@ const excludedPages = ['/assistant']
 
 export default function Footer() {
   const pathname = useLocation({ select: (x) => x.pathname })
-  if (excludedPages.includes(pathname)) {
-    return null
-  }
   const [email, setEmail] = React.useState('')
   const [isSubmitting, startTransition] = React.useTransition()
 
@@ -31,7 +28,9 @@ export default function Footer() {
       } else toast.error(result)
     })
   }
-
+  if (excludedPages.includes(pathname)) {
+    return null
+  }
   return (
     <footer className="relative bg-[#0f1520] text-neutral-300 overflow-hidden">
       {/* Top glowing divider */}
