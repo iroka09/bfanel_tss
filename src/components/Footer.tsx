@@ -10,10 +10,9 @@ import { useLocation } from '@tanstack/react-router'
 const excludedPages = ['/assistant']
 
 export default function Footer() {
-  const pathname = useLocation({ select: (x) => x.pathname })
   const [email, setEmail] = React.useState('')
   const [isSubmitting, startTransition] = React.useTransition()
-
+  const pathname = useLocation({ select: (x) => x.pathname })
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault()
     if (!email.trim()) {
@@ -28,9 +27,7 @@ export default function Footer() {
       } else toast.error(result)
     })
   }
-  if (excludedPages.includes(pathname)) {
-    return null
-  }
+  if (excludedPages.includes(pathname)) return null
   return (
     <footer className="relative bg-[#0f1520] text-neutral-300 overflow-hidden">
       {/* Top glowing divider */}
