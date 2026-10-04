@@ -23,7 +23,7 @@ interface SubmitEmailResponseType {
 const isDev = process.env.NODE_ENV === "development"
 
 export const submitEmail = createServerFn({ method: 'POST' })
-  .inputValidator(zodSchema)
+  .validator(zodSchema)
   .handler(async ({ request, data }): Promise<SubmitEmailResponseType> => {
     try {
       async function sendMail(dbData, data) {

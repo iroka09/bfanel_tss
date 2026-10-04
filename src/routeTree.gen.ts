@@ -10,40 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as LearnIndexRouteImport } from './routes/learn/index'
-import { Route as AssistantIndexRouteImport } from './routes/assistant/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
-import { Route as PaymentOpay_successRouteImport } from './routes/payment/opay_success'
-import { Route as PaymentOpay_cancelRouteImport } from './routes/payment/opay_cancel'
 import { Route as ApiVerify_emailRouteImport } from './routes/api/verify_email'
-import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
+import { Route as AssistantIndexRouteImport } from './routes/assistant/index'
+import { Route as LearnIndexRouteImport } from './routes/learn/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as PaymentOpay_cancelRouteImport } from './routes/payment/opay_cancel'
+import { Route as PaymentOpay_successRouteImport } from './routes/payment/opay_success'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ApiOpayOpay_webhookRouteImport } from './routes/api/opay/opay_webhook'
+import { Route as ApiUserIdRouteImport } from './routes/api/user/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
-  id: '/profile/',
-  path: '/profile/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LearnIndexRoute = LearnIndexRouteImport.update({
-  id: '/learn/',
-  path: '/learn/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AssistantIndexRoute = AssistantIndexRouteImport.update({
-  id: '/assistant/',
-  path: '/assistant/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
@@ -51,9 +31,24 @@ const AboutIndexRoute = AboutIndexRouteImport.update({
   path: '/about/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PaymentOpay_successRoute = PaymentOpay_successRouteImport.update({
-  id: '/payment/opay_success',
-  path: '/payment/opay_success',
+const ApiVerify_emailRoute = ApiVerify_emailRouteImport.update({
+  id: '/api/verify_email',
+  path: '/api/verify_email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantIndexRoute = AssistantIndexRouteImport.update({
+  id: '/assistant/',
+  path: '/assistant/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnIndexRoute = LearnIndexRouteImport.update({
+  id: '/learn/',
+  path: '/learn/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentOpay_cancelRoute = PaymentOpay_cancelRouteImport.update({
@@ -61,19 +56,24 @@ const PaymentOpay_cancelRoute = PaymentOpay_cancelRouteImport.update({
   path: '/payment/opay_cancel',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiVerify_emailRoute = ApiVerify_emailRouteImport.update({
-  id: '/api/verify_email',
-  path: '/api/verify_email',
+const PaymentOpay_successRoute = PaymentOpay_successRouteImport.update({
+  id: '/payment/opay_success',
+  path: '/payment/opay_success',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiUserIdRoute = ApiUserIdRouteImport.update({
-  id: '/api/user/$id',
-  path: '/api/user/$id',
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiOpayOpay_webhookRoute = ApiOpayOpay_webhookRouteImport.update({
   id: '/api/opay/opay_webhook',
   path: '/api/opay/opay_webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUserIdRoute = ApiUserIdRouteImport.update({
+  id: '/api/user/$id',
+  path: '/api/user/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -182,53 +182,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/': {
-      id: '/profile/'
-      path: '/profile'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login/'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/learn/': {
-      id: '/learn/'
-      path: '/learn'
-      fullPath: '/learn/'
-      preLoaderRoute: typeof LearnIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assistant/': {
-      id: '/assistant/'
-      path: '/assistant'
-      fullPath: '/assistant/'
-      preLoaderRoute: typeof AssistantIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about/': {
       id: '/about/'
       path: '/about'
       fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment/opay_success': {
-      id: '/payment/opay_success'
-      path: '/payment/opay_success'
-      fullPath: '/payment/opay_success'
-      preLoaderRoute: typeof PaymentOpay_successRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment/opay_cancel': {
-      id: '/payment/opay_cancel'
-      path: '/payment/opay_cancel'
-      fullPath: '/payment/opay_cancel'
-      preLoaderRoute: typeof PaymentOpay_cancelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/verify_email': {
@@ -238,11 +196,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiVerify_emailRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/user/$id': {
-      id: '/api/user/$id'
-      path: '/api/user/$id'
-      fullPath: '/api/user/$id'
-      preLoaderRoute: typeof ApiUserIdRouteImport
+    '/assistant/': {
+      id: '/assistant/'
+      path: '/assistant'
+      fullPath: '/assistant/'
+      preLoaderRoute: typeof AssistantIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn/': {
+      id: '/learn/'
+      path: '/learn'
+      fullPath: '/learn/'
+      preLoaderRoute: typeof LearnIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/opay_cancel': {
+      id: '/payment/opay_cancel'
+      path: '/payment/opay_cancel'
+      fullPath: '/payment/opay_cancel'
+      preLoaderRoute: typeof PaymentOpay_cancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/opay_success': {
+      id: '/payment/opay_success'
+      path: '/payment/opay_success'
+      fullPath: '/payment/opay_success'
+      preLoaderRoute: typeof PaymentOpay_successRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/opay/opay_webhook': {
@@ -250,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/api/opay/opay_webhook'
       fullPath: '/api/opay/opay_webhook'
       preLoaderRoute: typeof ApiOpayOpay_webhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/user/$id': {
+      id: '/api/user/$id'
+      path: '/api/user/$id'
+      fullPath: '/api/user/$id'
+      preLoaderRoute: typeof ApiUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

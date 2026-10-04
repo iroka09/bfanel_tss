@@ -49,7 +49,7 @@ export const getSession = createServerFnWithGET.handler(
 
 // ====  GET USER ======
 export const getUser = createServerFnWithPOST
-  .inputValidator((data?: { email: string }) => data)
+  .validator((data?: { email: string }) => data)
   .handler(async ({ data, context: { session, headers } }): Promise<User> => {
     if (data) {
       // get another person's profile
@@ -81,7 +81,7 @@ export const getUser = createServerFnWithPOST
 
 // ====  LOGIN ======
 export const loginFn = createServerFnWithPOST
-  .inputValidator((data: SignInInput) => data)
+  .validator((data: SignInInput) => data)
   .handler(async ({ data: _data, context }): Promise<AuthResult> | never => {
     async function updateSessionAndReturnData(data) {
       const session = context.session
@@ -145,7 +145,7 @@ export const loginFn = createServerFnWithPOST
 
 // =====   LOGOUT ======
 export const logoutFn = createServerFnWithPOST
-  .inputValidator((data?: { to: string }) => data)
+  .validator((data?: { to: string }) => data)
   .handler(async ({ data, context }) => {
     await context.session.clear()
     return { success: true }
@@ -153,7 +153,7 @@ export const logoutFn = createServerFnWithPOST
 
 //protect a route
 export const ensureSession = createServerFnWithPOST
-  .inputValidator((data?: { redirect: `/${string}` }) => data)
+  .validator((data?: { redirect: `/${string}` }) => data)
   .handler(async ({ data, context }): Promise<void | never> => {
     try {
       const sessionData = emptyObjToNull(context.session.data)

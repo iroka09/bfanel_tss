@@ -27,7 +27,7 @@ const OPAY_BASE_URL: string = process.env.OPAY_BASE_URL as string;
 
 
 export const initPayment = createServerFn({ method: "POST" })
-  .inputValidator(initPaymentSchema)
+  .validator(initPaymentSchema)
   .handler(async ({ data, context: { url } }) => {
     try {
       const APP_URL = isDev ? "http://localhost:3000" : url.origin;
@@ -98,7 +98,7 @@ export const initPayment = createServerFn({ method: "POST" })
 const QueryStatusSchema = z.object({ reference: z.string().min(1) });
 
 export const queryOpayPaymentStatus = createServerFn({ method: "POST" })
-  .inputValidator(QueryStatusSchema)
+  .validator(QueryStatusSchema)
   .handler(async ({ data }) => {
     const body = {
       reference: data.reference,

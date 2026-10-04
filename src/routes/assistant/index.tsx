@@ -56,9 +56,7 @@ declare module '*?raw' {
 
 // 2. Define the server function for handling the OpenRouter stream
 const streamChatFn = createServerFn({ method: 'POST' })
-  .inputValidator(
-    (data: { messages: { role: string; content: string }[] }) => data,
-  )
+  .validator((data: { messages: { role: string; content: string }[] }) => data)
   .handler(async function* ({ data }) {
     try {
       const openrouter = new OpenRouter({
@@ -289,7 +287,7 @@ function AiAssistantRoute() {
   const [feedbackState, setFeedbackState] = useState<
     Record<string, 'up' | 'down'>
   >({})
-  
+
   // NEW: State to manage the open 3-dots menu
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
@@ -301,7 +299,7 @@ function AiAssistantRoute() {
   useEffect(() => {
     const handleOutsideClick = () => setOpenMenuId(null)
     document.addEventListener('click', handleOutsideClick)
-    
+
     return () => {
       document.removeEventListener('click', handleOutsideClick)
       if ('speechSynthesis' in window) {
@@ -430,7 +428,7 @@ function AiAssistantRoute() {
     const msgIndex = messages.findIndex((m) => m.id === assistantMsgId)
     if (msgIndex <= 0) return
     const userMsg = messages[msgIndex - 1]
-    
+
     // Safety check to ensure the preceding message is a user prompt
     if (userMsg?.role !== 'user') return
 
@@ -458,7 +456,7 @@ function AiAssistantRoute() {
 
     setIsStreaming(false)
     setEditingMessageId(null)
-    
+
     // Needs a slight timeout to focus and auto-resize after state reflects
     setTimeout(() => {
       if (inputRef.current) {
@@ -765,17 +763,22 @@ function AiAssistantRoute() {
                       >
                         <Share2 className="w-[18px] h-[18px] hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
                       </button>
-                      
+
                       {/* MORE OPTIONS MENU */}
-                      <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-                        <button 
-                          onClick={() => setOpenMenuId(openMenuId === msg.id ? null : msg.id)}
+                      <div
+                        className="relative inline-block"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(openMenuId === msg.id ? null : msg.id)
+                          }
                           title="More options"
                           className="p-1 -ml-1 rounded-md hover:bg-slate-200 dark:hover:bg-[#3d3d3d] transition-colors"
                         >
                           <MoreVertical className="w-[18px] h-[18px] text-slate-400 hover:text-slate-700 dark:hover:text-gray-200 transition-colors" />
                         </button>
-                        
+
                         {openMenuId === msg.id && (
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-36 bg-white dark:bg-[#2f2f2f] rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 flex flex-col py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
                             <button
