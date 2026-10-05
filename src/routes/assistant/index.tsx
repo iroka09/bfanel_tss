@@ -89,6 +89,7 @@ const streamChatFn = createServerFn({ method: 'POST' })
 
       const stream = await openrouter.chat.send({
         chatRequest: {
+          // model: 'qwen/qwen3.8-27b:free',
           model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
           messages: fullMessages,
           stream: true,
@@ -600,7 +601,7 @@ function AiAssistantRoute() {
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-[#212121] text-slate-900 dark:text-gray-100 font-sans transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900 flex flex-col">
-      <header className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 bg-white/80 dark:bg-[#212121]/80 backdrop-blur-md border-b border-slate-200/50 dark:border-transparent">
+      <header className="flex items-center justify-between px-6 py-4 bg-white/80 dark:bg-[#212121]/80 backdrop-blur-md border-b border-slate-200/50 dark:border-transparent">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 shadow-sm">
             <Sparkles className="w-4 h-4 text-white" />
