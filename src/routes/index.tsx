@@ -7,8 +7,8 @@ import JoinUs from '@/components/JoinUs'
 import HeroButtons from '@/components/HeroButtons'
 import ContactForm from '@/components/ContactForm'
 import Testimonials from '@/components/Testimonials'
-import { Headset, Sparkles } from 'lucide-react'
-import { MessageCircleMore } from "lucide-react";
+import { MessageCircleMore, Sparkles } from 'lucide-react'
+
 
 export const Route = createFileRoute('/')({
   component: App,
