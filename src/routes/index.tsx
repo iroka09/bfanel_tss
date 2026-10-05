@@ -8,6 +8,7 @@ import HeroButtons from '@/components/HeroButtons'
 import ContactForm from '@/components/ContactForm'
 import Testimonials from '@/components/Testimonials'
 import { Headset, Sparkles } from 'lucide-react'
+import { MessageCircleMore } from "lucide-react";
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -97,21 +98,28 @@ export function FloatingAssistantButton() {
       {/* Main Floating Action Button */}
       <Link
         to="/assistant"
-        className="relative flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/50 hover:scale-110 active:scale-95 transition-all duration-300 ring-4 ring-white dark:ring-slate-900"
-        aria-label="Contact B-Fanel Customer Care Assistant"
+        aria-label="Chat with the B-Fanel AI assistant"
+        className="group flex flex-col items-center gap-1.5 outline-none"
       >
-        {/* Animated outer pulse glow */}
-        <span className="absolute inset-0 rounded-full bg-blue-500/30 animate-ping opacity-75 pointer-events-none" />
+        <span className="relative">
+          {/* Soft pulse. Switched off for visitors who prefer reduced motion */}
+          <span className="pointer-events-none absolute inset-0 rounded-full bg-orange-500/25 motion-safe:animate-ping [animation-duration:2.8s]" />
 
-        {/* Customer Care Icon or Image representation */}
-        <div className="relative flex items-center justify-center">
-          <Headset className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12" />
-        </div>
+          {/* Main button */}
+          <span className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#2d3d63] via-[#1e2840] to-[#141b2e] text-white shadow-lg shadow-[#1e2840]/40 ring-[3px] ring-white transition-all duration-300 before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent group-hover:-translate-y-0.5 group-hover:shadow-xl group-hover:shadow-orange-500/30 group-active:scale-95 group-focus-visible:ring-orange-500 dark:ring-slate-700">
+            <MessageCircleMore
+              className="relative h-[22px] w-[22px]"
+              strokeWidth={1.8}
+            />
+          </span>
 
-        {/* Online status indicator dot */}
-        <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
+          {/* Online dot */}
+          <span className="absolute right-0 top-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+        </span>
+
+        {/* Label */}
+        <span className="rounded-full bg-white/95 px-2.5 py-0.5 text-[11px] font-semibold leading-4 text-[#1e2840] shadow-sm ring-1 ring-slate-200 backdrop-blur dark:bg-slate-900/95 dark:text-slate-100 dark:ring-slate-700">
+          Ask AI
         </span>
       </Link>
     </div>

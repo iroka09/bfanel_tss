@@ -7,12 +7,11 @@ import { Button } from '@/components/ui/button'
 import { submitEmail } from '@/server/actions/newsletter'
 import { useLocation } from '@tanstack/react-router'
 
-const excludedPages = ['/assistant']
+const excludedPages = ['/assistant'] //list of pages where Footer won't show
 
 export default function Footer() {
   const [email, setEmail] = React.useState('')
   const [isSubmitting, startTransition] = React.useTransition()
-  const pathname = useLocation({ select: (x) => x.pathname })
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault()
     if (!email.trim()) {
@@ -27,6 +26,7 @@ export default function Footer() {
       } else toast.error(result)
     })
   }
+  const pathname = useLocation({ select: (x) => x.pathname })
   if (excludedPages.includes(pathname)) return null
   return (
     <footer className="relative bg-[#0f1520] text-neutral-300 overflow-hidden">
